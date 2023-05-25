@@ -9,6 +9,7 @@ export class AppController {
   getMessage(
     @Body() message
   ) {
+    console.log(message)
     return {
       status: 'ok',
       message
