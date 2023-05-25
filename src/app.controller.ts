@@ -6,9 +6,13 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post()
-  getMessage(
+  async getMessage(
     @Body() message
   ) {
+    console.log(message)
+    const response = await this.appService.sendMessage(message)
+
+    console.log(response)
     return {
       status: 'ok',
       message
