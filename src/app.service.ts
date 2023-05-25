@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Twilio } from 'twilio';
+import twilio from 'twilio';
+import TwilioClient from 'twilio/lib/rest/Twilio';
 
 @Injectable()
 export class AppService {
-  constructor(
-    private readonly client: Twilio = new Twilio(
+  client: TwilioClient
+
+  constructor(){
+    this.client = twilio(
       process.env.SERVICE_TWILIO_KEY_SID,
       process.env.SERVICE_TWILIO_KEY_SECRET
     )
-  ){}
+  }
 
   sendMessage = async(messageReceived) => {
     const message = await this.client.messages.create({
