@@ -16,7 +16,7 @@ export class AppService {
   sendMessage = async(messageReceived) => {
     const message = await this.client.messages.create({
       from:  process.env.ADMIN_PHONE,
-      to: messageReceived.from,
+      to: messageReceived.From,
       body: 'Obrigada pela sua resposta!'
     })
 
