@@ -20,6 +20,7 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/')
       .send(mockReceivedMessage({
+        body: '1',
         profileName: 'Ada Lovelace',
         to: 'whatsapp:+12345678900',
         waId: '5511988885555',

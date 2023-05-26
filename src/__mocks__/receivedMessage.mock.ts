@@ -1,6 +1,7 @@
 import { MessageModel } from '../model/message.model';
 
 interface MockReceivedMessage {
+  body: string;
   profileName: string,
   to: string,
   waId: string,
@@ -15,7 +16,7 @@ export const mockReceivedMessage = (data: MockReceivedMessage): MessageModel => 
   SmsSid: data.smsSid,
   WaId: data.waId,
   SmsStatus: 'received',
-  Body: 'Answer is here',
+  Body: data.body,
   To: data.to,
   NumSegments: '1',
   ReferralNumMedia: '0',

@@ -25,9 +25,9 @@ describe('HookController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', async () => {
+    it('should return message after sent', async () => {
       jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() => Promise.resolve({
-        body: 'Sample message',
+        body: '1',
         direction: 'outbound-api',
         from: 'whatsapp:+12345678900',
         to: 'whatsapp:+5511988885555',
@@ -37,6 +37,7 @@ describe('HookController', () => {
       }))
 
       const response = await hookController.getMessage(mockReceivedMessage({
+        body: '1',
         profileName: 'Ada Lovelace',
         to: 'whatsapp:+12345678900',
         waId: '5511988885555',
@@ -47,7 +48,7 @@ describe('HookController', () => {
       expect(response).toMatchObject({
         status: 'ok',
         response: {
-          body: 'Sample message',
+          body: '1',
           direction: 'outbound-api',
           from: 'whatsapp:+12345678900',
           to: 'whatsapp:+5511988885555',

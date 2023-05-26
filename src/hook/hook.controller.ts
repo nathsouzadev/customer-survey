@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { HookService } from './service/hook.service';
+import { MessageRequest } from './dto/messageRequest.dto';
 
 @Controller()
 export class HookController {
@@ -7,10 +8,10 @@ export class HookController {
 
   @Post()
   async getMessage(
-    @Body() message
+    @Body(new ValidationPipe()) messageRequest: MessageRequest,
   ) {
-    console.log(message)
-    const response = await this.hookService.sendMessage(message)
+    console.log(messageRequest)
+    const response = await this.hookService.sendMessage(messageRequest)
 
     console.log(response)
     return {
