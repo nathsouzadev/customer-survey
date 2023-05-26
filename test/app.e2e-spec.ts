@@ -28,9 +28,18 @@ describe('AppController (e2e)', () => {
       }))
       .expect(201)
       .then(response => {
-        expect(response.body).toMatchObject(
-          { status: 'ok' }
-        )
+        expect(response.body).toMatchObject({
+          status: 'ok',
+          response: {
+            body: 'Obrigada pela sua resposta!',
+            direction: 'outbound-api',
+            from: 'whatsapp:+14155238886',
+            to: 'whatsapp:+5511988885555',
+            dateUpdated: expect.any(String),
+            status: 'queued',
+            sid: expect.any(String)
+          }
+        })
       })
   });
 });
