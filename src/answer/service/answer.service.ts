@@ -30,6 +30,8 @@ export class AnswerService {
   updateResults = (value: string) => {
     this.data[0].results[0][Object.keys(this.data[0].results[0])[Number(value) - 1]] += 1
 
+    console.log(this.data[0])
+
     return this.data
   }
 }
