@@ -7,7 +7,7 @@ import { TwilioService } from './client/twilio.service';
 import { AnswerModule } from './answer/answer.module';
 import { HookModule } from './hook/hook.module';
 import { AnswerController } from './answer/answer.controller';
-import { AnswerService } from './answer/answer.service';
+import { AnswerService } from './answer/service/answer.service';
 
 @Module({
   imports: [

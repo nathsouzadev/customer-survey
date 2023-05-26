@@ -5,6 +5,11 @@ import { MessageModel } from '../model/message.model';
 import { MessageInstance } from 'twilio/lib/rest/api/v2010/account/message';
 import { MessageResponseModel } from '../model/message.response.model';
 
+interface MessageData {
+  message: MessageModel,
+  isValid: boolean 
+}
+
 @Injectable()
 export class TwilioService {
   client: TwilioClient;
@@ -16,17 +21,15 @@ export class TwilioService {
     );
   }
 
-  replyToUser = async (
-    message: MessageModel,
-  ): Promise<MessageResponseModel> => {
+  replyToUser = async (messageData: MessageData): Promise<MessageResponseModel> => {
     const response: MessageInstance = await this.client.messages.create({
       from: process.env.ADMIN_PHONE,
-      to: message.From,
-      body: ['1', '2', '3'].includes(message.Body) ? 
+      to: messageData.message.From,
+      body: messageData.isValid ? 
         'Obrigada pela sua resposta!' : 'Por favor responda apenas com o número de uma das alternativas',
     });
 
-    console.log(message);
+    console.log(messageData.message);
     return {
       body: response.body,
       direction: response.direction,

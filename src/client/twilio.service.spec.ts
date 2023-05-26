@@ -34,7 +34,10 @@ describe('TwilioService', () => {
       accountSid: '50M34c01quertacggd9876'
     })
 
-    const response = await twilioService.replyToUser(mockMessage)
+    const response = await twilioService.replyToUser({
+      message: mockMessage, 
+      isValid: true
+    })
     expect(mockCreate).toHaveBeenCalledWith({
       from: process.env.ADMIN_PHONE,
       to: 'whatsapp:+5511988885555',
@@ -61,7 +64,10 @@ describe('TwilioService', () => {
       accountSid: '50M34c01quertacggd9876'
     })
 
-    const response = await twilioService.replyToUser(mockMessage)
+    const response = await twilioService.replyToUser({
+      message: mockMessage, 
+      isValid: false
+    })
     expect(mockCreate).toHaveBeenCalledWith({
       from: process.env.ADMIN_PHONE,
       to: 'whatsapp:+5511988885555',

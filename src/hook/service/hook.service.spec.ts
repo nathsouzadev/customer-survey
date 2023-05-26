@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
 import { TwilioService } from '../../client/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
+import { AnswerService } from '../../answer/service/answer.service';
 
 describe('HookService', () => {
   let service: HookService;
   let mockTwilioService: TwilioService;
+  let mockAnswerService: AnswerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,19 +16,26 @@ describe('HookService', () => {
           {
             provide: TwilioService,
             useValue: {
-              replyToUser: jest.fn(),
+              replyToUser: jest.fn()
             },
+          },
+          {
+            provide: AnswerService,
+            useValue: {
+              updateResults: jest.fn()
+            }
           }
         ],
       }).compile();
 
       service = module.get<HookService>(HookService);
       mockTwilioService = module.get<TwilioService>(TwilioService);
+      mockAnswerService = module.get<AnswerService>(AnswerService);
   })
 
   it('should return success response when send message with valid content', async() => {
-    jest.spyOn(mockTwilioService, 'replyToUser').mockImplementation(() => Promise.resolve({
-      body: 'Sample message',
+    const mockReplyToUser = jest.spyOn(mockTwilioService, 'replyToUser').mockImplementation(() => Promise.resolve({
+      body: 'Obrigada pela sua resposta',
       direction: 'outbound-api',
       from: 'whatsapp:+12345678900',
       to: 'whatsapp:+5511988885555',
@@ -34,18 +43,35 @@ describe('HookService', () => {
       status: 'queued',
       sid: 'FMsGH890912dasb'
     }));
+    const mockUpdate = jest.spyOn(mockAnswerService, 'updateResults').mockImplementation(() => [
+      { 
+        answer: 'Como você avalia o nosso atendimento?',
+        results: [{
+          bom: 20,
+          regular: 11,
+          ruim: 5
+        }]
+      }
+    ])
 
-    const response = await service.sendMessage(mockReceivedMessage({
+
+    const mockMessage = mockReceivedMessage({
       body: '1',
       profileName: 'Ada Lovelace',
       to: 'whatsapp:+12345678900',
       waId: '5511988885555',
       smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
       accountSid: '50M34c01quertacggd9876'
-    }))
+    })
 
+    const response = await service.sendMessage(mockMessage)
+    expect(mockReplyToUser).toHaveBeenCalledWith({
+      message: mockMessage,
+      isValid: true
+    })
+    expect(mockUpdate).toHaveBeenCalledWith('1')
     expect(response).toMatchObject({
-      body: 'Sample message',
+      body: 'Obrigada pela sua resposta',
       direction: 'outbound-api',
       from: 'whatsapp:+12345678900',
       to: 'whatsapp:+5511988885555',
@@ -56,7 +82,7 @@ describe('HookService', () => {
   })
 
   it('should return failed response when send message with invalid content', async() => {
-    jest.spyOn(mockTwilioService, 'replyToUser').mockImplementation(() => Promise.resolve({
+    const mockReplyToUser = jest.spyOn(mockTwilioService, 'replyToUser').mockImplementation(() => Promise.resolve({
       body: 'Por favor responda apenas com o número de uma das alternativas',
       direction: 'outbound-api',
       from: 'whatsapp:+12345678900',
@@ -65,16 +91,20 @@ describe('HookService', () => {
       status: 'queued',
       sid: 'FMsGH890912dasb'
     }));
-
-    const response = await service.sendMessage(mockReceivedMessage({
+    const mockMessage = mockReceivedMessage({
       body: 'Invalid',
       profileName: 'Ada Lovelace',
       to: 'whatsapp:+12345678900',
       waId: '5511988885555',
       smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
       accountSid: '50M34c01quertacggd9876'
-    }))
+    })
 
+    const response = await service.sendMessage(mockMessage)
+    expect(mockReplyToUser).toHaveBeenCalledWith({
+      message: mockMessage,
+      isValid: false
+    })
     expect(response).toMatchObject({
       body: 'Por favor responda apenas com o número de uma das alternativas',
       direction: 'outbound-api',

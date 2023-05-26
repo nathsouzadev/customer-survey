@@ -3,6 +3,7 @@ import { HookController } from './hook.controller';
 import { HookService } from '../hook/service/hook.service';
 import { TwilioService } from '../client/twilio.service';
 import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
+import { AnswerService } from '../answer/service/answer.service';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -13,6 +14,7 @@ describe('HookController', () => {
       controllers: [HookController],
       providers: [
         HookService,
+        AnswerService,
         {
           provide: TwilioService,
           useValue: {}
