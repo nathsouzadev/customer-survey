@@ -2,39 +2,39 @@ import { Injectable } from '@nestjs/common';
 import { CreateAnswerDto } from '../dto/create-answer.dto';
 import { UpdateAnswerDto } from '../dto/update-answer.dto';
 
+let data = [
+  { 
+    answer: 'Como você avalia o nosso atendimento?',
+    results: [{
+      bom: 20,
+      regular: 10,
+      ruim: 5
+    }]
+  },
+  {
+    answer: 'Você maracará o seu retorno?',
+    results: [{
+      sim: 25,
+      talvez: 7,
+      nao: 3
+    }]
+  }
+]
+
 @Injectable()
 export class AnswerService {
-  data = [
-    { 
-      answer: 'Como você avalia o nosso atendimento?',
-      results: [{
-        bom: 20,
-        regular: 10,
-        ruim: 5
-      }]
-    },
-    {
-      answer: 'Você maracará o seu retorno?',
-      results: [{
-        sim: 25,
-        talvez: 7,
-        nao: 3
-      }]
-    }
-  ]
-
   getData = () => {
-    return this.data
+    return data
   }
 
   updateResults = (value: string) => {
-    const data = this.data
-    data[0].results[0][Object.keys(this.data[0].results[0])[Number(value) - 1]] += 1
+    let newData = data
+    newData[0].results[0][Object.keys(newData[0].results[0])[Number(value) - 1]] += 1
 
-    this.data = data
+    data = newData
 
-    console.log(this.data[0])
+    console.log(data[0])
 
-    return this.data
+    return data
   }
 }
