@@ -4,6 +4,9 @@ import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TwilioService } from './client/twilio.service';
+import { AnswerModule } from './answer/answer.module';
+import { AnswerController } from './answer/answer.controller';
+import { AnswerService } from './answer/answer.service';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -13,8 +16,8 @@ import { TwilioService } from './client/twilio.service';
         .default('development'),
       PORT: Joi.number().default(5000)
       })
-    }), ],
-  controllers: [AppController],
-  providers: [AppService, TwilioService],
+    }), AnswerModule, ],
+  controllers: [AppController, AnswerController],
+  providers: [AppService, AnswerService, TwilioService],
 })
 export class AppModule {}
