@@ -16,13 +16,14 @@ export class TwilioService {
     );
   }
 
-  sendToTwilio = async (
+  replyToUser = async (
     message: MessageModel,
   ): Promise<MessageResponseModel> => {
     const response: MessageInstance = await this.client.messages.create({
       from: process.env.ADMIN_PHONE,
       to: message.From,
-      body: 'Obrigada pela sua resposta!',
+      body: ['1', '2', '3'].includes(message.Body) ? 
+        'Obrigada pela sua resposta!' : 'Por favor responda apenas com o número de uma das alternativas',
     });
 
     console.log(message);

@@ -22,7 +22,6 @@ export class MessageRequest {
   SmsStatus: string;
   
   @IsNotEmpty({ message: 'Required field' })
-  @IsIn(['1', '2', '3'], { message: 'Invalid content' })
   Body: string;
   
   @IsNotEmpty({ message: 'Required field' })

@@ -8,6 +8,6 @@ export class HookService {
   constructor(private readonly client: TwilioService){}
 
   sendMessage = async(messageReceived: MessageModel): Promise<MessageResponseModel> => {
-    return this.client.sendToTwilio(messageReceived)
+    return this.client.replyToUser(messageReceived)
   }
 }
