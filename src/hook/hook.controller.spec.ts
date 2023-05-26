@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TwilioService } from './client/twilio.service';
-import { mockReceivedMessage } from './__mocks__/receivedMessage.mock';
+import { HookController } from './hook.controller';
+import { HookService } from '../hook/service/hook.service';
+import { TwilioService } from '../client/twilio.service';
+import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
 
-describe('AppController', () => {
-  let appController: AppController;
-  let mockAppService: AppService
+describe('HookController', () => {
+  let hookController: HookController;
+  let mockHookService: HookService
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
+      controllers: [HookController],
       providers: [
-        AppService,
+        HookService,
         {
           provide: TwilioService,
           useValue: {}
@@ -20,13 +20,13 @@ describe('AppController', () => {
       ],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
-    mockAppService = app.get<AppService>(AppService);
+    hookController = app.get<HookController>(HookController);
+    mockHookService = app.get<HookService>(HookService);
   });
 
   describe('root', () => {
     it('should return "Hello World!"', async () => {
-      jest.spyOn(mockAppService, 'sendMessage').mockImplementation(() => Promise.resolve({
+      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() => Promise.resolve({
         body: 'Sample message',
         direction: 'outbound-api',
         from: 'whatsapp:+12345678900',
@@ -36,7 +36,7 @@ describe('AppController', () => {
         sid: 'FMsGH890912dasb'
       }))
 
-      const response = await appController.getMessage(mockReceivedMessage({
+      const response = await hookController.getMessage(mockReceivedMessage({
         profileName: 'Ada Lovelace',
         to: 'whatsapp:+12345678900',
         waId: '5511988885555',

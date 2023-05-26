@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppService } from './app.service';
-import { TwilioService } from './client/twilio.service';
-import { mockReceivedMessage } from './__mocks__/receivedMessage.mock';
+import { HookService } from './hook.service';
+import { TwilioService } from '../../client/twilio.service';
+import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 
-describe('AppService', () => {
-  let service: AppService;
+describe('HookService', () => {
+  let service: HookService;
   let mockTwilioService: TwilioService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
         providers: [
-          AppService,
+          HookService,
           {
             provide: TwilioService,
             useValue: {
@@ -20,7 +20,7 @@ describe('AppService', () => {
         ],
       }).compile();
 
-      service = module.get<AppService>(AppService);
+      service = module.get<HookService>(HookService);
       mockTwilioService = module.get<TwilioService>(TwilioService);
   })
 

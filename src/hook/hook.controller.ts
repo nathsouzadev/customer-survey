@@ -1,16 +1,16 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { HookService } from './service/hook.service';
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class HookController {
+  constructor(private readonly hookService: HookService) {}
 
   @Post()
   async getMessage(
     @Body() message
   ) {
     console.log(message)
-    const response = await this.appService.sendMessage(message)
+    const response = await this.hookService.sendMessage(message)
 
     console.log(response)
     return {
