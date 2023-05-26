@@ -28,7 +28,10 @@ export class AnswerService {
   }
 
   updateResults = (value: string) => {
-    this.data[0].results[0][Object.keys(this.data[0].results[0])[Number(value) - 1]] += 1
+    const data = this.data
+    data[0].results[0][Object.keys(this.data[0].results[0])[Number(value) - 1]] += 1
+
+    this.data = data
 
     console.log(this.data[0])
 
