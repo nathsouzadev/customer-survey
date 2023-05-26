@@ -16,28 +16,25 @@ describe('AnswerController (e2e)', () => {
     await app.init();
   });
 
-  it('/answer (GET)', async() => {
+  it('/survey (GET)', async() => {
     return request(app.getHttpServer())
-      .get('/answer')
+      .get('/survey')
       .expect(200)
       .then(response => {
         expect(response.body).toMatchObject({
-          data: [
+          id: 'survey',
+          name: 'Exampled Survey',
+          title: 'Customer Experience',
+          questions: [
             { 
-              answer: 'Como você avalia o nosso atendimento?',
-              results: [{
-                bom: 20,
-                regular: 10,
-                ruim: 5
-              }]
-            },
-            {
-              answer: 'Você maracará o seu retorno?',
-              results: [{
-                sim: 25,
-                talvez: 7,
-                nao: 3
-              }]
+              id: 'question',
+              surveyId: 'survey',
+              question: 'Como você avalia o nosso atendimento?',
+              answers: [
+                { label: 'bom', quantity: 3 },
+                { label: 'regular', quantity: 2 },
+                { label: 'ruim', quantity: 1 }
+              ]
             }
           ]
         })

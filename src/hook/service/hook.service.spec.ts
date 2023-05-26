@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
 import { TwilioService } from '../../client/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
-import { AnswerService } from '../../answer/service/answer.service';
+import { SurveyService } from '../../survey/service/survey.service';
 
 describe('HookService', () => {
   let service: HookService;
   let mockTwilioService: TwilioService;
-  let mockAnswerService: AnswerService;
+  let mockSurveyService: SurveyService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,9 +20,9 @@ describe('HookService', () => {
             },
           },
           {
-            provide: AnswerService,
+            provide: SurveyService,
             useValue: {
-              updateResults: jest.fn()
+              addAnswerToSurvey: jest.fn()
             }
           }
         ],
@@ -30,7 +30,7 @@ describe('HookService', () => {
 
       service = module.get<HookService>(HookService);
       mockTwilioService = module.get<TwilioService>(TwilioService);
-      mockAnswerService = module.get<AnswerService>(AnswerService);
+      mockSurveyService = module.get<SurveyService>(SurveyService)
   })
 
   it('should return success response when send message with valid content', async() => {
@@ -43,16 +43,12 @@ describe('HookService', () => {
       status: 'queued',
       sid: 'FMsGH890912dasb'
     }));
-    const mockUpdate = jest.spyOn(mockAnswerService, 'updateResults').mockImplementation(() => [
-      { 
-        answer: 'Como você avalia o nosso atendimento?',
-        results: [{
-          bom: 20,
-          regular: 11,
-          ruim: 5
-        }]
-      }
-    ])
+    const mockUpdate = jest.spyOn(mockSurveyService, 'addAnswerToSurvey').mockImplementation(() => ({
+      id: 'a',
+      questionId: 'question',
+      answer: '1',
+      label: 'bom'
+    }))
 
 
     const mockMessage = mockReceivedMessage({
