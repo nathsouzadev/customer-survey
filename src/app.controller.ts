@@ -15,7 +15,7 @@ export class AppController {
     console.log(response)
     return {
       status: 'ok',
-      message
+      response
     }
   }
 }
