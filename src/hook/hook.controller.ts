@@ -7,16 +7,14 @@ export class HookController {
   constructor(private readonly hookService: HookService) {}
 
   @Post()
-  async getMessage(
-    @Body(new ValidationPipe()) messageRequest: MessageRequest,
-  ) {
-    console.log(messageRequest)
-    const response = await this.hookService.sendMessage(messageRequest)
+  async getMessage(@Body(new ValidationPipe()) messageRequest: MessageRequest) {
+    console.log(messageRequest);
+    const response = await this.hookService.sendMessage(messageRequest);
 
-    console.log(response)
+    console.log(response);
     return {
       status: 'ok',
-      response
-    }
+      response,
+    };
   }
 }

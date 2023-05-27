@@ -16,19 +16,21 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('receive message with valid body', async() => {
+  it('receive message with valid body', async () => {
     return request(app.getHttpServer())
       .post('/')
-      .send(mockReceivedMessage({
-        body: '1',
-        profileName: 'Ada Lovelace',
-        to: 'whatsapp:+12345678900',
-        waId: '5511988885555',
-        smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-        accountSid: '50M34c01quertacggd9876'
-      }))
+      .send(
+        mockReceivedMessage({
+          body: '1',
+          profileName: 'Ada Lovelace',
+          to: 'whatsapp:+12345678900',
+          waId: '5511988885555',
+          smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
+          accountSid: '50M34c01quertacggd9876',
+        }),
+      )
       .expect(201)
-      .then(response => {
+      .then((response) => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
@@ -38,25 +40,27 @@ describe('AppController (e2e)', () => {
             to: 'whatsapp:+5511988885555',
             dateUpdated: expect.any(String),
             status: 'queued',
-            sid: expect.any(String)
-          }
-        })
-      })
-  })
+            sid: expect.any(String),
+          },
+        });
+      });
+  });
 
-  it('receive message with invalid body', async() => {
+  it('receive message with invalid body', async () => {
     return request(app.getHttpServer())
       .post('/')
-      .send(mockReceivedMessage({
-        body: 'Invalid body',
-        profileName: 'Ada Lovelace',
-        to: 'whatsapp:+12345678900',
-        waId: '5511988885555',
-        smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-        accountSid: '50M34c01quertacggd9876'
-      }))
+      .send(
+        mockReceivedMessage({
+          body: 'Invalid body',
+          profileName: 'Ada Lovelace',
+          to: 'whatsapp:+12345678900',
+          waId: '5511988885555',
+          smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
+          accountSid: '50M34c01quertacggd9876',
+        }),
+      )
       .expect(201)
-      .then(response => {
+      .then((response) => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
@@ -66,9 +70,9 @@ describe('AppController (e2e)', () => {
             to: 'whatsapp:+5511988885555',
             dateUpdated: expect.any(String),
             status: 'queued',
-            sid: expect.any(String)
-          }
-        })
-      })
-  })
+            sid: expect.any(String),
+          },
+        });
+      });
+  });
 });

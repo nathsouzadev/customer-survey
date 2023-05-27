@@ -1,14 +1,16 @@
-import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
+import { MessageInstance } from 'twilio/lib/rest/api/v2010/account/message';
 
 interface MockMessageSentResponse {
-  body: string,
-  from: string,
-  to: string,
-  accountSid: string,
-  sid: string
+  body: string;
+  from: string;
+  to: string;
+  accountSid: string;
+  sid: string;
 }
 
-export const mockMessageSentRespose = (info: MockMessageSentResponse): Partial<MessageInstance> => ({
+export const mockMessageSentRespose = (
+  info: MockMessageSentResponse,
+): Partial<MessageInstance> => ({
   body: info.body,
   numSegments: '1',
   direction: 'outbound-api',
@@ -29,7 +31,6 @@ export const mockMessageSentRespose = (info: MockMessageSentResponse): Partial<M
   priceUnit: null,
   apiVersion: '2010-04-01',
   subresourceUris: {
-    media:
-      `/2010-04-01/Accounts/${info.accountSid}/Messages/${info.sid}/Media.json`,
+    media: `/2010-04-01/Accounts/${info.accountSid}/Messages/${info.sid}/Media.json`,
   },
 });

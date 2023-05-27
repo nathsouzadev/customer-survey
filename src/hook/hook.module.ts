@@ -6,6 +6,6 @@ import { SurveyService } from '../survey/service/survey.service';
 
 @Module({
   controllers: [HookController],
-  providers: [HookService, SurveyService, TwilioService]
+  providers: [HookService, SurveyService, TwilioService],
 })
 export class HookModule {}

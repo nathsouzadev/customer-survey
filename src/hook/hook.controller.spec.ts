@@ -7,7 +7,7 @@ import { SurveyService } from '../survey/service/survey.service';
 
 describe('HookController', () => {
   let hookController: HookController;
-  let mockHookService: HookService
+  let mockHookService: HookService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -17,8 +17,8 @@ describe('HookController', () => {
         SurveyService,
         {
           provide: TwilioService,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -28,24 +28,28 @@ describe('HookController', () => {
 
   describe('root', () => {
     it('should return message after sent', async () => {
-      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() => Promise.resolve({
-        body: '1',
-        direction: 'outbound-api',
-        from: 'whatsapp:+12345678900',
-        to: 'whatsapp:+5511988885555',
-        dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-        status: 'queued',
-        sid: 'FMsGH890912dasb'
-      }))
+      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
+        Promise.resolve({
+          body: '1',
+          direction: 'outbound-api',
+          from: 'whatsapp:+12345678900',
+          to: 'whatsapp:+5511988885555',
+          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
+          status: 'queued',
+          sid: 'FMsGH890912dasb',
+        }),
+      );
 
-      const response = await hookController.getMessage(mockReceivedMessage({
-        body: '1',
-        profileName: 'Ada Lovelace',
-        to: 'whatsapp:+12345678900',
-        waId: '5511988885555',
-        smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-        accountSid: '50M34c01quertacggd9876'
-      }))
+      const response = await hookController.getMessage(
+        mockReceivedMessage({
+          body: '1',
+          profileName: 'Ada Lovelace',
+          to: 'whatsapp:+12345678900',
+          waId: '5511988885555',
+          smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
+          accountSid: '50M34c01quertacggd9876',
+        }),
+      );
 
       expect(response).toMatchObject({
         status: 'ok',
@@ -56,8 +60,8 @@ describe('HookController', () => {
           to: 'whatsapp:+5511988885555',
           dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
           status: 'queued',
-          sid: 'FMsGH890912dasb'
-        }
+          sid: 'FMsGH890912dasb',
+        },
       });
     });
   });

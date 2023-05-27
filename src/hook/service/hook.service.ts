@@ -8,17 +8,19 @@ import { SurveyService } from '../../survey/service/survey.service';
 export class HookService {
   constructor(
     private readonly client: TwilioService,
-    private readonly surveyService: SurveyService
-  ){}
+    private readonly surveyService: SurveyService,
+  ) {}
 
-  sendMessage = async(messageReceived: MessageModel): Promise<MessageResponseModel> => {
-    const isValid: boolean = ['1', '2', '3'].includes(messageReceived.Body)
-    
-    if(isValid){
-      this.surveyService.addAnswerToSurvey(messageReceived.Body)
-      return this.client.replyToUser({ message: messageReceived, isValid })
+  sendMessage = async (
+    messageReceived: MessageModel,
+  ): Promise<MessageResponseModel> => {
+    const isValid: boolean = ['1', '2', '3'].includes(messageReceived.Body);
+
+    if (isValid) {
+      this.surveyService.addAnswerToSurvey(messageReceived.Body);
+      return this.client.replyToUser({ message: messageReceived, isValid });
     }
-    
-    return this.client.replyToUser({ message: messageReceived, isValid })
-  }
+
+    return this.client.replyToUser({ message: messageReceived, isValid });
+  };
 }

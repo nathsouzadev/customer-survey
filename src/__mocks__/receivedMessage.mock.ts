@@ -2,14 +2,16 @@ import { MessageModel } from '../model/message.model';
 
 interface MockReceivedMessage {
   body: string;
-  profileName: string,
-  to: string,
-  waId: string,
-  smsSid: string,
-  accountSid: string
+  profileName: string;
+  to: string;
+  waId: string;
+  smsSid: string;
+  accountSid: string;
 }
 
-export const mockReceivedMessage = (data: MockReceivedMessage): MessageModel => ({
+export const mockReceivedMessage = (
+  data: MockReceivedMessage,
+): MessageModel => ({
   SmsMessageSid: 'SMba82e029e2ba3f080b2d49c0c0328eff',
   NumMedia: '0',
   ProfileName: data.profileName,

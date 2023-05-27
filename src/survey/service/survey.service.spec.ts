@@ -18,32 +18,32 @@ describe('SurveyService', () => {
       name: 'Exampled Survey',
       title: 'Customer Experience',
       questions: [
-        { 
+        {
           id: 'question',
           surveyId: 'survey',
           question: 'Como você avalia o nosso atendimento?',
           answers: [
             { label: 'bom', quantity: 3 },
             { label: 'regular', quantity: 2 },
-            { label: 'ruim', quantity: 1 }
-          ]
-        }
-      ]
-    })
+            { label: 'ruim', quantity: 1 },
+          ],
+        },
+      ],
+    });
   });
 
   it('should be convert surveyDto to surveyModel', () => {
     const mockOrderedAnswer = [
       { label: 'bom', quantity: 3 },
       { label: 'regular', quantity: 2 },
-      { label: 'ruim', quantity: 1 }
-    ]
+      { label: 'ruim', quantity: 1 },
+    ];
     const mockSurveyDto = {
       id: 'survey',
       name: 'Exampled Survey',
       title: 'Customer Experience',
       questions: [
-        { 
+        {
           id: 'question',
           surveyId: 'survey',
           question: 'Como você avalia o nosso atendimento?',
@@ -53,37 +53,39 @@ describe('SurveyService', () => {
             { id: 'c', questionId: 'question', answer: '1', label: 'bom' },
             { id: 'd', questionId: 'question', answer: '2', label: 'regular' },
             { id: 'e', questionId: 'question', answer: '2', label: 'regular' },
-            { id: 'f', questionId: 'question', answer: '3', label: 'ruim' }
-          ]
-        }
-      ]
-    }
+            { id: 'f', questionId: 'question', answer: '3', label: 'ruim' },
+          ],
+        },
+      ],
+    };
 
-    expect(service.converSurveyToModel(mockSurveyDto, mockOrderedAnswer)).toMatchObject({
+    expect(
+      service.converSurveyToModel(mockSurveyDto, mockOrderedAnswer),
+    ).toMatchObject({
       id: 'survey',
       name: 'Exampled Survey',
       title: 'Customer Experience',
       questions: [
-        { 
+        {
           id: 'question',
           surveyId: 'survey',
           question: 'Como você avalia o nosso atendimento?',
           answers: [
             { label: 'bom', quantity: 3 },
             { label: 'regular', quantity: 2 },
-            { label: 'ruim', quantity: 1 }
-          ]
-        }
-      ]
-    })
-  })
+            { label: 'ruim', quantity: 1 },
+          ],
+        },
+      ],
+    });
+  });
 
   it('should be add a new answer to survey', () => {
     expect(service.addAnswerToSurvey('1')).toMatchObject({
       id: expect.any(String),
       questionId: 'question',
       answer: '1',
-      label: 'bom'
-    })
-  })
+      label: 'bom',
+    });
+  });
 });

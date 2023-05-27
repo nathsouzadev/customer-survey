@@ -7,7 +7,7 @@ const survey: Survey = {
   name: 'Exampled Survey',
   title: 'Customer Experience',
   questions: [
-    { 
+    {
       id: 'question',
       surveyId: 'survey',
       question: 'Como você avalia o nosso atendimento?',
@@ -17,49 +17,51 @@ const survey: Survey = {
         { id: 'c', questionId: 'question', answer: '1', label: 'bom' },
         { id: 'd', questionId: 'question', answer: '2', label: 'regular' },
         { id: 'e', questionId: 'question', answer: '2', label: 'regular' },
-        { id: 'f', questionId: 'question', answer: '3', label: 'ruim' }
-      ]
-    }
-  ]
-}
+        { id: 'f', questionId: 'question', answer: '3', label: 'ruim' },
+      ],
+    },
+  ],
+};
 
 @Injectable()
 export class SurveyService {
   getSurvey = (): SurveyModel => {
-    let orderedAnswers = []
-    survey.questions[0].answers.forEach(answer => {
-      const listedAnswer = orderedAnswers.findIndex(orderedAnswer => orderedAnswer.label === answer.label)
+    const orderedAnswers = [];
+    survey.questions[0].answers.forEach((answer) => {
+      const listedAnswer = orderedAnswers.findIndex(
+        (orderedAnswer) => orderedAnswer.label === answer.label,
+      );
 
-      if(listedAnswer === -1) {
+      if (listedAnswer === -1) {
         orderedAnswers.push({
           label: answer.label,
-          quantity: 1
-        })
+          quantity: 1,
+        });
       } else {
-        orderedAnswers[listedAnswer].quantity += 1
+        orderedAnswers[listedAnswer].quantity += 1;
       }
-    })
+    });
 
-    return this.converSurveyToModel(survey, orderedAnswers)
-  }
+    return this.converSurveyToModel(survey, orderedAnswers);
+  };
 
   converSurveyToModel = (survey, orderedAnswer): SurveyModel => {
-    const surveyResponse = Object.assign(survey)
-    delete surveyResponse.questions[0].answers
-    surveyResponse.questions[0].answers = orderedAnswer
-    return surveyResponse
-  }
+    const surveyResponse = Object.assign(survey);
+    delete surveyResponse.questions[0].answers;
+    surveyResponse.questions[0].answers = orderedAnswer;
+    return surveyResponse;
+  };
 
   addAnswerToSurvey = (userAnswer: string): Answer => {
-    const labels = ['bom', 'regular', 'ruim']
+    const labels = ['bom', 'regular', 'ruim'];
 
     const answer = new Answer({
       questionId: 'question',
       answer: userAnswer,
-      label: labels[Number(userAnswer) - 1]
-    })
-    survey.questions[0].answers.push(answer)
-    
-    return answer
-  }
+      label: labels[Number(userAnswer) - 1],
+    });
+    survey.questions[0].answers.push(answer);
+
+    return answer;
+  };
 }
