@@ -24,7 +24,7 @@ describe('AppController (e2e)', () => {
           body: '1',
           profileName: 'Ada Lovelace',
           to: 'whatsapp:+12345678900',
-          waId: '5511988885555',
+          waId: '5511999991111',
           smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
           accountSid: '50M34c01quertacggd9876',
         }),
@@ -34,10 +34,10 @@ describe('AppController (e2e)', () => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
-            body: 'Obrigada pela sua resposta!',
+            body: 'Você agendou um novo atendimento?',
             direction: 'outbound-api',
             from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+5511988885555',
+            to: 'whatsapp:+5511999991111',
             dateUpdated: expect.any(String),
             status: 'queued',
             sid: expect.any(String),

@@ -35,6 +35,16 @@ describe('AnswerController (e2e)', () => {
                 { label: 'ruim', quantity: 1 },
               ],
             },
+            {
+              id: 'question-b',
+              surveyId: 'survey',
+              question: 'Você agendou um novo atendimento?',
+              answers: [
+                { label: 'bom', quantity: 3 },
+                { label: 'regular', quantity: 2 },
+                { label: 'ruim', quantity: 1 },
+              ],
+            },
           ],
         });
       });

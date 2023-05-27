@@ -5,9 +5,15 @@ import { MessageModel } from '../model/message.model';
 import { MessageInstance } from 'twilio/lib/rest/api/v2010/account/message';
 import { MessageResponseModel } from '../model/message.response.model';
 
+enum ReplyMessage {
+  finish = 'Obrigada pela sua resposta!',
+  invalid = 'Por favor responda apenas com o número de uma das alternativas'
+}
+
 interface MessageData {
   message: MessageModel;
   isValid: boolean;
+  replyMessage: null | string
 }
 
 @Injectable()
@@ -28,8 +34,8 @@ export class TwilioService {
       from: process.env.ADMIN_PHONE,
       to: messageData.message.From,
       body: messageData.isValid
-        ? 'Obrigada pela sua resposta!'
-        : 'Por favor responda apenas com o número de uma das alternativas',
+        ? (messageData.replyMessage ?? ReplyMessage.finish)
+        : ReplyMessage.invalid,
     });
 
     console.log(messageData.message);

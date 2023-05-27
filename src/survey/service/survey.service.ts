@@ -1,48 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
 import { Answer, Survey } from '../dto/survey.dto';
+import { fakeSurvey } from './survey';
 
-const survey: Survey = {
-  id: 'survey',
-  name: 'Exampled Survey',
-  title: 'Customer Experience',
-  questions: [
-    {
-      id: 'question',
-      surveyId: 'survey',
-      question: 'Como você avalia o nosso atendimento?',
-      answers: [
-        { id: 'a', questionId: 'question', answer: '1', label: 'bom' },
-        { id: 'b', questionId: 'question', answer: '1', label: 'bom' },
-        { id: 'c', questionId: 'question', answer: '1', label: 'bom' },
-        { id: 'd', questionId: 'question', answer: '2', label: 'regular' },
-        { id: 'e', questionId: 'question', answer: '2', label: 'regular' },
-        { id: 'f', questionId: 'question', answer: '3', label: 'ruim' },
-      ],
-    },
-  ],
-};
+const survey: Survey = fakeSurvey
+
+const customers = [
+  {
+    phoneNumber: '5511999991111',
+    answers: []
+  },
+  {
+    phoneNumber: '5511999992222',
+    answers: [{ id: 'h', questionId: 'question', answer: '1', label: 'bom' }]
+  }
+]
 
 @Injectable()
 export class SurveyService {
   getSurvey = (): SurveyModel => {
-    const orderedAnswers = [];
-    survey.questions[0].answers.forEach((answer) => {
-      const listedAnswer = orderedAnswers.findIndex(
-        (orderedAnswer) => orderedAnswer.label === answer.label,
-      );
+    const questions = []
 
-      if (listedAnswer === -1) {
-        orderedAnswers.push({
-          label: answer.label,
-          quantity: 1,
-        });
-      } else {
-        orderedAnswers[listedAnswer].quantity += 1;
+    for(const question of survey.questions){
+      const orderedAnswers = []
+      for(const answer of question.answers){
+        const listedAnswer = orderedAnswers.findIndex(
+          (orderedAnswer) => orderedAnswer.label === answer.label,
+        );
+  
+        if (listedAnswer === -1) {
+          orderedAnswers.push({
+            label: answer.label,
+            quantity: 1,
+          });
+        } else {
+          orderedAnswers[listedAnswer].quantity = orderedAnswers[listedAnswer].quantity + 1;
+        }
       }
-    });
 
-    return this.converSurveyToModel(survey, orderedAnswers);
+      question.answers = orderedAnswers
+      questions.push(question)
+    }
+
+    return {
+      ...survey,
+      questions
+    }
   };
 
   converSurveyToModel = (survey, orderedAnswer): SurveyModel => {
@@ -52,16 +55,28 @@ export class SurveyService {
     return surveyResponse;
   };
 
-  addAnswerToSurvey = (userAnswer: string): Answer => {
+  addAnswerToSurvey = (userAnswer: {answer: string, customer: string}): {
+    answerReceived: Answer,
+    surveyLength: number,
+    customerAnswers: number,
+    nextQuestion: null | string
+  } => {
     const labels = ['bom', 'regular', 'ruim'];
 
     const answer = new Answer({
       questionId: 'question',
-      answer: userAnswer,
-      label: labels[Number(userAnswer) - 1],
+      answer: userAnswer.answer,
+      label: labels[Number(userAnswer.answer) - 1],
     });
     survey.questions[0].answers.push(answer);
 
-    return answer;
+    const customerIndex = customers.findIndex(customer => customer.phoneNumber === userAnswer.customer)
+
+    return {
+      answerReceived: answer,
+      surveyLength: survey.questions.length,
+      customerAnswers: customers[customerIndex].answers.length + 1,
+      nextQuestion: survey.questions.length > customers[customerIndex].answers.length + 1 ? survey.questions[customers[customerIndex].answers.length + 1].question : null
+    };
   };
 }

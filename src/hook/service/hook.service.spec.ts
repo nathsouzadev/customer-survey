@@ -33,7 +33,65 @@ describe('HookService', () => {
     mockSurveyService = module.get<SurveyService>(SurveyService);
   });
 
-  it('should return success response when send message with valid content', async () => {
+  it('should send message replyMessage with next question when customerAnswers is less than surveyLength', async () => {
+    const mockReplyToUser = jest
+      .spyOn(mockTwilioService, 'replyToUser')
+      .mockImplementation(() =>
+        Promise.resolve({
+          body: 'Next question',
+          direction: 'outbound-api',
+          from: 'whatsapp:+12345678900',
+          to: 'whatsapp:+5511988885555',
+          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
+          status: 'queued',
+          sid: 'FMsGH890912dasb',
+        }),
+      );
+    const mockUpdate = jest
+      .spyOn(mockSurveyService, 'addAnswerToSurvey')
+      .mockImplementation(() => ({
+        answerReceived: {
+          id: 'a',
+          questionId: 'question',
+          answer: '1',
+          label: 'bom',
+        },
+        surveyLength: 2,
+        customerAnswers: 1,
+        nextQuestion: 'Next question'
+      }));
+
+    const mockMessage = mockReceivedMessage({
+      body: '1',
+      profileName: 'Ada Lovelace',
+      to: 'whatsapp:+12345678900',
+      waId: '5511988885555',
+      smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
+      accountSid: '50M34c01quertacggd9876',
+    });
+
+    const response = await service.sendMessage(mockMessage);
+    expect(mockReplyToUser).toHaveBeenCalledWith({
+      message: mockMessage,
+      isValid: true,
+      replyMessage: 'Next question'
+    });
+    expect(mockUpdate).toHaveBeenCalledWith({
+      answer: '1',
+      customer: '5511988885555'
+    });
+    expect(response).toMatchObject({
+      body: 'Next question',
+      direction: 'outbound-api',
+      from: 'whatsapp:+12345678900',
+      to: 'whatsapp:+5511988885555',
+      dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
+      status: 'queued',
+      sid: 'FMsGH890912dasb',
+    });
+  });
+
+  it('should send message replyMessage null when customerAnswers is equal than surveyLength', async () => {
     const mockReplyToUser = jest
       .spyOn(mockTwilioService, 'replyToUser')
       .mockImplementation(() =>
@@ -50,10 +108,15 @@ describe('HookService', () => {
     const mockUpdate = jest
       .spyOn(mockSurveyService, 'addAnswerToSurvey')
       .mockImplementation(() => ({
-        id: 'a',
-        questionId: 'question',
-        answer: '1',
-        label: 'bom',
+        answerReceived: {
+          id: 'a',
+          questionId: 'question',
+          answer: '1',
+          label: 'bom',
+        },
+        surveyLength: 2,
+        customerAnswers: 2,
+        nextQuestion: null
       }));
 
     const mockMessage = mockReceivedMessage({
@@ -69,8 +132,12 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: true,
+      replyMessage: null
     });
-    expect(mockUpdate).toHaveBeenCalledWith('1');
+    expect(mockUpdate).toHaveBeenCalledWith({
+      answer: '1',
+      customer: '5511988885555'
+    });
     expect(response).toMatchObject({
       body: 'Obrigada pela sua resposta',
       direction: 'outbound-api',
@@ -109,6 +176,7 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: false,
+      replyMessage: null
     });
     expect(response).toMatchObject({
       body: 'Por favor responda apenas com o número de uma das alternativas',

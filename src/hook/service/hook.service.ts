@@ -17,10 +17,17 @@ export class HookService {
     const isValid: boolean = ['1', '2', '3'].includes(messageReceived.Body);
 
     if (isValid) {
-      this.surveyService.addAnswerToSurvey(messageReceived.Body);
-      return this.client.replyToUser({ message: messageReceived, isValid });
+      const answer = this.surveyService.addAnswerToSurvey({
+        answer: messageReceived.Body,
+        customer: messageReceived.WaId
+      });
+      return this.client.replyToUser({ 
+        message: messageReceived, 
+        isValid,
+        replyMessage:  answer.customerAnswers < answer.surveyLength ? answer.nextQuestion : null
+      })
     }
 
-    return this.client.replyToUser({ message: messageReceived, isValid });
+    return this.client.replyToUser({ message: messageReceived, isValid, replyMessage: null });
   };
 }

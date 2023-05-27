@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyService } from './survey.service';
+import { fakeSurvey } from './survey';
 
 describe('SurveyService', () => {
   let service: SurveyService;
@@ -13,7 +14,9 @@ describe('SurveyService', () => {
   });
 
   it('should be return survey', () => {
-    expect(service.getSurvey()).toMatchObject({
+    const survey = service.getSurvey()
+    console.log(survey.questions[1])
+    expect(survey).toMatchObject({
       id: 'survey',
       name: 'Exampled Survey',
       title: 'Customer Experience',
@@ -28,64 +31,51 @@ describe('SurveyService', () => {
             { label: 'ruim', quantity: 1 },
           ],
         },
-      ],
-    });
-  });
-
-  it('should be convert surveyDto to surveyModel', () => {
-    const mockOrderedAnswer = [
-      { label: 'bom', quantity: 3 },
-      { label: 'regular', quantity: 2 },
-      { label: 'ruim', quantity: 1 },
-    ];
-    const mockSurveyDto = {
-      id: 'survey',
-      name: 'Exampled Survey',
-      title: 'Customer Experience',
-      questions: [
         {
-          id: 'question',
+          id: 'question-b',
           surveyId: 'survey',
-          question: 'Como você avalia o nosso atendimento?',
-          answers: [
-            { id: 'a', questionId: 'question', answer: '1', label: 'bom' },
-            { id: 'b', questionId: 'question', answer: '1', label: 'bom' },
-            { id: 'c', questionId: 'question', answer: '1', label: 'bom' },
-            { id: 'd', questionId: 'question', answer: '2', label: 'regular' },
-            { id: 'e', questionId: 'question', answer: '2', label: 'regular' },
-            { id: 'f', questionId: 'question', answer: '3', label: 'ruim' },
-          ],
-        },
-      ],
-    };
-
-    expect(
-      service.converSurveyToModel(mockSurveyDto, mockOrderedAnswer),
-    ).toMatchObject({
-      id: 'survey',
-      name: 'Exampled Survey',
-      title: 'Customer Experience',
-      questions: [
-        {
-          id: 'question',
-          surveyId: 'survey',
-          question: 'Como você avalia o nosso atendimento?',
+          question: 'Você agendou um novo atendimento?',
           answers: [
             { label: 'bom', quantity: 3 },
             { label: 'regular', quantity: 2 },
-            { label: 'ruim', quantity: 1 },
+            { label: 'ruim', quantity: 1 }
           ],
-        },
+        }
       ],
     });
   });
 
-  it('should be add a new answer to survey', () => {
-    expect(service.addAnswerToSurvey('1')).toMatchObject({
-      id: expect.any(String),
-      questionId: 'question',
+  it('should be add a new answer to survey and return nextQuestion with question', () => {
+    expect(service.addAnswerToSurvey({
       answer: '1',
-      label: 'bom',
+      customer: '5511999991111'
+    })).toMatchObject({
+      answerReceived: {
+        id: expect.any(String),
+        questionId: 'question',
+        answer: '1',
+        label: 'bom',
+      },
+      surveyLength: 2,
+      customerAnswers: 1,
+      nextQuestion: 'Você agendou um novo atendimento?' 
+    });
+  });
+
+  it('should be add a new answer to survey and return nextQuestion with null', () => {
+    expect(service.addAnswerToSurvey({
+      answer: '1',
+      customer: '5511999992222'
+    })).toMatchObject({
+      answerReceived: {
+        id: expect.any(String),
+        questionId: 'question',
+        answer: '1',
+        label: 'bom',
+      },
+      surveyLength: 2,
+      customerAnswers: 2,
+      nextQuestion: null 
     });
   });
 });
