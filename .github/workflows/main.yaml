@@ -86,7 +86,7 @@ jobs:
       run: yarn test:e2e
 
   stage:
-    if: needs.test.lint == 'success' && needs.test.result == 'success' && needs.e2e.result == 'success'
+    if: needs.lint.result == 'success' && needs.test.result == 'success' && needs.e2e.result == 'success'
     needs:
       - lint
       - test
