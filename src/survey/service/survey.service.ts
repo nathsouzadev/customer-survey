@@ -48,13 +48,6 @@ export class SurveyService {
     }
   };
 
-  converSurveyToModel = (survey, orderedAnswer): SurveyModel => {
-    const surveyResponse = Object.assign(survey);
-    delete surveyResponse.questions[0].answers;
-    surveyResponse.questions[0].answers = orderedAnswer;
-    return surveyResponse;
-  };
-
   addAnswerToSurvey = (userAnswer: {answer: string, customer: string}): {
     answerReceived: Answer,
     surveyLength: number,

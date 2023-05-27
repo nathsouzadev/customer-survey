@@ -16,7 +16,7 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('receive message with valid body', async () => {
+  it('receive next question when user do not finish survey', async () => {
     return request(app.getHttpServer())
       .post('/')
       .send(
@@ -38,6 +38,36 @@ describe('AppController (e2e)', () => {
             direction: 'outbound-api',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511999991111',
+            dateUpdated: expect.any(String),
+            status: 'queued',
+            sid: expect.any(String),
+          },
+        });
+      });
+  });
+
+  it('receive thank message when user do not finish survey', async () => {
+    return request(app.getHttpServer())
+      .post('/')
+      .send(
+        mockReceivedMessage({
+          body: '1',
+          profileName: 'Ada Lovelace',
+          to: 'whatsapp:+12345678900',
+          waId: '5511999992222',
+          smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
+          accountSid: '50M34c01quertacggd9876',
+        }),
+      )
+      .expect(201)
+      .then((response) => {
+        expect(response.body).toMatchObject({
+          status: 'ok',
+          response: {
+            body: 'Obrigada pela sua resposta!',
+            direction: 'outbound-api',
+            from: 'whatsapp:+14155238886',
+            to: 'whatsapp:+5511999992222',
             dateUpdated: expect.any(String),
             status: 'queued',
             sid: expect.any(String),
