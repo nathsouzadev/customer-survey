@@ -65,9 +65,6 @@ jobs:
       run: yarn test
   
   e2e:
-    if: needs.test.result == 'success'
-    needs:
-      - test
     runs-on: ubuntu-latest
 
     strategy:
