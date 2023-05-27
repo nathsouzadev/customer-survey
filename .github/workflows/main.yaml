@@ -86,8 +86,9 @@ jobs:
       run: yarn test:e2e
 
   stage:
-    if: needs.test.result == 'success' && needs.e2e.result == 'success'
+    if: needs.test.lint == 'success' && needs.test.result == 'success' && needs.e2e.result == 'success'
     needs:
+      - lint
       - test
       - e2e
     runs-on: ubuntu-latest
@@ -109,8 +110,6 @@ jobs:
   
   deploy:
     needs:
-      - test
-      - e2e
       - stage
     runs-on: ubuntu-latest
 
