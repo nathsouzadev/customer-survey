@@ -54,6 +54,10 @@ jobs:
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
+      env:
+        ADMIN_PHONE: ${{ secrets.ADMIN_PHONE }}
+        SERVICE_TWILIO_KEY_SECRET: ${{ secrets.SERVICE_TWILIO_KEY_SECRET }}
+        SERVICE_TWILIO_KEY_SID: ${{ secrets.SERVICE_TWILIO_KEY_SID }}
       with:
         node-version: ${{ matrix.node-version }}
 
