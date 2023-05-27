@@ -13,6 +13,10 @@ const customers = [
   {
     phoneNumber: '5511999992222',
     answers: [{ id: 'h', questionId: 'question', answer: '1', label: 'bom' }]
+  },
+  {
+    phoneNumber: process.env.PHONE_TEST,
+    answers: []
   }
 ]
 
