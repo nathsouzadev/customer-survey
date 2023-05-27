@@ -21,6 +21,28 @@ env:
   SERVICE_TWILIO_KEY_SID: ${{ secrets.SERVICE_TWILIO_KEY_SID }}
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+      # ESLint and Prettier must be in `package.json`
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+
+    - name: Run lint
+      run: yarn lint:check
+
   test:
     runs-on: ubuntu-latest
 
