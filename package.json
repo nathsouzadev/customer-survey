@@ -22,8 +22,16 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db": "docker-compose up -d"
+    "test:e2e": "yarn reset:db && jest --config ./test/jest-e2e.json",
+    "db": "docker-compose up -d",
+    "seed:db": "npx prisma db seed",
+    "clear:db": "ts-node ./test/configDb.ts",
+    "reset:db": "yarn clear:db && yarn seed:db",
+    "ci:local": "yarn test && yarn test:e2e",
+    "local": "yarn install && yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

@@ -92,6 +92,12 @@ jobs:
     - name: Install dependencies
       run: yarn --frozen-lockfile
 
+    - name: Setup database
+      run: yarn prisma migrate deploy
+
+    - name: Seed database
+      run: yarn seed:db
+
     - name: Running e2e tests
       run: yarn test:e2e
 

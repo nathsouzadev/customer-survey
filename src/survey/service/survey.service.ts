@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
 import { Answer, Survey } from '../dto/survey.dto';
 import { fakeSurvey } from './survey';
+import { CustomerAnswerService } from '../../customerAnswer/customerAnswer.service';
 
 const survey: Survey = fakeSurvey;
 
@@ -22,6 +23,10 @@ const customers = [
 
 @Injectable()
 export class SurveyService {
+
+  constructor(
+    private readonly customerAnswerService: CustomerAnswerService
+  ){}
   getSurvey = (): SurveyModel => {
     const questions = [];
 
@@ -53,15 +58,13 @@ export class SurveyService {
     };
   };
 
-  addAnswerToSurvey = (userAnswer: {
+  addAnswerToSurvey = async (userAnswer: {
     answer: string;
     customer: string;
-  }): {
+  }): Promise<{
     answerReceived: Answer;
-    surveyLength: number;
-    customerAnswers: number;
     nextQuestion: null | string;
-  } => {
+  }> => {
     const labels = ['bom', 'regular', 'ruim'];
 
     const answer = new Answer({
@@ -70,19 +73,16 @@ export class SurveyService {
       label: labels[Number(userAnswer.answer) - 1],
     });
 
-    survey.questions[0].answers.push(answer);
-
-    const customerIndex = customers.findIndex(
-      (customer) => customer.phoneNumber === userAnswer.customer,
-    );
+    const response = await this.customerAnswerService.saveCustomerAnswer({
+      ...userAnswer,
+      answer: labels[Number(userAnswer.answer) - 1]
+    })
 
     return {
       answerReceived: answer,
-      surveyLength: survey.questions.length,
-      customerAnswers: customers[customerIndex].answers.length + 1,
       nextQuestion:
-        survey.questions.length > customers[customerIndex].answers.length + 1
-          ? survey.questions[customers[customerIndex].answers.length + 1]
+        survey.questions.length > response.totalAnswers
+          ? survey.questions[response.totalAnswers]
               .question
           : null,
     };

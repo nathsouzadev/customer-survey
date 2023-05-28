@@ -6,16 +6,10 @@
 
 2 - Install and run [Docker Desktop](https://www.docker.com/);
 
-3 - Running the database
+3 - Install all dependecies and setup database
 
 ```bash
-$ yarn db
-```
-
-4 - Install all dependecies
-
-```bash
-$ yarn install
+$ yarn local
 ```
 
 ## Running the app

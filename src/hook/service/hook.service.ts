@@ -17,7 +17,7 @@ export class HookService {
     const isValid: boolean = ['1', '2', '3'].includes(messageReceived.Body);
 
     if (isValid) {
-      const answer = this.surveyService.addAnswerToSurvey({
+      const answer = await this.surveyService.addAnswerToSurvey({
         answer: messageReceived.Body,
         customer: messageReceived.WaId,
       });
@@ -25,7 +25,7 @@ export class HookService {
         message: messageReceived,
         isValid,
         replyMessage:
-          answer.customerAnswers < answer.surveyLength
+          answer.nextQuestion
             ? answer.nextQuestion
             : null,
       });

@@ -3,6 +3,9 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { mockReceivedMessage } from '../src/__mocks__/receivedMessage.mock';
+import { PrismaClient } from '@prisma/client';
+
+const prismaClient = new PrismaClient({ log: ['query'] });
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -30,7 +33,7 @@ describe('AppController (e2e)', () => {
         }),
       )
       .expect(201)
-      .then((response) => {
+      .then(async response => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
@@ -43,6 +46,24 @@ describe('AppController (e2e)', () => {
             sid: expect.any(String),
           },
         });
+
+        const answer = await prismaClient.customerAnswer.findFirst({
+          where: {
+            customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6'
+          }
+        })
+
+        expect(answer).toMatchObject({
+          id: expect.any(String),
+          customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
+          answer: 'bom'
+        })
+
+        await prismaClient.customerAnswer.delete({
+          where: {
+            id: answer.id
+          }
+        })
       });
   });
 
@@ -51,7 +72,7 @@ describe('AppController (e2e)', () => {
       .post('/')
       .send(
         mockReceivedMessage({
-          body: '1',
+          body: '2',
           profileName: 'Ada Lovelace',
           to: 'whatsapp:+12345678900',
           waId: '5511999992222',
@@ -60,7 +81,7 @@ describe('AppController (e2e)', () => {
         }),
       )
       .expect(201)
-      .then((response) => {
+      .then(async response => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
@@ -73,6 +94,24 @@ describe('AppController (e2e)', () => {
             sid: expect.any(String),
           },
         });
+
+        const answer = await prismaClient.customerAnswer.findMany({
+          where: {
+            customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39'
+          }
+        })
+
+        expect(answer[1]).toMatchObject({
+          id: expect.any(String),
+          customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
+          answer: 'regular'
+        })
+
+        await prismaClient.customerAnswer.delete({
+          where: {
+            id: answer[1].id
+          }
+        })
       });
   });
 
