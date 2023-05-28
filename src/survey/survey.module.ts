@@ -1,29 +1,27 @@
 import { Module } from '@nestjs/common';
 import { SurveyService } from './service/survey.service';
 import { SurveyController } from './survey.controller';
-import { CustomerAnswerService } from '../customerAnswer/customerAnswer.service';
-import { CustomerAnswerModule } from '../customerAnswer/customerAnswer.module';
-import { CustomerAnswerRepository } from '../customerAnswer/repository/customerAnswer.repository';
-import { PrismaCustomerAnswerRepository } from '../customerAnswer/repository/prisma/prismaCustomerAnswer.repository';
+import { CustomerModule } from '../customer/customer.module';
+import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
+import { PrismaCustomerAnswerRepository } from '../customer/repository/prisma/prismaCustomerAnswer.repository';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { PrismaCustomerRepository } from '../customer/repository/prisma/prismaCustomer.repository';
 import { PrismaService } from '../client/prisma/prisma.service';
 
 @Module({
-  imports: [CustomerAnswerModule],
+  imports: [CustomerModule],
   controllers: [SurveyController],
   providers: [
     SurveyService,
-    CustomerAnswerService,
-    {
-      provide: CustomerAnswerRepository,
-      useClass: PrismaCustomerAnswerRepository,
-    },
     CustomerService,
     {
       provide: CustomerRepository,
       useClass: PrismaCustomerRepository,
+    },
+    {
+      provide: CustomerAnswerRepository,
+      useClass: PrismaCustomerAnswerRepository,
     },
     PrismaService,
   ],

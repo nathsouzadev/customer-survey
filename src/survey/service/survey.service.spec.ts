@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyService } from './survey.service';
-import { CustomerAnswerService } from '../../customerAnswer/customerAnswer.service';
+import { CustomerService } from '../../customer/customer.service';
 import { randomUUID } from 'crypto';
 
 describe('SurveyService', () => {
   let service: SurveyService;
-  let mockCustomerAnswerService: CustomerAnswerService;
+  let mockCustomerService: CustomerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SurveyService,
         {
-          provide: CustomerAnswerService,
+          provide: CustomerService,
           useValue: {
             saveCustomerAnswer: jest.fn(),
           },
@@ -21,9 +21,7 @@ describe('SurveyService', () => {
     }).compile();
 
     service = module.get<SurveyService>(SurveyService);
-    mockCustomerAnswerService = module.get<CustomerAnswerService>(
-      CustomerAnswerService,
-    );
+    mockCustomerService = module.get<CustomerService>(CustomerService);
   });
 
   it('should be return survey', () => {
@@ -60,7 +58,7 @@ describe('SurveyService', () => {
   it('should be add a new answer to survey and return nextQuestion with question', async () => {
     const mockCustomerId = randomUUID();
     const mockSaveCustomerAnswer = jest
-      .spyOn(mockCustomerAnswerService, 'saveCustomerAnswer')
+      .spyOn(mockCustomerService, 'saveCustomerAnswer')
       .mockImplementation(() =>
         Promise.resolve({
           answer: {
@@ -94,7 +92,7 @@ describe('SurveyService', () => {
   it('should be add a new answer to survey and return nextQuestion with null', async () => {
     const mockCustomerId = randomUUID();
     const mockSaveCustomerAnswer = jest
-      .spyOn(mockCustomerAnswerService, 'saveCustomerAnswer')
+      .spyOn(mockCustomerService, 'saveCustomerAnswer')
       .mockImplementation(() =>
         Promise.resolve({
           answer: {

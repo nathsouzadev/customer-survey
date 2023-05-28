@@ -4,8 +4,7 @@ import { HookService } from '../hook/service/hook.service';
 import { TwilioService } from '../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
 import { SurveyService } from '../survey/service/survey.service';
-import { CustomerAnswerService } from '../customerAnswer/customerAnswer.service';
-import { CustomerAnswerRepository } from '../customerAnswer/repository/customerAnswer.repository';
+import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 
@@ -23,14 +22,13 @@ describe('HookController', () => {
           provide: TwilioService,
           useValue: {},
         },
-        CustomerAnswerService,
-        {
-          provide: CustomerAnswerRepository,
-          useValue: {},
-        },
         CustomerService,
         {
           provide: CustomerRepository,
+          useValue: {},
+        },
+        {
+          provide: CustomerAnswerRepository,
           useValue: {},
         },
       ],

@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
 import { Answer, Survey } from '../dto/survey.dto';
 import { fakeSurvey } from './survey';
-import { CustomerAnswerService } from '../../customerAnswer/customerAnswer.service';
+import { CustomerService } from '../../customer/customer.service';
 
 const survey: Survey = fakeSurvey;
 
 @Injectable()
 export class SurveyService {
-  constructor(private readonly customerAnswerService: CustomerAnswerService) {}
+  constructor(private readonly customerService: CustomerService) {}
   getSurvey = (): SurveyModel => {
     const questions = [];
 
@@ -55,7 +55,7 @@ export class SurveyService {
       label: labels[Number(userAnswer.answer) - 1],
     });
 
-    const response = await this.customerAnswerService.saveCustomerAnswer({
+    const response = await this.customerService.saveCustomerAnswer({
       ...userAnswer,
       answer: labels[Number(userAnswer.answer) - 1],
     });

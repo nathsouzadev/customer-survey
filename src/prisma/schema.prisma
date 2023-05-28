@@ -15,6 +15,7 @@ model Customer {
   name String @db.VarChar(255)
   phoneNumber String
   answers CustomerAnswer[]
+  surveys CustomerSurvey[]
 }
 
 model CustomerAnswer {
@@ -29,6 +30,7 @@ model Survey {
   name String @db.VarChar(255)
   title String @db.VarChar(255)
   questions Question[]
+  customers CustomerSurvey[]
 }
 
 model Question {
@@ -44,4 +46,13 @@ model QuestionAnswer {
   questionId String
   answer String
   label String
+}
+
+model CustomerSurvey {
+  id String @id @default(uuid())
+  active Boolean
+  customer Customer @relation(fields: [customerId], references: [id])
+  customerId String
+  survey Survey @relation(fields: [surveyId], references: [id])
+  surveyId String
 }

@@ -9,9 +9,9 @@ import { PrismaQuestionAnswerRepository } from './repository/prisma/prismaQuesti
     QuestionAnswerService,
     {
       provide: QuestionAnswerRepository,
-      useClass: PrismaQuestionAnswerRepository
+      useClass: PrismaQuestionAnswerRepository,
     },
-    PrismaService
+    PrismaService,
   ],
 })
 export class QuestionAnswerModule {}
