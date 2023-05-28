@@ -4,7 +4,6 @@ import * as Joi from 'joi';
 import { HookModule } from './hook/hook.module';
 import { SurveyModule } from './survey/survey.module';
 import { CustomerModule } from './customer/customer.module';
-import { QuestionAnswerModule } from './questionAnswer/questionAnswer.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { QuestionAnswerModule } from './questionAnswer/questionAnswer.module';
     HookModule,
     SurveyModule,
     CustomerModule,
-    QuestionAnswerModule,
   ],
 })
 export class AppModule {}
