@@ -92,6 +92,9 @@ jobs:
     - name: Install dependencies
       run: yarn --frozen-lockfile
 
+    - name: Create tables
+      run: npx prisma migrate dev --name ci
+
     - name: Seed database
       run: yarn seed:db
 
