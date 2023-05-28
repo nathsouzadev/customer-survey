@@ -14,7 +14,7 @@ import { PrismaService } from '../client/prisma/prisma.service';
   imports: [CustomerAnswerModule],
   controllers: [SurveyController],
   providers: [
-    SurveyService, 
+    SurveyService,
     CustomerAnswerService,
     {
       provide: CustomerAnswerRepository,
@@ -25,7 +25,7 @@ import { PrismaService } from '../client/prisma/prisma.service';
       provide: CustomerRepository,
       useClass: PrismaCustomerRepository,
     },
-    PrismaService
+    PrismaService,
   ],
 })
 export class SurveyModule {}

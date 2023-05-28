@@ -14,7 +14,7 @@ export class PrismaQuestionAnswerRepository
   ): Promise<QuestionAnswer[]> =>
     this.prisma.questionAnswer.findMany({
       where: {
-        questionId
+        questionId,
       },
     });
 }

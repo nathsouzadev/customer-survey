@@ -18,13 +18,13 @@ describe('SurveyController', () => {
         CustomerAnswerService,
         {
           provide: CustomerAnswerRepository,
-          useValue: {}
+          useValue: {},
         },
         CustomerService,
         {
           provide: CustomerRepository,
-          useValue: {}
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 

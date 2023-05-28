@@ -49,15 +49,17 @@ describe('HookService', () => {
       );
     const mockUpdate = jest
       .spyOn(mockSurveyService, 'addAnswerToSurvey')
-      .mockImplementation(() => Promise.resolve({
-        answerReceived: {
-          id: 'a',
-          questionId: 'question',
-          answer: '1',
-          label: 'bom',
-        },
-        nextQuestion: 'Next question',
-      }));
+      .mockImplementation(() =>
+        Promise.resolve({
+          answerReceived: {
+            id: 'a',
+            questionId: 'question',
+            answer: '1',
+            label: 'bom',
+          },
+          nextQuestion: 'Next question',
+        }),
+      );
 
     const mockMessage = mockReceivedMessage({
       body: '1',
@@ -105,15 +107,17 @@ describe('HookService', () => {
       );
     const mockUpdate = jest
       .spyOn(mockSurveyService, 'addAnswerToSurvey')
-      .mockImplementation(() => Promise.resolve({
-        answerReceived: {
-          id: 'a',
-          questionId: 'question',
-          answer: '1',
-          label: 'bom',
-        },
-        nextQuestion: null,
-      }));
+      .mockImplementation(() =>
+        Promise.resolve({
+          answerReceived: {
+            id: 'a',
+            questionId: 'question',
+            answer: '1',
+            label: 'bom',
+          },
+          nextQuestion: null,
+        }),
+      );
 
     const mockMessage = mockReceivedMessage({
       body: '1',

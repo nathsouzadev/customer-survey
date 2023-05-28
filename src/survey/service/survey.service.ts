@@ -6,27 +6,9 @@ import { CustomerAnswerService } from '../../customerAnswer/customerAnswer.servi
 
 const survey: Survey = fakeSurvey;
 
-const customers = [
-  {
-    phoneNumber: '5511999991111',
-    answers: [],
-  },
-  {
-    phoneNumber: '5511999992222',
-    answers: [{ id: 'h', questionId: 'question', answer: '1', label: 'bom' }],
-  },
-  {
-    phoneNumber: process.env.PHONE_TEST,
-    answers: [],
-  },
-];
-
 @Injectable()
 export class SurveyService {
-
-  constructor(
-    private readonly customerAnswerService: CustomerAnswerService
-  ){}
+  constructor(private readonly customerAnswerService: CustomerAnswerService) {}
   getSurvey = (): SurveyModel => {
     const questions = [];
 
@@ -75,15 +57,14 @@ export class SurveyService {
 
     const response = await this.customerAnswerService.saveCustomerAnswer({
       ...userAnswer,
-      answer: labels[Number(userAnswer.answer) - 1]
-    })
+      answer: labels[Number(userAnswer.answer) - 1],
+    });
 
     return {
       answerReceived: answer,
       nextQuestion:
         survey.questions.length > response.totalAnswers
-          ? survey.questions[response.totalAnswers]
-              .question
+          ? survey.questions[response.totalAnswers].question
           : null,
     };
   };

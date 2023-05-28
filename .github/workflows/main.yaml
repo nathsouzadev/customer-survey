@@ -93,7 +93,7 @@ jobs:
       run: yarn --frozen-lockfile
 
     - name: Setup database
-      run: yarn prisma migrate deploy
+      run: yarn postinstall 
 
     - name: Seed database
       run: yarn seed:db

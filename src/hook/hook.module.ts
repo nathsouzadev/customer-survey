@@ -16,8 +16,8 @@ import { PrismaService } from '../client/prisma/prisma.service';
   imports: [CustomerAnswerModule],
   controllers: [HookController],
   providers: [
-    HookService, 
-    SurveyService, 
+    HookService,
+    SurveyService,
     TwilioService,
     CustomerAnswerService,
     {
@@ -29,7 +29,7 @@ import { PrismaService } from '../client/prisma/prisma.service';
       provide: CustomerRepository,
       useClass: PrismaCustomerRepository,
     },
-    PrismaService
+    PrismaService,
   ],
 })
 export class HookModule {}
