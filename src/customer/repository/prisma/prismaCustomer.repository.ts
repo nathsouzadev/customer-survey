@@ -8,10 +8,10 @@ export class PrismaCustomerRepository implements CustomerRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   getCustomerByPhoneNumber = async (phoneNumber: string): Promise<Customer> => {
-    return this.prisma.customer.findFirst(({
+    return this.prisma.customer.findFirst({
       where: {
-        phoneNumber
-      }
-    }))
+        phoneNumber,
+      },
+    });
   };
 }

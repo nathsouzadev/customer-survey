@@ -7,13 +7,13 @@ import { MessageResponseModel } from '../../model/message.response.model';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
-  invalid = 'Por favor responda apenas com o número de uma das alternativas'
+  invalid = 'Por favor responda apenas com o número de uma das alternativas',
 }
 
 interface MessageData {
   message: MessageModel;
   isValid: boolean;
-  replyMessage: null | string
+  replyMessage: null | string;
 }
 
 @Injectable()
@@ -34,7 +34,7 @@ export class TwilioService {
       from: process.env.ADMIN_PHONE,
       to: messageData.message.From,
       body: messageData.isValid
-        ? (messageData.replyMessage ?? ReplyMessage.finish)
+        ? messageData.replyMessage ?? ReplyMessage.finish
         : ReplyMessage.invalid,
     });
 

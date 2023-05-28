@@ -11,17 +11,17 @@ import { PrismaCustomerAnswerRepository } from './repository/prisma/prismaCustom
 @Module({
   imports: [CustomerModule],
   providers: [
-    CustomerAnswerService, 
+    CustomerAnswerService,
     CustomerService,
     {
       provide: CustomerRepository,
-      useClass: PrismaCustomerRepository
+      useClass: PrismaCustomerRepository,
     },
     {
       provide: CustomerAnswerRepository,
-      useClass: PrismaCustomerAnswerRepository
+      useClass: PrismaCustomerAnswerRepository,
     },
-    PrismaService
-  ]
+    PrismaService,
+  ],
 })
 export class CustomerAnswerModule {}

@@ -39,7 +39,7 @@ describe('TwilioService', () => {
     const response = await twilioService.replyToUser({
       message: mockMessage,
       isValid: true,
-      replyMessage: 'Other question'
+      replyMessage: 'Other question',
     });
     expect(mockCreate).toHaveBeenCalledWith({
       from: process.env.ADMIN_PHONE,
@@ -70,7 +70,7 @@ describe('TwilioService', () => {
     const response = await twilioService.replyToUser({
       message: mockMessage,
       isValid: true,
-      replyMessage: null
+      replyMessage: null,
     });
     expect(mockCreate).toHaveBeenCalledWith({
       from: process.env.ADMIN_PHONE,
@@ -101,7 +101,7 @@ describe('TwilioService', () => {
     const response = await twilioService.replyToUser({
       message: mockMessage,
       isValid: false,
-      replyMessage: null
+      replyMessage: null,
     });
     expect(mockCreate).toHaveBeenCalledWith({
       from: process.env.ADMIN_PHONE,

@@ -6,8 +6,8 @@ export class CustomerAnswerDTO {
   answer: string;
 
   constructor(body: { customerId: string; answer: string }) {
-    this.id = randomUUID(),
-    this.customerId = body.customerId,
-    this.answer = body.answer;
+    (this.id = randomUUID()),
+      (this.customerId = body.customerId),
+      (this.answer = body.answer);
   }
 }

@@ -19,15 +19,22 @@ export class HookService {
     if (isValid) {
       const answer = this.surveyService.addAnswerToSurvey({
         answer: messageReceived.Body,
-        customer: messageReceived.WaId
+        customer: messageReceived.WaId,
       });
-      return this.client.replyToUser({ 
-        message: messageReceived, 
+      return this.client.replyToUser({
+        message: messageReceived,
         isValid,
-        replyMessage:  answer.customerAnswers < answer.surveyLength ? answer.nextQuestion : null
-      })
+        replyMessage:
+          answer.customerAnswers < answer.surveyLength
+            ? answer.nextQuestion
+            : null,
+      });
     }
 
-    return this.client.replyToUser({ message: messageReceived, isValid, replyMessage: null });
+    return this.client.replyToUser({
+      message: messageReceived,
+      isValid,
+      replyMessage: null,
+    });
   };
 }

@@ -58,7 +58,7 @@ describe('HookService', () => {
         },
         surveyLength: 2,
         customerAnswers: 1,
-        nextQuestion: 'Next question'
+        nextQuestion: 'Next question',
       }));
 
     const mockMessage = mockReceivedMessage({
@@ -74,11 +74,11 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: true,
-      replyMessage: 'Next question'
+      replyMessage: 'Next question',
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
-      customer: '5511988885555'
+      customer: '5511988885555',
     });
     expect(response).toMatchObject({
       body: 'Next question',
@@ -116,7 +116,7 @@ describe('HookService', () => {
         },
         surveyLength: 2,
         customerAnswers: 2,
-        nextQuestion: null
+        nextQuestion: null,
       }));
 
     const mockMessage = mockReceivedMessage({
@@ -132,11 +132,11 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: true,
-      replyMessage: null
+      replyMessage: null,
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
-      customer: '5511988885555'
+      customer: '5511988885555',
     });
     expect(response).toMatchObject({
       body: 'Obrigada pela sua resposta',
@@ -176,7 +176,7 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: false,
-      replyMessage: null
+      replyMessage: null,
     });
     expect(response).toMatchObject({
       body: 'Por favor responda apenas com o número de uma das alternativas',

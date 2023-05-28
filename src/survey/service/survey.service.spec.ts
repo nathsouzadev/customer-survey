@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyService } from './survey.service';
-import { fakeSurvey } from './survey';
 
 describe('SurveyService', () => {
   let service: SurveyService;
@@ -14,8 +13,8 @@ describe('SurveyService', () => {
   });
 
   it('should be return survey', () => {
-    const survey = service.getSurvey()
-    console.log(survey.questions[1])
+    const survey = service.getSurvey();
+    console.log(survey.questions[1]);
     expect(survey).toMatchObject({
       id: 'survey',
       name: 'Exampled Survey',
@@ -38,18 +37,20 @@ describe('SurveyService', () => {
           answers: [
             { label: 'bom', quantity: 3 },
             { label: 'regular', quantity: 2 },
-            { label: 'ruim', quantity: 1 }
+            { label: 'ruim', quantity: 1 },
           ],
-        }
+        },
       ],
     });
   });
 
   it('should be add a new answer to survey and return nextQuestion with question', () => {
-    expect(service.addAnswerToSurvey({
-      answer: '1',
-      customer: '5511999991111'
-    })).toMatchObject({
+    expect(
+      service.addAnswerToSurvey({
+        answer: '1',
+        customer: '5511999991111',
+      }),
+    ).toMatchObject({
       answerReceived: {
         id: expect.any(String),
         questionId: 'question',
@@ -58,15 +59,17 @@ describe('SurveyService', () => {
       },
       surveyLength: 2,
       customerAnswers: 1,
-      nextQuestion: 'Você agendou um novo atendimento?' 
+      nextQuestion: 'Você agendou um novo atendimento?',
     });
   });
 
   it('should be add a new answer to survey and return nextQuestion with null', () => {
-    expect(service.addAnswerToSurvey({
-      answer: '1',
-      customer: '5511999992222'
-    })).toMatchObject({
+    expect(
+      service.addAnswerToSurvey({
+        answer: '1',
+        customer: '5511999992222',
+      }),
+    ).toMatchObject({
       answerReceived: {
         id: expect.any(String),
         questionId: 'question',
@@ -75,7 +78,7 @@ describe('SurveyService', () => {
       },
       surveyLength: 2,
       customerAnswers: 2,
-      nextQuestion: null 
+      nextQuestion: null,
     });
   });
 });

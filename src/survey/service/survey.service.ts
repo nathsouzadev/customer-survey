@@ -3,60 +3,64 @@ import { SurveyModel } from '../model/survey.model';
 import { Answer, Survey } from '../dto/survey.dto';
 import { fakeSurvey } from './survey';
 
-const survey: Survey = fakeSurvey
+const survey: Survey = fakeSurvey;
 
 const customers = [
   {
     phoneNumber: '5511999991111',
-    answers: []
+    answers: [],
   },
   {
     phoneNumber: '5511999992222',
-    answers: [{ id: 'h', questionId: 'question', answer: '1', label: 'bom' }]
+    answers: [{ id: 'h', questionId: 'question', answer: '1', label: 'bom' }],
   },
   {
     phoneNumber: process.env.PHONE_TEST,
-    answers: []
-  }
-]
+    answers: [],
+  },
+];
 
 @Injectable()
 export class SurveyService {
   getSurvey = (): SurveyModel => {
-    const questions = []
+    const questions = [];
 
-    for(const question of survey.questions){
-      const orderedAnswers = []
-      for(const answer of question.answers){
+    for (const question of survey.questions) {
+      const orderedAnswers = [];
+      for (const answer of question.answers) {
         const listedAnswer = orderedAnswers.findIndex(
           (orderedAnswer) => orderedAnswer.label === answer.label,
         );
-  
+
         if (listedAnswer === -1) {
           orderedAnswers.push({
             label: answer.label,
             quantity: 1,
           });
         } else {
-          orderedAnswers[listedAnswer].quantity = orderedAnswers[listedAnswer].quantity + 1;
+          orderedAnswers[listedAnswer].quantity =
+            orderedAnswers[listedAnswer].quantity + 1;
         }
       }
 
-      question.answers = orderedAnswers
-      questions.push(question)
+      question.answers = orderedAnswers;
+      questions.push(question);
     }
 
     return {
       ...survey,
-      questions
-    }
+      questions,
+    };
   };
 
-  addAnswerToSurvey = (userAnswer: {answer: string, customer: string}): {
-    answerReceived: Answer,
-    surveyLength: number,
-    customerAnswers: number,
-    nextQuestion: null | string
+  addAnswerToSurvey = (userAnswer: {
+    answer: string;
+    customer: string;
+  }): {
+    answerReceived: Answer;
+    surveyLength: number;
+    customerAnswers: number;
+    nextQuestion: null | string;
   } => {
     const labels = ['bom', 'regular', 'ruim'];
 
@@ -65,16 +69,22 @@ export class SurveyService {
       answer: userAnswer.answer,
       label: labels[Number(userAnswer.answer) - 1],
     });
-    
+
     survey.questions[0].answers.push(answer);
 
-    const customerIndex = customers.findIndex(customer => customer.phoneNumber === userAnswer.customer)
+    const customerIndex = customers.findIndex(
+      (customer) => customer.phoneNumber === userAnswer.customer,
+    );
 
     return {
       answerReceived: answer,
       surveyLength: survey.questions.length,
       customerAnswers: customers[customerIndex].answers.length + 1,
-      nextQuestion: survey.questions.length > customers[customerIndex].answers.length + 1 ? survey.questions[customers[customerIndex].answers.length + 1].question : null
+      nextQuestion:
+        survey.questions.length > customers[customerIndex].answers.length + 1
+          ? survey.questions[customers[customerIndex].answers.length + 1]
+              .question
+          : null,
     };
   };
 }

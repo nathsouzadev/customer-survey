@@ -7,27 +7,31 @@ import { SaveCustomerAnswer } from './model/saveCustomerAnswer.model';
 
 @Injectable()
 export class CustomerAnswerService {
-
   constructor(
     private readonly customerAnswerRepository: CustomerAnswerRepository,
-    private readonly customerService: CustomerService
-  ){}
+    private readonly customerService: CustomerService,
+  ) {}
 
-  saveCustomerAnswer = async(customerAnswer: CustomerAnswerModel): Promise<SaveCustomerAnswer> => {
-    const { id: customerId } = await this.customerService.getCustomer(customerAnswer.customer)
+  saveCustomerAnswer = async (
+    customerAnswer: CustomerAnswerModel,
+  ): Promise<SaveCustomerAnswer> => {
+    const { id: customerId } = await this.customerService.getCustomer(
+      customerAnswer.customer,
+    );
 
     const answer = new CustomerAnswerDTO({
       customerId,
-      answer: customerAnswer.answer
-    })
-    
-    const savedAnswer = await this.customerAnswerRepository.saveAnswer(answer)
+      answer: customerAnswer.answer,
+    });
 
-    const customerAnswers = await this.customerAnswerRepository.getAnswersByCustomerId(customerId)
+    const savedAnswer = await this.customerAnswerRepository.saveAnswer(answer);
+
+    const customerAnswers =
+      await this.customerAnswerRepository.getAnswersByCustomerId(customerId);
 
     return {
       answer: savedAnswer,
-      totalAnswers: customerAnswers.length
-    }
-  }
+      totalAnswers: customerAnswers.length,
+    };
+  };
 }

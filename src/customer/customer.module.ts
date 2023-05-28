@@ -6,12 +6,12 @@ import { PrismaCustomerRepository } from './repository/prisma/prismaCustomer.rep
 
 @Module({
   providers: [
-    CustomerService, 
+    CustomerService,
     PrismaService,
     {
       provide: CustomerRepository,
-      useClass: PrismaCustomerRepository
-    }
-  ]
+      useClass: PrismaCustomerRepository,
+    },
+  ],
 })
 export class CustomerModule {}

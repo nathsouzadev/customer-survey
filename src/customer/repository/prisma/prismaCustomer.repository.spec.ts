@@ -17,7 +17,7 @@ describe('PrismaCustomerRepository', () => {
           useValue: {
             customer: {
               findFirst: jest.fn(),
-            }
+            },
           },
         },
       ],
@@ -38,13 +38,13 @@ describe('PrismaCustomerRepository', () => {
     const user = await repository.getCustomerByPhoneNumber(mockPhoneNumber);
     expect(mockFindFirst).toHaveBeenCalledWith({
       where: {
-        phoneNumber: mockPhoneNumber
-      }
+        phoneNumber: mockPhoneNumber,
+      },
     });
     expect(user).toMatchObject({
       id: expect.any(String),
       name: 'Ada Lovelace',
-      phoneNumber: mockPhoneNumber
+      phoneNumber: mockPhoneNumber,
     });
   });
 });

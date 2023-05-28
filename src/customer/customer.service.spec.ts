@@ -5,9 +5,9 @@ import { randomUUID } from 'crypto';
 
 describe('CustomerService', () => {
   let service: CustomerService;
-  let mockCustomerRepository: CustomerRepository
+  let mockCustomerRepository: CustomerRepository;
 
-  const mockPhoneNumber = '5511999991111'
+  const mockPhoneNumber = '5511999991111';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,28 +16,33 @@ describe('CustomerService', () => {
         {
           provide: CustomerRepository,
           useValue: {
-            getCustomerByPhoneNumber: jest.fn()
-          }
-        }
+            getCustomerByPhoneNumber: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<CustomerService>(CustomerService);
-    mockCustomerRepository = module.get<CustomerRepository>(CustomerRepository)
+    mockCustomerRepository = module.get<CustomerRepository>(CustomerRepository);
   });
 
-  it('shoulde be return customer with phoneNumber', async() => {
-    const mockGetCustomer = jest.spyOn(mockCustomerRepository, 'getCustomerByPhoneNumber').mockImplementation(() => Promise.resolve({
-      id: randomUUID(),
-      name: 'Ada Lovelace',
-      phoneNumber: '5511999991111',
-    }))
+  it('shoulde be return customer with phoneNumber', async () => {
+    const mockGetCustomer = jest
+      .spyOn(mockCustomerRepository, 'getCustomerByPhoneNumber')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+        }),
+      );
 
-    const customer = await service.getCustomer(mockPhoneNumber)
+    const customer = await service.getCustomer(mockPhoneNumber);
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
     expect(customer).toMatchObject({
       id: expect.any(String),
       name: 'Ada Lovelace',
-      phoneNumber: mockPhoneNumber
-    })
+      phoneNumber: mockPhoneNumber,
+    });
   });
 });
