@@ -92,9 +92,6 @@ jobs:
     - name: Install dependencies
       run: yarn --frozen-lockfile
 
-    - name: Setup database
-      run: yarn postinstall 
-
     - name: Seed database
       run: yarn seed:db
 
