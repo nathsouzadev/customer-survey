@@ -5,6 +5,7 @@ import { HookModule } from './hook/hook.module';
 import { SurveyModule } from './survey/survey.module';
 import { CustomerModule } from './customer/customer.module';
 import { CustomerAnswerModule } from './customerAnswer/customerAnswer.module';
+import { QuestionAnswerModule } from './questionAnswer/questionAnswer.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CustomerAnswerModule } from './customerAnswer/customerAnswer.module';
     SurveyModule,
     CustomerModule,
     CustomerAnswerModule,
+    QuestionAnswerModule,
   ],
 })
 export class AppModule {}
