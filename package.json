@@ -10,7 +10,7 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "yarn prisma:migrate && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "NODE_OPTIONS=\"--max_old_space_size=4096\" nest start",
     "start:dev": "nest start --watch",
@@ -28,7 +28,8 @@
     "clear:db": "ts-node ./test/configDb.ts",
     "reset:db": "yarn clear:db && yarn seed:db",
     "ci:local": "yarn test && yarn test:e2e",
-    "local": "yarn install && yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e"
+    "local": "yarn install && yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e",
+    "prisma:migrate": "npx prisma init --datasource-provider postgresql"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
