@@ -65,6 +65,7 @@ export class SurveyService {
       answer: userAnswer.answer,
       label: labels[Number(userAnswer.answer) - 1],
     });
+    
     survey.questions[0].answers.push(answer);
 
     const customerIndex = customers.findIndex(customer => customer.phoneNumber === userAnswer.customer)

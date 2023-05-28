@@ -1,6 +1,18 @@
 # Customer Survey
 
-## Installation
+## How to run locally
+
+1 - Clone the repository
+
+2 - Install and run [Docker Desktop](https://www.docker.com/);
+
+3 - Running the database
+
+```bash
+$ yarn db
+```
+
+4 - Install all dependecies
 
 ```bash
 $ yarn install

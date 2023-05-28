@@ -1,5 +1,5 @@
-import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
-import { mockMessageSentRespose } from '../__mocks__/messageSentResponse.mock';
+import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
+import { mockMessageSentRespose } from '../../__mocks__/messageSentResponse.mock';
 import { TwilioService } from './twilio.service';
 
 const mockCreate = jest.fn().mockReturnValue(

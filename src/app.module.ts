@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { HookModule } from './hook/hook.module';
 import { SurveyModule } from './survey/survey.module';
+import { CustomerModule } from './customer/customer.module';
+import { CustomerAnswerModule } from './customerAnswer/customerAnswer.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { SurveyModule } from './survey/survey.module';
     }),
     HookModule,
     SurveyModule,
+    CustomerModule,
+    CustomerAnswerModule,
   ],
 })
 export class AppModule {}
