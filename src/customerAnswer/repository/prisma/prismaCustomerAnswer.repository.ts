@@ -7,9 +7,13 @@ import { CustomerAnswerRepository } from '../customerAnswer.repository';
 export class PrismaCustomerAnswerRepository implements CustomerAnswerRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  saveAnswer = async (customerAnswer: CustomerAnswer): Promise<CustomerAnswer> => {
-    return this.prisma.customerAnswer.create({
-      data: customerAnswer
-    })
-  };
+  saveAnswer = async (customerAnswer: CustomerAnswer): Promise<CustomerAnswer> => this.prisma.customerAnswer.create({
+    data: customerAnswer
+  })
+
+  getAnswersByCustomerId = async(customerId: string): Promise<CustomerAnswer[]> => this.prisma.customerAnswer.findMany({
+    where: {
+      customerId
+    }
+  })
 }

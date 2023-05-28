@@ -22,7 +22,8 @@ describe('CustomerAnswerService', () => {
         {
           provide: CustomerAnswerRepository,
           useValue: {
-            saveAnswer: jest.fn()
+            saveAnswer: jest.fn(),
+            getAnswersByCustomerId: jest.fn()
           }
         }
       ],
@@ -48,6 +49,19 @@ describe('CustomerAnswerService', () => {
       answer: 'bom'
     }))
 
+    const mockGetAnsers = jest.spyOn(mockCustomerAnswerRepository, 'getAnswersByCustomerId').mockImplementation(() => Promise.resolve([
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      },
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      }
+    ]))
+
     const response = await service.saveCustomerAnswer({
       answer: 'bom',
       customer: '5511999991111'
@@ -64,7 +78,7 @@ describe('CustomerAnswerService', () => {
         customerId: mockCustomerId,
         answer: 'bom'
       },
-      totalAnswers: 1
+      totalAnswers: 2
     })
   });
 });

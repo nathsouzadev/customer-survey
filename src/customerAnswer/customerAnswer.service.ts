@@ -3,6 +3,7 @@ import { CustomerAnswerModel } from './model/customerAnswer.model';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
 import { CustomerAnswerDTO } from './dto/customerAnser.dto';
+import { SaveCustomerAnswer } from './model/saveCustomerAnswer.model';
 
 @Injectable()
 export class CustomerAnswerService {
@@ -12,7 +13,7 @@ export class CustomerAnswerService {
     private readonly customerService: CustomerService
   ){}
 
-  saveCustomerAnswer = async(customerAnswer: CustomerAnswerModel) => {
+  saveCustomerAnswer = async(customerAnswer: CustomerAnswerModel): Promise<SaveCustomerAnswer> => {
     const { id: customerId } = await this.customerService.getCustomer(customerAnswer.customer)
 
     const answer = new CustomerAnswerDTO({
@@ -22,9 +23,11 @@ export class CustomerAnswerService {
     
     const savedAnswer = await this.customerAnswerRepository.saveAnswer(answer)
 
+    const customerAnswers = await this.customerAnswerRepository.getAnswersByCustomerId(customerId)
+
     return {
       answer: savedAnswer,
-      totalAnswers: 1
+      totalAnswers: customerAnswers.length
     }
   }
 }

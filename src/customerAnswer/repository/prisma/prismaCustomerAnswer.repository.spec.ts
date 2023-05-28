@@ -16,6 +16,7 @@ describe('PrismaCustomerAnswerRepository', () => {
           useValue: {
             customerAnswer: {
               create: jest.fn(),
+              findMany: jest.fn()
             }
           },
         },
@@ -44,4 +45,39 @@ describe('PrismaCustomerAnswerRepository', () => {
       answer: 'bom'
     });
   });
+
+  it('should return all answer with customerId', async() => {
+    const mockCustomerId = randomUUID()
+    const mockFindMany = jest.spyOn(mockPrismaService.customerAnswer, 'findMany').mockResolvedValue([
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      },
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      },
+    ])
+
+    const answers = await repository.getAnswersByCustomerId(mockCustomerId)
+    expect(mockFindMany).toHaveBeenCalledWith({
+      where: {
+        customerId: mockCustomerId
+      }
+    })
+    expect(answers).toMatchObject([
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      },
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        answer: 'bom'
+      },
+    ])
+  })
 });
