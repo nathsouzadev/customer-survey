@@ -5,12 +5,14 @@ import { SaveCustomerAnswer } from './model/saveCustomerAnswer.model';
 import { CustomerAnswerModel } from './model/customerAnswer.model';
 import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
 import { CustomerAnswerDTO } from './dto/customerAnser.dto';
+import { CustomerSurveyRepository } from './repository/customerSurvey.repository';
 
 @Injectable()
 export class CustomerService {
   constructor(
     private readonly customerRepository: CustomerRepository,
     private readonly customerAnswerRepository: CustomerAnswerRepository,
+    private readonly customerSurveyRepository: CustomerSurveyRepository
   ) {}
 
   getCustomer = async (phoneNumber: string): Promise<Customer> =>
@@ -36,4 +38,6 @@ export class CustomerService {
       totalAnswers: customerAnswers.length,
     };
   };
+
+  getSurvey = async(customerId: string) => this.customerSurveyRepository.getSurveyByCustomerId(customerId)
 }

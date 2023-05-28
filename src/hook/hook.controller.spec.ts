@@ -7,6 +7,7 @@ import { SurveyService } from '../survey/service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
+import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -31,6 +32,10 @@ describe('HookController', () => {
           provide: CustomerAnswerRepository,
           useValue: {},
         },
+        {
+          provide: CustomerSurveyRepository,
+          useValue: {},
+        }
       ],
     }).compile();
 

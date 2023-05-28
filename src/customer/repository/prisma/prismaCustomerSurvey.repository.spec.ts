@@ -39,13 +39,14 @@ describe('PrismaCustomerSurveyRepository', () => {
     const mockSave = jest
       .spyOn(mockPrismaService.customerSurvey, 'findFirst')
       .mockResolvedValue(mockSurvey);
-    const user = await repository.getSurveyByCustomerId(mockCustomerId);
+    
+    const survey = await repository.getSurveyByCustomerId(mockCustomerId);
     expect(mockSave).toHaveBeenCalledWith({
       where: {
         customerId: mockCustomerId
       }
     });
-    expect(user).toMatchObject({
+    expect(survey).toMatchObject({
       id: expect.any(String),
       active: true,
       customerId: mockCustomerId,

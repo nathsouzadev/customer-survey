@@ -3,11 +3,13 @@ import { CustomerService } from './customer.service';
 import { CustomerRepository } from './repository/customer.repository';
 import { randomUUID } from 'crypto';
 import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
+import { CustomerSurveyRepository } from './repository/customerSurvey.repository';
 
 describe('CustomerService', () => {
   let service: CustomerService;
   let mockCustomerRepository: CustomerRepository;
   let mockCustomerAnswerRepository: CustomerAnswerRepository;
+  let mockCustomerSurveyRepository: CustomerSurveyRepository
 
   const mockPhoneNumber = '5511999991111';
 
@@ -28,6 +30,12 @@ describe('CustomerService', () => {
             getAnswersByCustomerId: jest.fn(),
           },
         },
+        {
+          provide: CustomerSurveyRepository,
+          useValue: {
+            getSurveyByCustomerId: jest.fn()
+          }
+        }
       ],
     }).compile();
 
@@ -35,6 +43,9 @@ describe('CustomerService', () => {
     mockCustomerRepository = module.get<CustomerRepository>(CustomerRepository);
     mockCustomerAnswerRepository = module.get<CustomerAnswerRepository>(
       CustomerAnswerRepository,
+    );
+    mockCustomerSurveyRepository = module.get<CustomerSurveyRepository>(
+      CustomerSurveyRepository,
     );
   });
 
@@ -116,6 +127,28 @@ describe('CustomerService', () => {
         answer: 'bom',
       },
       totalAnswers: 2,
+    });
+  });
+
+  it('should return survey with customerId', async () => {
+    const mockCustomerId = randomUUID();
+    const mockSurvey = {
+      id: randomUUID(),
+      active: true,
+      customerId: mockCustomerId,
+      surveyId: randomUUID()
+    };
+    const mockGetSurvey = jest
+      .spyOn(mockCustomerSurveyRepository, 'getSurveyByCustomerId')
+      .mockImplementation(() => Promise.resolve(mockSurvey));
+    
+    const survey = await service.getSurvey(mockCustomerId);
+    expect(mockGetSurvey).toHaveBeenCalledWith(mockCustomerId);
+    expect(survey).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      customerId: mockCustomerId,
+      surveyId: expect.any(String),
     });
   });
 });

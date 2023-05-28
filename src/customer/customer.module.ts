@@ -5,6 +5,8 @@ import { CustomerRepository } from './repository/customer.repository';
 import { PrismaCustomerRepository } from './repository/prisma/prismaCustomer.repository';
 import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
 import { PrismaCustomerAnswerRepository } from './repository/prisma/prismaCustomerAnswer.repository';
+import { CustomerSurveyRepository } from './repository/customerSurvey.repository';
+import { PrismaCustomerSurveyRepository } from './repository/prisma/prismaCustomerSurvey.repository';
 
 @Module({
   providers: [
@@ -18,6 +20,10 @@ import { PrismaCustomerAnswerRepository } from './repository/prisma/prismaCustom
       provide: CustomerAnswerRepository,
       useClass: PrismaCustomerAnswerRepository,
     },
+    {
+      provide: CustomerSurveyRepository,
+      useClass: PrismaCustomerSurveyRepository
+    }
   ],
 })
 export class CustomerModule {}

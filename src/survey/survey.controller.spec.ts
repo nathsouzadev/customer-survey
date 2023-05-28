@@ -4,6 +4,7 @@ import { SurveyService } from './service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
+import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -23,6 +24,10 @@ describe('SurveyController', () => {
           provide: CustomerAnswerRepository,
           useValue: {},
         },
+        {
+          provide: CustomerSurveyRepository,
+          useValue: {},
+        }
       ],
     }).compile();
 

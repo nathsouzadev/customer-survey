@@ -8,6 +8,8 @@ import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { PrismaCustomerRepository } from '../customer/repository/prisma/prismaCustomer.repository';
 import { PrismaService } from '../client/prisma/prisma.service';
+import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
+import { PrismaCustomerSurveyRepository } from '../customer/repository/prisma/prismaCustomerSurvey.repository';
 
 @Module({
   imports: [CustomerModule],
@@ -22,6 +24,10 @@ import { PrismaService } from '../client/prisma/prisma.service';
     {
       provide: CustomerAnswerRepository,
       useClass: PrismaCustomerAnswerRepository,
+    },
+    {
+      provide: CustomerSurveyRepository,
+      useClass: PrismaCustomerSurveyRepository
     },
     PrismaService,
   ],
