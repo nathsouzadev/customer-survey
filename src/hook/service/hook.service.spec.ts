@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
-import { TwilioService } from '../../client/twilio.service';
+import { TwilioService } from '../../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
 

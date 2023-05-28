@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TwilioService } from '../../client/twilio.service';
+import { TwilioService } from '../../client/twilio/twilio.service';
 import { MessageModel } from '../../model/message.model';
 import { MessageResponseModel } from '../../model/message.response.model';
 import { SurveyService } from '../../survey/service/survey.service';

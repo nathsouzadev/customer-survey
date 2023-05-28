@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import twilio from 'twilio';
 import TwilioClient from 'twilio/lib/rest/Twilio';
-import { MessageModel } from '../model/message.model';
+import { MessageModel } from '../../model/message.model';
 import { MessageInstance } from 'twilio/lib/rest/api/v2010/account/message';
-import { MessageResponseModel } from '../model/message.response.model';
+import { MessageResponseModel } from '../../model/message.response.model';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
