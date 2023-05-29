@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyController } from './survey.controller';
 import { SurveyService } from './service/survey.service';
-import { CustomerAnswerService } from '../customerAnswer/customerAnswer.service';
-import { CustomerAnswerRepository } from '../customerAnswer/repository/customerAnswer.repository';
+import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
+import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -15,16 +15,19 @@ describe('SurveyController', () => {
       controllers: [SurveyController],
       providers: [
         SurveyService,
-        CustomerAnswerService,
-        {
-          provide: CustomerAnswerRepository,
-          useValue: {}
-        },
         CustomerService,
         {
           provide: CustomerRepository,
-          useValue: {}
-        }
+          useValue: {},
+        },
+        {
+          provide: CustomerAnswerRepository,
+          useValue: {},
+        },
+        {
+          provide: CustomerSurveyRepository,
+          useValue: {},
+        },
       ],
     }).compile();
 

@@ -24,10 +24,7 @@ export class HookService {
       return this.client.replyToUser({
         message: messageReceived,
         isValid,
-        replyMessage:
-          answer.nextQuestion
-            ? answer.nextQuestion
-            : null,
+        replyMessage: answer.nextQuestion ? answer.nextQuestion : null,
       });
     }
 

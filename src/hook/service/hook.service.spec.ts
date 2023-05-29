@@ -3,6 +3,7 @@ import { HookService } from './hook.service';
 import { TwilioService } from '../../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
+import { randomUUID } from 'crypto';
 
 describe('HookService', () => {
   let service: HookService;
@@ -49,15 +50,17 @@ describe('HookService', () => {
       );
     const mockUpdate = jest
       .spyOn(mockSurveyService, 'addAnswerToSurvey')
-      .mockImplementation(() => Promise.resolve({
-        answerReceived: {
-          id: 'a',
-          questionId: 'question',
-          answer: '1',
-          label: 'bom',
-        },
-        nextQuestion: 'Next question',
-      }));
+      .mockImplementation(() =>
+        Promise.resolve({
+          answerReceived: {
+            id: randomUUID(),
+            customerId: randomUUID(),
+            questionId: randomUUID(),
+            answer: 'bom',
+          },
+          nextQuestion: 'Next question',
+        }),
+      );
 
     const mockMessage = mockReceivedMessage({
       body: '1',
@@ -105,15 +108,17 @@ describe('HookService', () => {
       );
     const mockUpdate = jest
       .spyOn(mockSurveyService, 'addAnswerToSurvey')
-      .mockImplementation(() => Promise.resolve({
-        answerReceived: {
-          id: 'a',
-          questionId: 'question',
-          answer: '1',
-          label: 'bom',
-        },
-        nextQuestion: null,
-      }));
+      .mockImplementation(() =>
+        Promise.resolve({
+          answerReceived: {
+            id: randomUUID(),
+            customerId: randomUUID(),
+            questionId: randomUUID(),
+            answer: 'bom',
+          },
+          nextQuestion: null,
+        }),
+      );
 
     const mockMessage = mockReceivedMessage({
       body: '1',

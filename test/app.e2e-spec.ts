@@ -33,11 +33,11 @@ describe('AppController (e2e)', () => {
         }),
       )
       .expect(201)
-      .then(async response => {
+      .then(async (response) => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
-            body: 'Você agendou um novo atendimento?',
+            body: 'Question 1',
             direction: 'outbound-api',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511999991111',
@@ -49,21 +49,21 @@ describe('AppController (e2e)', () => {
 
         const answer = await prismaClient.customerAnswer.findFirst({
           where: {
-            customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6'
-          }
-        })
+            customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
+          },
+        });
 
         expect(answer).toMatchObject({
           id: expect.any(String),
           customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
-          answer: 'bom'
-        })
+          answer: 'bom',
+        });
 
         await prismaClient.customerAnswer.delete({
           where: {
-            id: answer.id
-          }
-        })
+            id: answer.id,
+          },
+        });
       });
   });
 
@@ -81,7 +81,7 @@ describe('AppController (e2e)', () => {
         }),
       )
       .expect(201)
-      .then(async response => {
+      .then(async (response) => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
@@ -97,21 +97,21 @@ describe('AppController (e2e)', () => {
 
         const answer = await prismaClient.customerAnswer.findMany({
           where: {
-            customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39'
-          }
-        })
+            customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
+          },
+        });
 
         expect(answer[1]).toMatchObject({
           id: expect.any(String),
           customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
-          answer: 'regular'
-        })
+          answer: 'regular',
+        });
 
         await prismaClient.customerAnswer.delete({
           where: {
-            id: answer[1].id
-          }
-        })
+            id: answer[1].id,
+          },
+        });
       });
   });
 
