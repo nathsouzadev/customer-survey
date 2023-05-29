@@ -80,7 +80,7 @@ const customerAnswers = [
 const survey = {
   id: '2f578a7b-8930-4a1b-8998-f15142a090b7',
   name: 'Survey',
-  title: 'Example Survey'
+  title: 'Customer Survey'
 }
 
 const customerSurveys = [

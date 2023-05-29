@@ -5,6 +5,7 @@ import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.
 import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
+import { SurveyRepository } from './repository/survey.repository';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -28,6 +29,10 @@ describe('SurveyController', () => {
           provide: CustomerSurveyRepository,
           useValue: {},
         },
+        {
+          provide: SurveyRepository,
+          useValue: {},
+        }
       ],
     }).compile();
 
@@ -35,8 +40,8 @@ describe('SurveyController', () => {
     mockSurveyService = module.get<SurveyService>(SurveyService);
   });
 
-  it('should be return survey', () => {
-    jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() => ({
+  it('should be return survey', async() => {
+    jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() => Promise.resolve({
       id: 'survey',
       name: 'Exampled Survey',
       title: 'Customer Experience',
@@ -53,7 +58,9 @@ describe('SurveyController', () => {
         },
       ],
     }));
-    expect(controller.getSurvey()).toMatchObject({
+
+    const response = await controller.getSurvey()
+    expect(response).toMatchObject({
       id: 'survey',
       name: 'Exampled Survey',
       title: 'Customer Experience',

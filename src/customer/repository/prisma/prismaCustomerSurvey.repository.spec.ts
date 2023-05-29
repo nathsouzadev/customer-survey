@@ -79,6 +79,7 @@ describe('PrismaCustomerSurveyRepository', () => {
             id: mockQuestionId,
             surveyId: mockSurveyId,
             question: 'Question 1',
+            order: 1,
             answers: [
               {
                 id: expect.any(String),
@@ -104,6 +105,7 @@ describe('PrismaCustomerSurveyRepository', () => {
             id: mockQuestionId2,
             surveyId: mockSurveyId,
             question: 'Question 2',
+            order: 2,
             answers: [
               {
                 id: expect.any(String),
