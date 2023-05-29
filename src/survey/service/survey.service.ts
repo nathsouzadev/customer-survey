@@ -52,7 +52,6 @@ export class SurveyService {
     const mySurvey: any = await this.customerService.getSurvey(
       userAnswer.customer,
     );
-    console.log('SURVEY', mySurvey);
 
     const labels = mySurvey.survey.questions[0].answers.map(
       (answer) => answer.label,
@@ -73,7 +72,7 @@ export class SurveyService {
     return {
       answerReceived: answer,
       nextQuestion:
-        survey.questions.length > customerAnswers.length + 1
+        mySurvey.survey.questions.length > customerAnswers.length + 1
           ? mySurvey.survey.questions[customerAnswers.length + 1].question
           : null,
     };

@@ -37,8 +37,10 @@ describe('PrismaCustomerSurveyRepository', () => {
     const mockSurvey = mockCustomerSurvey({
       customerId: mockCustomerId,
       surveyId: mockSurveyId,
-      questionId: mockQuestionId,
-      questionId2: mockQuestionId2,
+      questions: [
+        { id: mockQuestionId, question: 'Question 1', order: 1 },
+        { id: mockQuestionId2, question: 'Question 2', order: 2 },
+      ],
     });
 
     const mockSave = jest

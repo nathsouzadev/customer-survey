@@ -1,11 +1,52 @@
 import { randomUUID } from 'crypto';
-import { CustomerSurveyModel } from '../customer/model/customerSurvey.model';
+import {
+  CustomerSurveyModel,
+  QuestionModel,
+} from '../customer/model/customerSurvey.model';
+
+interface MockQuestionData {
+  id: string;
+  question: string;
+  order: number;
+}
+
+export const mockQuestion = (body: {
+  customerId: string;
+  surveyId: string;
+  questionId: string;
+  question: string;
+  order: number;
+}): QuestionModel => ({
+  id: body.questionId,
+  surveyId: body.surveyId,
+  question: body.question,
+  order: body.order,
+  answers: [
+    {
+      id: randomUUID(),
+      questionId: body.questionId,
+      answer: '1',
+      label: 'bom',
+    },
+    {
+      id: randomUUID(),
+      questionId: body.questionId,
+      answer: '2',
+      label: 'regular',
+    },
+    {
+      id: randomUUID(),
+      questionId: body.questionId,
+      answer: '3',
+      label: 'ruim',
+    },
+  ],
+});
 
 export const mockCustomerSurvey = (body: {
   customerId: string;
   surveyId: string;
-  questionId: string;
-  questionId2: string;
+  questions: MockQuestionData[];
 }): CustomerSurveyModel => ({
   id: randomUUID(),
   active: true,
@@ -15,57 +56,68 @@ export const mockCustomerSurvey = (body: {
     id: body.surveyId,
     name: 'Survey',
     title: 'Main survey',
-    questions: [
-      {
-        id: body.questionId,
-        surveyId: body.surveyId,
-        question: 'Question 1',
-        answers: [
-          {
-            id: randomUUID(),
-            questionId: body.questionId,
-            answer: '1',
-            label: 'bom',
-          },
-          {
-            id: randomUUID(),
-            questionId: body.questionId,
-            answer: '2',
-            label: 'regular',
-          },
-          {
-            id: randomUUID(),
-            questionId: body.questionId,
-            answer: '3',
-            label: 'ruim',
-          },
-        ],
-      },
-      {
-        id: body.questionId2,
-        surveyId: body.surveyId,
-        question: 'Question 2',
-        answers: [
-          {
-            id: randomUUID(),
-            questionId: body.questionId2,
-            answer: '1',
-            label: 'bom',
-          },
-          {
-            id: randomUUID(),
-            questionId: body.questionId2,
-            answer: '2',
-            label: 'regular',
-          },
-          {
-            id: randomUUID(),
-            questionId: body.questionId2,
-            answer: '3',
-            label: 'ruim',
-          },
-        ],
-      },
-    ],
+    questions: body.questions.map((question) =>
+      mockQuestion({
+        ...body,
+        questionId: question.id,
+        question: question.question,
+        order: question.order,
+      }),
+    ),
   },
 });
+
+// [
+//   {
+//     id: body.questionId,
+//     surveyId: body.surveyId,
+//     question: 'Question 1',
+//     order: 1,
+//     answers: [
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId,
+//         answer: '1',
+//         label: 'bom',
+//       },
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId,
+//         answer: '2',
+//         label: 'regular',
+//       },
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId,
+//         answer: '3',
+//         label: 'ruim',
+//       },
+//     ],
+//   },
+//   {
+//     id: body.questionId2,
+//     surveyId: body.surveyId,
+//     question: 'Question 2',
+//     order: 2,
+//     answers: [
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId2,
+//         answer: '1',
+//         label: 'bom',
+//       },
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId2,
+//         answer: '2',
+//         label: 'regular',
+//       },
+//       {
+//         id: randomUUID(),
+//         questionId: body.questionId2,
+//         answer: '3',
+//         label: 'ruim',
+//       },
+//     ],
+//   },
+// ]
