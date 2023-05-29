@@ -70,8 +70,8 @@ describe('SurveyService', () => {
       surveyId: mockSurveyId,
       questions: [
         { id: mockQuestionId, question: 'Question 1', order: 1 },
-        { id: mockQuestionId2, question: 'Question 2', order: 2 }
-      ]
+        { id: mockQuestionId2, question: 'Question 2', order: 2 },
+      ],
     });
 
     const mockSaveCustomerAnswer = jest
@@ -129,8 +129,8 @@ describe('SurveyService', () => {
       surveyId: mockSurveyId,
       questions: [
         { id: mockQuestionId, question: 'Question 1', order: 1 },
-        { id: mockQuestionId2, question: 'Question 2', order: 2 }
-      ]
+        { id: mockQuestionId2, question: 'Question 2', order: 2 },
+      ],
     });
 
     const mockSaveCustomerAnswer = jest

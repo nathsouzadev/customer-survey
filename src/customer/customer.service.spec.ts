@@ -108,8 +108,8 @@ describe('CustomerService', () => {
       surveyId: mockSurveyId,
       questions: [
         { id: mockQuestionId2, question: 'Question 2', order: 2 },
-        { id: mockQuestionId, question: 'Question 1', order: 1 }
-      ]
+        { id: mockQuestionId, question: 'Question 1', order: 1 },
+      ],
     });
 
     const mockGetCustomer = jest

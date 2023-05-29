@@ -1,10 +1,13 @@
 import { randomUUID } from 'crypto';
-import { CustomerSurveyModel, QuestionModel } from '../customer/model/customerSurvey.model';
+import {
+  CustomerSurveyModel,
+  QuestionModel,
+} from '../customer/model/customerSurvey.model';
 
 interface MockQuestionData {
-  id: string,
-  question: string
-  order: number
+  id: string;
+  question: string;
+  order: number;
 }
 
 export const mockQuestion = (body: {
@@ -12,7 +15,7 @@ export const mockQuestion = (body: {
   surveyId: string;
   questionId: string;
   question: string;
-  order: number
+  order: number;
 }): QuestionModel => ({
   id: body.questionId,
   surveyId: body.surveyId,
@@ -36,14 +39,14 @@ export const mockQuestion = (body: {
       questionId: body.questionId,
       answer: '3',
       label: 'ruim',
-    }
-  ]
-})
+    },
+  ],
+});
 
 export const mockCustomerSurvey = (body: {
   customerId: string;
   surveyId: string;
-  questions: MockQuestionData[]
+  questions: MockQuestionData[];
 }): CustomerSurveyModel => ({
   id: randomUUID(),
   active: true,
@@ -53,12 +56,14 @@ export const mockCustomerSurvey = (body: {
     id: body.surveyId,
     name: 'Survey',
     title: 'Main survey',
-    questions: body.questions.map(question => mockQuestion({
-      ...body,
-      questionId: question.id,
-      question: question.question,
-      order: question.order
-    }))
+    questions: body.questions.map((question) =>
+      mockQuestion({
+        ...body,
+        questionId: question.id,
+        question: question.question,
+        order: question.order,
+      }),
+    ),
   },
 });
 
