@@ -27,7 +27,7 @@ describe('SurveyController', () => {
         {
           provide: CustomerSurveyRepository,
           useValue: {},
-        }
+        },
       ],
     }).compile();
 

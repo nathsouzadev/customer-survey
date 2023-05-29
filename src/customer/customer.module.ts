@@ -22,8 +22,8 @@ import { PrismaCustomerSurveyRepository } from './repository/prisma/prismaCustom
     },
     {
       provide: CustomerSurveyRepository,
-      useClass: PrismaCustomerSurveyRepository
-    }
+      useClass: PrismaCustomerSurveyRepository,
+    },
   ],
 })
 export class CustomerModule {}

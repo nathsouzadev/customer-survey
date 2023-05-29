@@ -3,6 +3,7 @@ import { HookService } from './hook.service';
 import { TwilioService } from '../../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
+import { randomUUID } from 'crypto';
 
 describe('HookService', () => {
   let service: HookService;
@@ -52,10 +53,10 @@ describe('HookService', () => {
       .mockImplementation(() =>
         Promise.resolve({
           answerReceived: {
-            id: 'a',
-            questionId: 'question',
-            answer: '1',
-            label: 'bom',
+            id: randomUUID(),
+            customerId: randomUUID(),
+            questionId: randomUUID(),
+            answer: 'bom',
           },
           nextQuestion: 'Next question',
         }),
@@ -110,10 +111,10 @@ describe('HookService', () => {
       .mockImplementation(() =>
         Promise.resolve({
           answerReceived: {
-            id: 'a',
-            questionId: 'question',
-            answer: '1',
-            label: 'bom',
+            id: randomUUID(),
+            customerId: randomUUID(),
+            questionId: randomUUID(),
+            answer: 'bom',
           },
           nextQuestion: null,
         }),

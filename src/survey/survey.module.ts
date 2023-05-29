@@ -27,7 +27,7 @@ import { PrismaCustomerSurveyRepository } from '../customer/repository/prisma/pr
     },
     {
       provide: CustomerSurveyRepository,
-      useClass: PrismaCustomerSurveyRepository
+      useClass: PrismaCustomerSurveyRepository,
     },
     PrismaService,
   ],

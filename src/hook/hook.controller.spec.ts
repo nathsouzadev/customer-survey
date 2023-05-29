@@ -35,7 +35,7 @@ describe('HookController', () => {
         {
           provide: CustomerSurveyRepository,
           useValue: {},
-        }
+        },
       ],
     }).compile();
 

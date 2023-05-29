@@ -4,12 +4,13 @@ import { CustomerRepository } from './repository/customer.repository';
 import { randomUUID } from 'crypto';
 import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
 import { CustomerSurveyRepository } from './repository/customerSurvey.repository';
+import { mockCustomerSurvey } from '../__mocks__/customerSurvey.mock';
 
 describe('CustomerService', () => {
   let service: CustomerService;
   let mockCustomerRepository: CustomerRepository;
   let mockCustomerAnswerRepository: CustomerAnswerRepository;
-  let mockCustomerSurveyRepository: CustomerSurveyRepository
+  let mockCustomerSurveyRepository: CustomerSurveyRepository;
 
   const mockPhoneNumber = '5511999991111';
 
@@ -28,14 +29,15 @@ describe('CustomerService', () => {
           useValue: {
             saveAnswer: jest.fn(),
             getAnswersByCustomerId: jest.fn(),
+            getCustomerAnswersToSurvey: jest.fn(),
           },
         },
         {
           provide: CustomerSurveyRepository,
           useValue: {
-            getSurveyByCustomerId: jest.fn()
-          }
-        }
+            getSurveyByCustomerId: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -69,86 +71,169 @@ describe('CustomerService', () => {
     });
   });
 
-  it('should save customerAnswer and return total answers of user', async () => {
-    const mockPhoneNumber = '5511999991111';
+  it('should be save customerAnswer', async () => {
     const mockCustomerId = randomUUID();
+    const mockQuestionId = randomUUID();
+
+    const mockAnswer = {
+      id: randomUUID(),
+      customerId: mockCustomerId,
+      questionId: mockQuestionId,
+      answer: 'bom',
+    };
+
+    const mockSaveAnswer = jest
+      .spyOn(mockCustomerAnswerRepository, 'saveAnswer')
+      .mockImplementation(() => Promise.resolve(mockAnswer));
+
+    const response = await service.saveCustomerAnswer(mockAnswer);
+    expect(mockSaveAnswer).toHaveBeenCalledWith(mockAnswer);
+    expect(response).toMatchObject({
+      id: expect.any(String),
+      customerId: mockCustomerId,
+      questionId: mockQuestionId,
+      answer: 'bom',
+    });
+  });
+
+  it('should return survey with founded by phoneNumber', async () => {
+    const mockCustomerId = randomUUID();
+    const mockPhoneNumber = '5511999991111';
+    const mockSurveyId = randomUUID();
+    const mockQuestionId = randomUUID();
+    const mockQuestionId2 = randomUUID();
+
+    const mockSurvey = mockCustomerSurvey({
+      customerId: mockCustomerId,
+      surveyId: mockSurveyId,
+      questionId: mockQuestionId,
+      questionId2: mockQuestionId2,
+    });
+
     const mockGetCustomer = jest
-      .spyOn(service, 'getCustomer')
+      .spyOn(mockCustomerRepository, 'getCustomerByPhoneNumber')
       .mockImplementation(() =>
         Promise.resolve({
           id: mockCustomerId,
           name: 'Ada Lovelace',
-          phoneNumber: '5511999991111',
+          phoneNumber: mockPhoneNumber,
         }),
       );
-
-    const mockSaveAnswer = jest
-      .spyOn(mockCustomerAnswerRepository, 'saveAnswer')
-      .mockImplementation(() =>
-        Promise.resolve({
-          id: randomUUID(),
-          customerId: mockCustomerId,
-          answer: 'bom',
-        }),
-      );
-
-    const mockGetAnswers = jest
-      .spyOn(mockCustomerAnswerRepository, 'getAnswersByCustomerId')
-      .mockImplementation(() =>
-        Promise.resolve([
-          {
-            id: randomUUID(),
-            customerId: mockCustomerId,
-            answer: 'bom',
-          },
-          {
-            id: randomUUID(),
-            customerId: mockCustomerId,
-            answer: 'bom',
-          },
-        ]),
-      );
-
-    const response = await service.saveCustomerAnswer({
-      answer: 'bom',
-      customer: '5511999991111',
-    });
-    expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
-    expect(mockSaveAnswer).toHaveBeenCalledWith({
-      id: expect.any(String),
-      customerId: mockCustomerId,
-      answer: 'bom',
-    });
-    expect(mockGetAnswers).toHaveBeenCalledWith(mockCustomerId);
-    expect(response).toMatchObject({
-      answer: {
-        id: expect.any(String),
-        customerId: mockCustomerId,
-        answer: 'bom',
-      },
-      totalAnswers: 2,
-    });
-  });
-
-  it('should return survey with customerId', async () => {
-    const mockCustomerId = randomUUID();
-    const mockSurvey = {
-      id: randomUUID(),
-      active: true,
-      customerId: mockCustomerId,
-      surveyId: randomUUID()
-    };
     const mockGetSurvey = jest
       .spyOn(mockCustomerSurveyRepository, 'getSurveyByCustomerId')
       .mockImplementation(() => Promise.resolve(mockSurvey));
-    
-    const survey = await service.getSurvey(mockCustomerId);
+
+    const survey = await service.getSurvey(mockPhoneNumber);
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
     expect(mockGetSurvey).toHaveBeenCalledWith(mockCustomerId);
     expect(survey).toMatchObject({
       id: expect.any(String),
       active: true,
       customerId: mockCustomerId,
-      surveyId: expect.any(String),
+      surveyId: mockSurveyId,
+      survey: {
+        id: mockSurveyId,
+        name: 'Survey',
+        title: 'Main survey',
+        questions: [
+          {
+            id: mockQuestionId,
+            surveyId: mockSurveyId,
+            question: 'Question 1',
+            answers: [
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId,
+                answer: '1',
+                label: 'bom',
+              },
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId,
+                answer: '2',
+                label: 'regular',
+              },
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId,
+                answer: '3',
+                label: 'ruim',
+              },
+            ],
+          },
+          {
+            id: mockQuestionId2,
+            surveyId: mockSurveyId,
+            question: 'Question 2',
+            answers: [
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId2,
+                answer: '1',
+                label: 'bom',
+              },
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId2,
+                answer: '2',
+                label: 'regular',
+              },
+              {
+                id: expect.any(String),
+                questionId: mockQuestionId2,
+                answer: '3',
+                label: 'ruim',
+              },
+            ],
+          },
+        ],
+      },
     });
+  });
+
+  it('shoul return all customerAnswer to questionId', async () => {
+    const mockCustomerId = randomUUID();
+    const mockQuestionIds = [randomUUID(), randomUUID()];
+    const mockGetCustomerAnswers = jest
+      .spyOn(mockCustomerAnswerRepository, 'getCustomerAnswersToSurvey')
+      .mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: randomUUID(),
+            customerId: mockCustomerId,
+            questionId: mockQuestionIds[0],
+            answer: 'bom',
+          },
+          {
+            id: randomUUID(),
+            customerId: mockCustomerId,
+            questionId: mockQuestionIds[1],
+            answer: 'bom',
+          },
+        ]),
+      );
+
+    const answers = await service.getCustomerAnswersToSurvey({
+      customerId: mockCustomerId,
+      questionsId: mockQuestionIds,
+    });
+    expect(mockGetCustomerAnswers).toHaveBeenCalledWith({
+      customerId: mockCustomerId,
+      questionsId: mockQuestionIds,
+    });
+    expect(answers).toMatchObject([
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        questionId: mockQuestionIds[0],
+        answer: 'bom',
+      },
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        questionId: mockQuestionIds[1],
+        answer: 'bom',
+      },
+    ]);
   });
 });

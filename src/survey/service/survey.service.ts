@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
-import { Answer, Survey } from '../dto/survey.dto';
+import { Survey } from '../dto/survey.dto';
 import { fakeSurvey } from './survey';
 import { CustomerService } from '../../customer/customer.service';
+import { randomUUID } from 'crypto';
+import { CustomerAnswer } from '@prisma/client';
 
 const survey: Survey = fakeSurvey;
 
@@ -44,27 +46,35 @@ export class SurveyService {
     answer: string;
     customer: string;
   }): Promise<{
-    answerReceived: Answer;
+    answerReceived: CustomerAnswer;
     nextQuestion: null | string;
   }> => {
-    const labels = ['bom', 'regular', 'ruim'];
+    const mySurvey: any = await this.customerService.getSurvey(
+      userAnswer.customer,
+    );
+    console.log('SURVEY', mySurvey);
 
-    const answer = new Answer({
-      questionId: 'question',
-      answer: userAnswer.answer,
-      label: labels[Number(userAnswer.answer) - 1],
-    });
+    const labels = mySurvey.survey.questions[0].answers.map(
+      (answer) => answer.label,
+    );
+    const customerAnswers =
+      await this.customerService.getCustomerAnswersToSurvey({
+        customerId: mySurvey.customerId,
+        questionsId: mySurvey.survey.questions.map((question) => question.id),
+      });
 
-    const response = await this.customerService.saveCustomerAnswer({
-      ...userAnswer,
+    const answer = await this.customerService.saveCustomerAnswer({
+      id: randomUUID(),
+      customerId: mySurvey.customerId,
+      questionId: mySurvey.survey.questions[customerAnswers.length].id,
       answer: labels[Number(userAnswer.answer) - 1],
     });
 
     return {
       answerReceived: answer,
       nextQuestion:
-        survey.questions.length > response.totalAnswers
-          ? survey.questions[response.totalAnswers].question
+        survey.questions.length > customerAnswers.length + 1
+          ? mySurvey.survey.questions[customerAnswers.length + 1].question
           : null,
     };
   };

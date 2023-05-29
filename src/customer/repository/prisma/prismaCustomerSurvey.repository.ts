@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CustomerSurvey } from '@prisma/client';
 import { PrismaService } from '../../../client/prisma/prisma.service';
 import { CustomerSurveyRepository } from '../customerSurvey.repository';
+import { CustomerSurveyModel } from '../../../customer/model/customerSurvey.model';
 
 @Injectable()
 export class PrismaCustomerSurveyRepository
@@ -11,10 +11,22 @@ export class PrismaCustomerSurveyRepository
 
   getSurveyByCustomerId = async (
     customerId: string,
-  ): Promise<CustomerSurvey> =>
+  ): Promise<CustomerSurveyModel> =>
     this.prisma.customerSurvey.findFirst({
       where: {
         customerId,
+        active: true,
+      },
+      include: {
+        survey: {
+          include: {
+            questions: {
+              include: {
+                answers: true,
+              },
+            },
+          },
+        },
       },
     });
 }

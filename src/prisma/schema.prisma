@@ -23,6 +23,8 @@ model CustomerAnswer {
   customer Customer @relation(fields: [customerId], references: [id])
   customerId String
   answer String
+  question Question @relation(fields: [questionId], references: [id])
+  questionId String
 }
 
 model Survey {
@@ -37,7 +39,9 @@ model Question {
   id String @id @default(uuid())
   survey Survey @relation(fields: [surveyId], references: [id])
   surveyId String
+  question String
   answers QuestionAnswer[]
+  customerAnswers CustomerAnswer[]
 }
 
 model QuestionAnswer {
