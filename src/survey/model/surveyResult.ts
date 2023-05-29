@@ -9,13 +9,13 @@ class Question {
   id: string;
   surveyId: string;
   question: string;
-  order: number
-  customerAnswers: CustomerAnswer[]
+  order: number;
+  customerAnswers: CustomerAnswer[];
 }
 
 class CustomerAnswer {
-  id: string
-  customerId: string
-  answer: string
-  questionId: string
+  id: string;
+  customerId: string;
+  answer: string;
+  questionId: string;
 }

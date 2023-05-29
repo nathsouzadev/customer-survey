@@ -15,9 +15,9 @@ export class PrismaSurveyRepository implements SurveyRepository {
       include: {
         questions: {
           include: {
-            customerAnswers: true
-          }
-        }
+            customerAnswers: true,
+          },
+        },
       },
     });
 }

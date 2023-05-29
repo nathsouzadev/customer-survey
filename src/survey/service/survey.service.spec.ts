@@ -8,7 +8,7 @@ import { SurveyRepository } from '../repository/survey.repository';
 describe('SurveyService', () => {
   let service: SurveyService;
   let mockCustomerService: CustomerService;
-  let mockSurveyRepository: SurveyRepository
+  let mockSurveyRepository: SurveyRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,63 +25,69 @@ describe('SurveyService', () => {
         {
           provide: SurveyRepository,
           useValue: {
-            getSurveyById: jest.fn()
-          }
-        }
+            getSurveyById: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<SurveyService>(SurveyService);
     mockCustomerService = module.get<CustomerService>(CustomerService);
-    mockSurveyRepository = module.get<SurveyRepository>(SurveyRepository)
+    mockSurveyRepository = module.get<SurveyRepository>(SurveyRepository);
   });
 
-  it('should be return survey', async() => {
+  it('should be return survey', async () => {
     const mockSurveyId = randomUUID();
-    const mockQuestionId = randomUUID()
-    
-    const mockGetSurvey = jest.spyOn<any, any>(mockSurveyRepository, 'getSurveyById').mockImplementation(() => Promise.resolve({
-      id: mockSurveyId,
-      name: 'Survey',
-      title: 'Customer Survey',
-      questions: [
-        {
-          id: mockQuestionId,
-          surveyId: mockSurveyId,
-          question: 'Question',
-          order: 1,
-          customerAnswers: [
+    const mockQuestionId = randomUUID();
+
+    const mockGetSurvey = jest
+      .spyOn<any, any>(mockSurveyRepository, 'getSurveyById')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockSurveyId,
+          name: 'Survey',
+          title: 'Customer Survey',
+          questions: [
             {
-              id: randomUUID(),
-              costumerId: randomUUID(),
-              answer: 'Yes',
-              questionId: mockQuestionId
+              id: mockQuestionId,
+              surveyId: mockSurveyId,
+              question: 'Question',
+              order: 1,
+              customerAnswers: [
+                {
+                  id: randomUUID(),
+                  costumerId: randomUUID(),
+                  answer: 'Yes',
+                  questionId: mockQuestionId,
+                },
+                {
+                  id: randomUUID(),
+                  costumerId: randomUUID(),
+                  answer: 'Yes',
+                  questionId: mockQuestionId,
+                },
+                {
+                  id: randomUUID(),
+                  costumerId: randomUUID(),
+                  answer: 'No',
+                  questionId: mockQuestionId,
+                },
+                {
+                  id: randomUUID(),
+                  costumerId: randomUUID(),
+                  answer: 'No',
+                  questionId: mockQuestionId,
+                },
+              ],
             },
-            {
-              id: randomUUID(),
-              costumerId: randomUUID(),
-              answer: 'Yes',
-              questionId: mockQuestionId
-            },
-            {
-              id: randomUUID(),
-              costumerId: randomUUID(),
-              answer: 'No',
-              questionId: mockQuestionId
-            },
-            {
-              id: randomUUID(),
-              costumerId: randomUUID(),
-              answer: 'No',
-              questionId: mockQuestionId
-            }
-          ]
-        }
-      ]
-    }))
+          ],
+        }),
+      );
 
     const survey = await service.getSurvey();
-    expect(mockGetSurvey).toHaveBeenCalledWith('29551fe2-3059-44d9-ab1a-f5318368b88f')
+    expect(mockGetSurvey).toHaveBeenCalledWith(
+      '29551fe2-3059-44d9-ab1a-f5318368b88f',
+    );
     expect(survey).toMatchObject({
       id: mockSurveyId,
       name: 'Survey',
@@ -93,9 +99,9 @@ describe('SurveyService', () => {
           question: 'Question',
           customerAnswers: [
             { label: 'Yes', quantity: 2 },
-            { label: 'No', quantity: 2 }
+            { label: 'No', quantity: 2 },
           ],
-        }
+        },
       ],
     });
   });

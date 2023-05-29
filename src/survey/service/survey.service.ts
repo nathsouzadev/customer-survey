@@ -1,26 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
-import { Survey } from '../dto/survey.dto';
-import { fakeSurvey } from './survey';
 import { CustomerService } from '../../customer/customer.service';
 import { randomUUID } from 'crypto';
 import { CustomerAnswer } from '@prisma/client';
 import { CustomerSurveyModel } from '../../customer/model/customerSurvey.model';
 import { SurveyRepository } from '../repository/survey.repository';
-import { SurveyResults } from '../model/surveyResult';
-
-const survey: Survey = fakeSurvey;
 
 @Injectable()
 export class SurveyService {
   constructor(
     private readonly surveyRepository: SurveyRepository,
-    private readonly customerService: CustomerService
+    private readonly customerService: CustomerService,
   ) {}
-  getSurvey = async(): Promise<SurveyModel> => {
-    const survey = await this.surveyRepository.getSurveyById('29551fe2-3059-44d9-ab1a-f5318368b88f')
+  getSurvey = async (): Promise<SurveyModel> => {
+    const survey = await this.surveyRepository.getSurveyById(
+      '29551fe2-3059-44d9-ab1a-f5318368b88f',
+    );
 
-    const questions = []
+    const questions = [];
 
     for (const question of survey.questions) {
       const orderedAnswers = [];
@@ -43,11 +40,11 @@ export class SurveyService {
       question.customerAnswers = orderedAnswers;
       questions.push(question);
     }
-  
+
     return {
       ...survey,
-      questions
-    }
+      questions,
+    };
   };
 
   addAnswerToSurvey = async (userAnswer: {
@@ -59,9 +56,7 @@ export class SurveyService {
   }> => {
     const {
       customerId,
-      survey: {
-        questions
-      }
+      survey: { questions },
     }: CustomerSurveyModel = await this.customerService.getSurvey(
       userAnswer.customer,
     );

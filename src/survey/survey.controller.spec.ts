@@ -32,7 +32,7 @@ describe('SurveyController', () => {
         {
           provide: SurveyRepository,
           useValue: {},
-        }
+        },
       ],
     }).compile();
 
@@ -40,26 +40,28 @@ describe('SurveyController', () => {
     mockSurveyService = module.get<SurveyService>(SurveyService);
   });
 
-  it('should be return survey', async() => {
-    jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() => Promise.resolve({
-      id: 'survey',
-      name: 'Exampled Survey',
-      title: 'Customer Experience',
-      questions: [
-        {
-          id: 'question',
-          surveyId: 'survey',
-          question: 'Como você avalia o nosso atendimento?',
-          answers: [
-            { label: 'bom', quantity: 3 },
-            { label: 'regular', quantity: 2 },
-            { label: 'ruim', quantity: 1 },
-          ],
-        },
-      ],
-    }));
+  it('should be return survey', async () => {
+    jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() =>
+      Promise.resolve({
+        id: 'survey',
+        name: 'Exampled Survey',
+        title: 'Customer Experience',
+        questions: [
+          {
+            id: 'question',
+            surveyId: 'survey',
+            question: 'Como você avalia o nosso atendimento?',
+            answers: [
+              { label: 'bom', quantity: 3 },
+              { label: 'regular', quantity: 2 },
+              { label: 'ruim', quantity: 1 },
+            ],
+          },
+        ],
+      }),
+    );
 
-    const response = await controller.getSurvey()
+    const response = await controller.getSurvey();
     expect(response).toMatchObject({
       id: 'survey',
       name: 'Exampled Survey',
