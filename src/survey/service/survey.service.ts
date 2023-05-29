@@ -52,7 +52,7 @@ export class SurveyService {
     const mySurvey: any = await this.customerService.getSurvey(
       userAnswer.customer,
     );
-    
+
     const labels = mySurvey.survey.questions[0].answers.map(
       (answer) => answer.label,
     );
