@@ -25,7 +25,21 @@ export class CustomerService {
   getSurvey = async (phoneNumber: string): Promise<CustomerSurveyModel> => {
     const { id: customerId } = await this.getCustomer(phoneNumber);
 
-    return this.customerSurveyRepository.getSurveyByCustomerId(customerId);
+    const customerSurvey = await this.customerSurveyRepository.getSurveyByCustomerId(customerId);
+
+    customerSurvey.survey.questions.sort((a, b) => {
+      if(a.order < b.order){
+        return -1
+      }
+
+      if(a.order > b.order){
+        return 1
+      }
+
+      return 0
+    })
+
+    return customerSurvey
   };
 
   getCustomerAnswersToSurvey = async (

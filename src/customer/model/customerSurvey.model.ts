@@ -13,10 +13,11 @@ interface SurveyModel {
   questions: QuestionModel[];
 }
 
-interface QuestionModel {
+export interface QuestionModel {
   id: string;
   surveyId: string;
   question: string;
+  order: number;
   answers: Answer[];
 }
 

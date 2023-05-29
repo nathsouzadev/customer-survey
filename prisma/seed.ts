@@ -102,12 +102,14 @@ const questions = [
   {
     id: '310db204-c0bb-4454-8424-d8783f99afb1',
     surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
-    question: 'Question 2'
+    question: 'Question 2',
+    order: 2
   },
   {
     id: '35958c5c-bcaf-4851-803b-27c3f837624f',
     surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
-    question: 'Question 1'
+    question: 'Question 1',
+    order: 1
   }
 ]
 
