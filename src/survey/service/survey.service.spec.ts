@@ -161,7 +161,7 @@ describe('SurveyService', () => {
         questionId: mockQuestionId,
         answer: 'bom',
       },
-      nextQuestion: 'Question 2',
+      nextQuestion: 'Question 2 \n1 - bom\n2 - regular\n3 - ruim',
     });
   });
 

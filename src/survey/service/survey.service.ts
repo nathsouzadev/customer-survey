@@ -84,12 +84,30 @@ export class SurveyService {
       answer: labels[Number(userAnswer.answer) - 1],
     });
 
+    const nextQuestion =
+      questions.length > customerAnswers.length + 1
+        ? `${
+            questions[customerAnswers.length + 1].question
+          } \n${this.getOptions(questions[customerAnswers.length + 1].answers)}`
+        : null;
+
+    console.log(nextQuestion);
+
     return {
       answerReceived: answer,
-      nextQuestion:
-        questions.length > customerAnswers.length + 1
-          ? questions[customerAnswers.length + 1].question
-          : null,
+      nextQuestion,
     };
+  };
+
+  getOptions = (options) => {
+    let option;
+
+    options.forEach((answer, index) => {
+      index === 0
+        ? (option = `${answer.answer} - ${answer.label}`)
+        : (option = option + `\n${answer.answer} - ${answer.label}`);
+    });
+
+    return option;
   };
 }

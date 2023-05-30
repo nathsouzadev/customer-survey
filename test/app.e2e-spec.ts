@@ -37,7 +37,7 @@ describe('AppController (e2e)', () => {
         expect(response.body).toMatchObject({
           status: 'ok',
           response: {
-            body: 'Question 2',
+            body: 'Question 2 \n1 - bom\n2 - regular\n3 - ruim',
             direction: 'outbound-api',
             from: 'whatsapp:+14155238886',
             to: 'whatsapp:+5511999991111',
