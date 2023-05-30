@@ -21,14 +21,14 @@ describe('AnswerController (e2e)', () => {
       .expect(200)
       .then((response) => {
         expect(response.body).toMatchObject({
-          id: 'survey',
-          name: 'Exampled Survey',
-          title: 'Customer Experience',
+          id: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+          name: 'Survey',
+          title: 'Customer Survey',
           questions: [
             {
-              id: 'question',
-              surveyId: 'survey',
-              question: 'Como você avalia o nosso atendimento?',
+              id: '35958c5c-bcaf-4851-803b-27c3f837624f',
+              surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+              question: 'Question 1',
               answers: [
                 { label: 'bom', quantity: 3 },
                 { label: 'regular', quantity: 2 },
@@ -36,14 +36,10 @@ describe('AnswerController (e2e)', () => {
               ],
             },
             {
-              id: 'question-b',
-              surveyId: 'survey',
-              question: 'Você agendou um novo atendimento?',
-              answers: [
-                { label: 'bom', quantity: 3 },
-                { label: 'regular', quantity: 2 },
-                { label: 'ruim', quantity: 1 },
-              ],
+              id: '310db204-c0bb-4454-8424-d8783f99afb1',
+              surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+              question: 'Question 2',
+              answers: [],
             },
           ],
         });
