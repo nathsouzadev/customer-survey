@@ -17,7 +17,12 @@ export class SurveyService {
       '29551fe2-3059-44d9-ab1a-f5318368b88f',
     );
 
-    const questions = [];
+    const surveyData: SurveyModel = {
+      id: survey.id,
+      name: survey.name,
+      title: survey.title,
+      questions: [],
+    };
 
     for (const question of survey.questions) {
       const orderedAnswers = [];
@@ -37,14 +42,15 @@ export class SurveyService {
         }
       }
 
-      question.customerAnswers = orderedAnswers;
-      questions.push(question);
+      surveyData.questions.push({
+        id: question.id,
+        surveyId: question.surveyId,
+        question: question.question,
+        answers: orderedAnswers,
+      });
     }
 
-    return {
-      ...survey,
-      questions,
-    };
+    return surveyData;
   };
 
   addAnswerToSurvey = async (userAnswer: {

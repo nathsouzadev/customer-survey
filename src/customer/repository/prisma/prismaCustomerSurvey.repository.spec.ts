@@ -60,6 +60,9 @@ describe('PrismaCustomerSurveyRepository', () => {
               include: {
                 answers: true,
               },
+              orderBy: {
+                order: 'asc',
+              },
             },
           },
         },

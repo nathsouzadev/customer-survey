@@ -78,7 +78,7 @@ const customerAnswers = [
 ]
 
 const survey = {
-  id: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+  id: '29551fe2-3059-44d9-ab1a-f5318368b88f',
   name: 'Survey',
   title: 'Customer Survey'
 }
@@ -88,26 +88,26 @@ const customerSurveys = [
     id: '3fa78c6b-d18f-4900-9c2d-498982ab0d80',
     active: true,
     customerId: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
-    surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7'
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f'
   },
   {
     id: '46ab7918-aee1-4d56-8d9a-de415aff17be',
     active: true,
     customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
-    surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7'
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f'
   }
 ]
 
 const questions = [
   {
     id: '310db204-c0bb-4454-8424-d8783f99afb1',
-    surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
     question: 'Question 2',
     order: 2
   },
   {
     id: '35958c5c-bcaf-4851-803b-27c3f837624f',
-    surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
     question: 'Question 1',
     order: 1
   }
