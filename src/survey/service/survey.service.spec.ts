@@ -97,7 +97,7 @@ describe('SurveyService', () => {
           id: mockQuestionId,
           surveyId: mockSurveyId,
           question: 'Question',
-          customerAnswers: [
+          answers: [
             { label: 'Yes', quantity: 2 },
             { label: 'No', quantity: 2 },
           ],

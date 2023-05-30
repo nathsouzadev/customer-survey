@@ -78,6 +78,9 @@ describe('PrismaSurveyRepository', () => {
           include: {
             customerAnswers: true,
           },
+          orderBy: {
+            order: 'asc',
+          },
         },
       },
     });

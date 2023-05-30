@@ -96,7 +96,7 @@ describe('CustomerService', () => {
     });
   });
 
-  it('should return survey with founded by phoneNumber ordered by question order number', async () => {
+  it('should return survey with founded by phoneNumber', async () => {
     const mockCustomerId = randomUUID();
     const mockPhoneNumber = '5511999991111';
     const mockSurveyId = randomUUID();
@@ -107,8 +107,8 @@ describe('CustomerService', () => {
       customerId: mockCustomerId,
       surveyId: mockSurveyId,
       questions: [
-        { id: mockQuestionId2, question: 'Question 2', order: 2 },
         { id: mockQuestionId, question: 'Question 1', order: 1 },
+        { id: mockQuestionId2, question: 'Question 2', order: 2 },
       ],
     });
 

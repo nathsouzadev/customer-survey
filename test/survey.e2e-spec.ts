@@ -20,14 +20,15 @@ describe('AnswerController (e2e)', () => {
       .get('/survey')
       .expect(200)
       .then((response) => {
+        console.log(response.body);
         expect(response.body).toMatchObject({
-          id: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+          id: '29551fe2-3059-44d9-ab1a-f5318368b88f',
           name: 'Survey',
           title: 'Customer Survey',
           questions: [
             {
               id: '35958c5c-bcaf-4851-803b-27c3f837624f',
-              surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+              surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
               question: 'Question 1',
               answers: [
                 { label: 'bom', quantity: 3 },
@@ -37,7 +38,7 @@ describe('AnswerController (e2e)', () => {
             },
             {
               id: '310db204-c0bb-4454-8424-d8783f99afb1',
-              surveyId: '2f578a7b-8930-4a1b-8998-f15142a090b7',
+              surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
               question: 'Question 2',
               answers: [],
             },
