@@ -40,6 +40,11 @@ export class SurveyService {
       question.customerAnswers = orderedAnswers;
       questions.push(question);
     }
+    
+    console.log{
+      ...survey,
+      questions,
+    }
 
     return {
       ...survey,
