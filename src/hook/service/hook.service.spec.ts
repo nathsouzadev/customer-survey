@@ -58,7 +58,7 @@ describe('HookService', () => {
             questionId: randomUUID(),
             answer: 'bom',
           },
-          nextQuestion: 'Next question',
+          nextQuestion: 'Next Question \n1 - bom\n2 - regular\n3 - ruim',
         }),
       );
 
@@ -75,7 +75,7 @@ describe('HookService', () => {
     expect(mockReplyToUser).toHaveBeenCalledWith({
       message: mockMessage,
       isValid: true,
-      replyMessage: 'Next question',
+      replyMessage: 'Next Question \n1 - bom\n2 - regular\n3 - ruim',
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
