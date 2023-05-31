@@ -61,3 +61,10 @@ model CustomerSurvey {
   survey Survey @relation(fields: [surveyId], references: [id])
   surveyId String
 }
+
+model Company {
+  id String @id @default(uuid())
+  active Boolean
+  name String
+  email String @unique
+}
