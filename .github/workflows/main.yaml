@@ -65,7 +65,7 @@ jobs:
     - name: Run unit tests
       run: yarn test
   
-  e2e:
+  integration:
     runs-on: ubuntu-latest
 
     strategy:
@@ -98,15 +98,15 @@ jobs:
     - name: Seed database
       run: yarn seed:db
 
-    - name: Running e2e tests
-      run: yarn test:e2e
+    - name: Running integration tests
+      run: yarn test:integration
 
   stage:
-    if: needs.lint.result == 'success' && needs.test.result == 'success' && needs.e2e.result == 'success'
+    if: needs.lint.result == 'success' && needs.test.result == 'success' && needs.integration.result == 'success'
     needs:
       - lint
       - test
-      - e2e
+      - integration
     runs-on: ubuntu-latest
 
     strategy:

@@ -12,10 +12,8 @@ export class SurveyService {
     private readonly surveyRepository: SurveyRepository,
     private readonly customerService: CustomerService,
   ) {}
-  getSurvey = async (): Promise<SurveyModel> => {
-    const survey = await this.surveyRepository.getSurveyById(
-      '29551fe2-3059-44d9-ab1a-f5318368b88f',
-    );
+  getSurvey = async (surveyId: string): Promise<SurveyModel> => {
+    const survey = await this.surveyRepository.getSurveyById(surveyId);
 
     const surveyData: SurveyModel = {
       id: survey.id,

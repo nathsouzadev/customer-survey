@@ -19,4 +19,14 @@ export class PrismaCompanyRepository implements CompanyRepository {
         ...createCompanyRequest,
       },
     });
+
+  getCompanyByEmail = async (email: string): Promise<Company> =>
+    this.prisma.company.findFirst({
+      where: {
+        email,
+      },
+      include: {
+        surveys: true,
+      },
+    });
 }

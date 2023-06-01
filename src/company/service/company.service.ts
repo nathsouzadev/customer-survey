@@ -11,4 +11,7 @@ export class CompanyService {
     createCompanyRequest: CreateCompanyRequestDTO,
   ): Promise<Company> =>
     this.companyRepository.saveCompany(createCompanyRequest);
+
+  getCompanyByEmail = async (email: string): Promise<Company> =>
+    this.companyRepository.getCompanyByEmail(email);
 }

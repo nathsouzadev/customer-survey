@@ -49,4 +49,43 @@ describe('CompanyController', () => {
       email: 'company@email.com',
     });
   });
+
+  it('should be return company with email', async () => {
+    const mockCompanyId = randomUUID();
+    const mockGetCompany = jest
+      .spyOn(mockCompanyService, 'getCompanyByEmail')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockCompanyId,
+          active: true,
+          name: 'Company',
+          email: 'company@email.com',
+          surveys: [
+            {
+              id: randomUUID(),
+              companyId: mockCompanyId,
+              name: 'Survey',
+              title: 'Main survey',
+            },
+          ],
+        }),
+      );
+
+    const company = await controller.getCompanyByEmail('company@email.com');
+    expect(mockGetCompany).toHaveBeenCalledWith('company@email.com');
+    expect(company).toMatchObject({
+      id: mockCompanyId,
+      active: true,
+      name: 'Company',
+      email: 'company@email.com',
+      surveys: [
+        {
+          id: expect.any(String),
+          companyId: mockCompanyId,
+          name: 'Survey',
+          title: 'Main survey',
+        },
+      ],
+    });
+  });
 });

@@ -5,6 +5,7 @@ import { HookModule } from './hook/hook.module';
 import { SurveyModule } from './survey/survey.module';
 import { CustomerModule } from './customer/customer.module';
 import { CompanyModule } from './company/company.module';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,6 +21,22 @@ import { CompanyModule } from './company/company.module';
     SurveyModule,
     CustomerModule,
     CompanyModule,
+    RouterModule.register([
+      {
+        path: '',
+        module: HookModule,
+      },
+      {
+        path: 'company',
+        module: CompanyModule,
+        children: [
+          {
+            path: 'survey',
+            module: SurveyModule,
+          },
+        ],
+      },
+    ]),
   ],
 })
 export class AppModule {}

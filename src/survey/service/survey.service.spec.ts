@@ -85,10 +85,8 @@ describe('SurveyService', () => {
         }),
       );
 
-    const survey = await service.getSurvey();
-    expect(mockGetSurvey).toHaveBeenCalledWith(
-      '29551fe2-3059-44d9-ab1a-f5318368b88f',
-    );
+    const survey = await service.getSurvey(mockSurveyId);
+    expect(mockGetSurvey).toHaveBeenCalledWith(mockSurveyId);
     expect(survey).toMatchObject({
       id: mockSurveyId,
       companyId: expect.any(String),

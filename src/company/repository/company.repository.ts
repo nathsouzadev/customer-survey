@@ -5,4 +5,6 @@ export abstract class CompanyRepository {
   abstract saveCompany(
     createCompanyRequest: CreateCompanyRequestDTO,
   ): Promise<Company>;
+
+  abstract getCompanyByEmail(email: string): Promise<Company>;
 }
