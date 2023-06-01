@@ -42,7 +42,7 @@ describe('SurveyController', () => {
   });
 
   it('should be return survey', async () => {
-    const mockSurveyId = randomUUID()
+    const mockSurveyId = randomUUID();
     jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() =>
       Promise.resolve({
         id: mockSurveyId,
