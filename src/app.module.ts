@@ -24,7 +24,7 @@ import { RouterModule } from '@nestjs/core';
     RouterModule.register([
       {
         path: '',
-        module: HookModule
+        module: HookModule,
       },
       {
         path: 'company',
@@ -32,11 +32,11 @@ import { RouterModule } from '@nestjs/core';
         children: [
           {
             path: 'survey',
-            module: SurveyModule
-          }
-        ]
-      }
-    ])
+            module: SurveyModule,
+          },
+        ],
+      },
+    ]),
   ],
 })
 export class AppModule {}
