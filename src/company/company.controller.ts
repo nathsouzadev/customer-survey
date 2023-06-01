@@ -3,7 +3,7 @@ import { CompanyService } from './service/company.service';
 import { CreateCompanyRequestDTO } from './dto/createCompanyRequest.dto';
 import { Company } from '@prisma/client';
 
-@Controller('company')
+@Controller()
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 

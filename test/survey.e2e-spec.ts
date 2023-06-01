@@ -17,7 +17,7 @@ describe('AnswerController (e2e)', () => {
 
   it('/survey (GET)', async () => {
     return request(app.getHttpServer())
-      .get('/survey')
+      .get('/company/survey')
       .expect(200)
       .then((response) => {
         console.log(response.body);

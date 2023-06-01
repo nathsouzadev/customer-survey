@@ -43,4 +43,69 @@ describe('CompanyController (e2e)', () => {
         });
       });
   });
+
+  it('should not create company with name empty', async () => {
+    return request(app.getHttpServer())
+      .post('/company')
+      .send({
+        name: '',
+        email: 'new-company@email.com',
+      })
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body).toMatchObject({
+          error: 'Bad Request',
+          message: [
+            'Required field'
+          ]
+        });
+      });
+  });
+
+  it('should not create company with email empty', async () => {
+    return request(app.getHttpServer())
+      .post('/company')
+      .send({
+        name: 'new-company',
+        email: '',
+      })
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body).toMatchObject({
+          error: 'Bad Request',
+          message: [
+            'Inform a valid email',
+            'Required field'
+          ]
+        });
+      });
+  });
+
+  it('should not create company with invalid email', async () => {
+    return request(app.getHttpServer())
+      .post('/company')
+      .send({
+        name: 'new-company',
+        email: 'new-company',
+      })
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body).toMatchObject({
+          error: 'Bad Request',
+          message: [
+            'Inform a valid email'
+          ]
+        });
+      });
+  });
+
+  it('should not create company with email already exists', async () => {
+    return request(app.getHttpServer())
+      .post('/company')
+      .send({
+        name: 'new-company',
+        email: 'company@email.com',
+      })
+      .expect(500)
+  });
 });
