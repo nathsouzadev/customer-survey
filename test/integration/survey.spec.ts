@@ -18,7 +18,7 @@ describe('SurveyController', () => {
   describe('Get survey by surveyId', () => {
     it('get survey', async () => {
       return request(app.getHttpServer())
-        .get('/company/survey')
+        .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
         .expect(200)
         .then((response) => {
           console.log(response.body);
