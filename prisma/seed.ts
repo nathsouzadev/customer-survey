@@ -1,5 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 
+const companys = [
+  {
+    id: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+    active: true,
+    name: 'Company',
+    email: 'company@email.com'
+  }
+]
+
 const customers = [
   {
     id: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
@@ -80,7 +89,8 @@ const customerAnswers = [
 const survey = {
   id: '29551fe2-3059-44d9-ab1a-f5318368b88f',
   name: 'Survey',
-  title: 'Customer Survey'
+  title: 'Customer Survey',
+  companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
 }
 
 const customerSurveys = [
@@ -155,6 +165,12 @@ const questionAnswers = [
 const prisma = new PrismaClient({ log: ['query'] });
 
 const main = async() => {
+  for(const company of companys){
+    await prisma.company.create({
+      data: company
+    })
+  }
+
   for (const customer of customers){
     await prisma.customer.create({
       data: customer

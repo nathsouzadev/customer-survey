@@ -75,6 +75,7 @@ describe('PrismaCustomerSurveyRepository', () => {
       surveyId: mockSurveyId,
       survey: {
         id: mockSurveyId,
+        companyId: expect.any(String),
         name: 'Survey',
         title: 'Main survey',
         questions: [

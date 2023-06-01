@@ -1,5 +1,6 @@
 export class SurveyModel {
   id: string;
+  companyId: string;
   name: string;
   title: string;
   questions: Question[];

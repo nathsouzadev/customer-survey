@@ -22,8 +22,8 @@ describe('CompanyController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/company')
       .send({
-        name: 'Company',
-        email: 'company@email.com',
+        name: 'New Company',
+        email: 'new-company@email.com',
       })
       .expect(201)
       .then(async (response) => {
@@ -32,8 +32,8 @@ describe('CompanyController (e2e)', () => {
         expect(response.body).toMatchObject({
           id: expect.any(String),
           active: true,
-          name: 'Company',
-          email: 'company@email.com',
+          name: 'New Company',
+          email: 'new-company@email.com',
         });
 
         await prismaClient.company.delete({

@@ -10,6 +10,7 @@ interface SurveyModel {
   id: string;
   name: string;
   title: string;
+  companyId: string;
   questions: QuestionModel[];
 }
 

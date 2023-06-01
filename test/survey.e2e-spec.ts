@@ -25,6 +25,7 @@ describe('AnswerController (e2e)', () => {
           id: '29551fe2-3059-44d9-ab1a-f5318368b88f',
           name: 'Survey',
           title: 'Customer Survey',
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
           questions: [
             {
               id: '35958c5c-bcaf-4851-803b-27c3f837624f',

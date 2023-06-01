@@ -29,6 +29,8 @@ model CustomerAnswer {
 
 model Survey {
   id String @id @default(uuid())
+  company Company @relation(fields: [companyId], references: [id])
+  companyId String
   name String @db.VarChar(255)
   title String @db.VarChar(255)
   questions Question[]
@@ -67,4 +69,5 @@ model Company {
   active Boolean
   name String
   email String @unique
+  surveys Survey[]
 }

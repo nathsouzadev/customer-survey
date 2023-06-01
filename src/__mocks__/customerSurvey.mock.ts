@@ -54,6 +54,7 @@ export const mockCustomerSurvey = (body: {
   surveyId: body.surveyId,
   survey: {
     id: body.surveyId,
+    companyId: randomUUID(),
     name: 'Survey',
     title: 'Main survey',
     questions: body.questions.map((question) =>
