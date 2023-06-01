@@ -45,6 +45,7 @@ describe('SurveyService', () => {
       .mockImplementation(() =>
         Promise.resolve({
           id: mockSurveyId,
+          companyId: randomUUID(),
           name: 'Survey',
           title: 'Customer Survey',
           questions: [
@@ -90,6 +91,7 @@ describe('SurveyService', () => {
     );
     expect(survey).toMatchObject({
       id: mockSurveyId,
+      companyId: expect.any(String),
       name: 'Survey',
       title: 'Customer Survey',
       questions: [

@@ -19,6 +19,7 @@ export class SurveyService {
 
     const surveyData: SurveyModel = {
       id: survey.id,
+      companyId: survey.companyId,
       name: survey.name,
       title: survey.title,
       questions: [],

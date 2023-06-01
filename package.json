@@ -29,27 +29,29 @@
     "reset:db": "yarn clear:db && yarn seed:db",
     "ci:local": "yarn test && yarn test:e2e",
     "local": "yarn install && yarn db && yarn prisma migrate deploy && yarn seed:db && yarn test && yarn test:e2e",
-    "prisma:generate": "prisma generate --schema=./src/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate dev --schema=./src/prisma/schema.prisma",
-    "prisma:deploy": "npx prisma migrate deploy --schema=./src/prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema=./src/config/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema=./src/config/prisma/schema.prisma",
+    "prisma:deploy": "npx prisma migrate deploy --schema=./src/config/prisma/schema.prisma",
     "postinstall": "yarn prisma:generate"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/terminus": "^9.2.2",
     "@prisma/client": "^4.14.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "prisma": "^4.14.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "twilio": "^4.11.1",
-    "prisma": "^4.14.1"
+    "twilio": "^4.11.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

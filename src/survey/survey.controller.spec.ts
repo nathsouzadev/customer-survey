@@ -6,6 +6,7 @@ import { CustomerService } from '../customer/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 import { SurveyRepository } from './repository/survey.repository';
+import { randomUUID } from 'crypto';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -44,6 +45,7 @@ describe('SurveyController', () => {
     jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() =>
       Promise.resolve({
         id: 'survey',
+        companyId: randomUUID(),
         name: 'Exampled Survey',
         title: 'Customer Experience',
         questions: [
@@ -64,6 +66,7 @@ describe('SurveyController', () => {
     const response = await controller.getSurvey();
     expect(response).toMatchObject({
       id: 'survey',
+      companyId: expect.any(String),
       name: 'Exampled Survey',
       title: 'Customer Experience',
       questions: [
