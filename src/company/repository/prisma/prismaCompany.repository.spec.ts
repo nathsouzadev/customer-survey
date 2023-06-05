@@ -17,6 +17,7 @@ describe('PrismaCompanyRepository', () => {
             company: {
               create: jest.fn(),
               findFirst: jest.fn(),
+              exclude: jest.fn(),
             },
           },
         },
@@ -31,6 +32,7 @@ describe('PrismaCompanyRepository', () => {
     const mockCreateCompanyRequest = {
       name: 'Company',
       email: 'company@email.com',
+      password: 'password'
     };
 
     const mockCreate = jest
@@ -40,6 +42,7 @@ describe('PrismaCompanyRepository', () => {
         active: true,
         name: 'Company',
         email: 'company@email.com',
+        password: 'password'
       });
 
     const company = await repository.saveCompany(mockCreateCompanyRequest);
@@ -67,6 +70,7 @@ describe('PrismaCompanyRepository', () => {
         active: true,
         name: 'Company',
         email: 'company@email.com',
+        password: 'password',
         surveys: [
           {
             id: randomUUID(),

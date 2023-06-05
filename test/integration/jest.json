@@ -2,11 +2,7 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
-<<<<<<< Updated upstream:test/integration/jest.json
   "testRegex": ".spec.ts$",
-=======
-  "testRegex": "(login).spec.ts$",
->>>>>>> Stashed changes:test/jest-e2e.json
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   }

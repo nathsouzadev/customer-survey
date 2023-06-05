@@ -70,4 +70,5 @@ model Company {
   name String
   email String @unique
   surveys Survey[]
+  password String
 }

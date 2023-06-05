@@ -5,7 +5,8 @@ const companys = [
     id: '8defa50c-1187-49f9-95af-9f1c22ec94af',
     active: true,
     name: 'Company',
-    email: 'company@email.com'
+    email: 'company@email.com',
+    password: '$2a$08$GkIOV23NZSjVI9Mzr.I6FeZT5HkhgeP3L5CtD636jOSyFxzI9rH1K'
   }
 ]
 

@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyService } from './company.service';
 import { CompanyRepository } from '../repository/company.repository';
 import { randomUUID } from 'crypto';
+import * as bcrypt from 'bcryptjs'
+
+jest.mock('bcryptjs')
 
 describe('CompanyService', () => {
   let service: CompanyService;
@@ -29,7 +32,10 @@ describe('CompanyService', () => {
     const mockCreateRequest = {
       name: 'Company',
       email: 'company@email.com',
+      password: 'password'
     };
+
+    jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('3ncrypt3d'))
     const mockSaveCompany = jest
       .spyOn(mockCompanyRepository, 'saveCompany')
       .mockImplementation(() =>
@@ -42,7 +48,10 @@ describe('CompanyService', () => {
       );
 
     const company = await service.createCompany(mockCreateRequest);
-    expect(mockSaveCompany).toHaveBeenCalledWith(mockCreateRequest);
+    expect(mockSaveCompany).toHaveBeenCalledWith({
+      ...mockCreateRequest,
+      password: '3ncrypt3d'
+    });
     expect(company).toMatchObject({
       id: expect.any(String),
       active: true,
