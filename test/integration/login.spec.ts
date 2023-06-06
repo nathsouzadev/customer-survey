@@ -5,7 +5,7 @@ import { AppModule } from '../../src/app.module';
 
 describe('CompanyController', () => {
   let app: INestApplication;
-  process.env.token = 'dev-secret';
+  process.env.TOKEN = 'dev-secret';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
