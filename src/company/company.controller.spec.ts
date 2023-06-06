@@ -18,7 +18,7 @@ describe('CompanyController', () => {
           provide: CompanyRepository,
           useValue: {},
         },
-        AppLogger
+        AppLogger,
       ],
     }).compile();
 
@@ -30,7 +30,7 @@ describe('CompanyController', () => {
     const mockCreateCompanyRequest = {
       name: 'Company',
       email: 'company@email.com',
-      password: 'password'
+      password: 'password',
     };
     const mockCreate = jest
       .spyOn(mockCompanyService, 'createCompany')

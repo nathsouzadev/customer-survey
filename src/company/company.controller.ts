@@ -15,22 +15,27 @@ import { CompanyModel } from './model/company.model';
 export class CompanyController {
   constructor(
     private readonly companyService: CompanyService,
-    private readonly logger: AppLogger
-    ) {}
+    private readonly logger: AppLogger,
+  ) {}
 
   @Post()
   async createCompany(
     @Body(new ValidationPipe()) createCompanyRequest: CreateCompanyRequestDTO,
   ): Promise<CompanyModel> {
-    this.logger.logger({
-      requestData: createCompanyRequest,
-      message: 'Request received'
-    }, CompanyController.name)
+    this.logger.logger(
+      {
+        requestData: createCompanyRequest,
+        message: 'Request received',
+      },
+      CompanyController.name,
+    );
     return this.companyService.createCompany(createCompanyRequest);
   }
 
   @Get(':email')
-  async getCompanyByEmail(@Param('email') email: string): Promise<CompanyModel> {
+  async getCompanyByEmail(
+    @Param('email') email: string,
+  ): Promise<CompanyModel> {
     return this.companyService.getCompanyByEmail(email);
   }
 }

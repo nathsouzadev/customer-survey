@@ -3,9 +3,9 @@ export const deepCopy = (obj) => {
     return obj;
   }
 
-  let copy = {};
+  const copy = {};
 
-  for (let key in obj) {
+  for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       copy[key] = deepCopy(obj[key]);
     }

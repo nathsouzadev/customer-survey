@@ -7,5 +7,5 @@ export const companyProviders = [
     provide: CompanyRepository,
     useClass: PrismaCompanyRepository,
   },
-  AppLogger
+  AppLogger,
 ];

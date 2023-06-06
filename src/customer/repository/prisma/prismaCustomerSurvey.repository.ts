@@ -24,9 +24,9 @@ export class PrismaCustomerSurveyRepository
               include: {
                 answers: {
                   orderBy: {
-                    answer: 'asc'
-                  }
-                }
+                    answer: 'asc',
+                  },
+                },
               },
               orderBy: {
                 order: 'asc',
