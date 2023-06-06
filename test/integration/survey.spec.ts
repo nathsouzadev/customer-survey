@@ -21,7 +21,6 @@ describe('SurveyController', () => {
         .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
         .expect(200)
         .then((response) => {
-          console.log(response.body);
           expect(response.body).toMatchObject({
             id: '29551fe2-3059-44d9-ab1a-f5318368b88f',
             name: 'Survey',

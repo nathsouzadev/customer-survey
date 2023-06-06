@@ -7,4 +7,7 @@ export class CreateCompanyRequestDTO {
   @IsNotEmpty({ message: 'Required field' })
   @IsEmail({}, { message: 'Inform a valid email' })
   email: string;
+
+  @IsNotEmpty({ message: 'Required field' })
+  password: string;
 }

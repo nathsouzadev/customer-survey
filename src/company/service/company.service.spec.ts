@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CompanyService } from './company.service';
 import { CompanyRepository } from '../repository/company.repository';
 import { randomUUID } from 'crypto';
+import * as bcrypt from 'bcryptjs';
+import { AppLogger } from '../../utils/appLogger';
+
+jest.mock('bcryptjs');
 
 describe('CompanyService', () => {
   let service: CompanyService;
@@ -16,8 +20,10 @@ describe('CompanyService', () => {
           useValue: {
             saveCompany: jest.fn(),
             getCompanyByEmail: jest.fn(),
+            getCompany: jest.fn(),
           },
         },
+        AppLogger,
       ],
     }).compile();
 
@@ -29,7 +35,12 @@ describe('CompanyService', () => {
     const mockCreateRequest = {
       name: 'Company',
       email: 'company@email.com',
+      password: 'password',
     };
+
+    jest
+      .spyOn(bcrypt, 'hash')
+      .mockImplementation(() => Promise.resolve('3ncrypt3d'));
     const mockSaveCompany = jest
       .spyOn(mockCompanyRepository, 'saveCompany')
       .mockImplementation(() =>
@@ -42,7 +53,10 @@ describe('CompanyService', () => {
       );
 
     const company = await service.createCompany(mockCreateRequest);
-    expect(mockSaveCompany).toHaveBeenCalledWith(mockCreateRequest);
+    expect(mockSaveCompany).toHaveBeenCalledWith({
+      ...mockCreateRequest,
+      password: '3ncrypt3d',
+    });
     expect(company).toMatchObject({
       id: expect.any(String),
       active: true,
@@ -88,5 +102,60 @@ describe('CompanyService', () => {
         },
       ],
     });
+  });
+
+  it('should be return auth company with correct password', async () => {
+    const mockAuthRequest = {
+      email: 'company@email.com',
+      password: 'password',
+    };
+    jest
+      .spyOn(bcrypt, 'compare')
+      .mockImplementation(() => Promise.resolve(true));
+    const mockGetAuthCompany = jest
+      .spyOn(mockCompanyRepository, 'getCompany')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          name: 'Company',
+          email: 'company@email.com',
+          password: 'password',
+        }),
+      );
+
+    const company = await service.getAuthCompany(mockAuthRequest);
+    expect(mockGetAuthCompany).toHaveBeenCalledWith('company@email.com');
+    expect(company).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      name: 'Company',
+      email: 'company@email.com',
+    });
+  });
+
+  it('should be return null with incorrect password', async () => {
+    const mockAuthRequest = {
+      email: 'company@email.com',
+      password: 'wrong-password',
+    };
+    jest
+      .spyOn(bcrypt, 'compare')
+      .mockImplementation(() => Promise.resolve(false));
+    const mockGetAuthCompany = jest
+      .spyOn(mockCompanyRepository, 'getCompany')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          name: 'Company',
+          email: 'company@email.com',
+          password: 'password',
+        }),
+      );
+
+    const company = await service.getAuthCompany(mockAuthRequest);
+    expect(mockGetAuthCompany).toHaveBeenCalledWith('company@email.com');
+    expect(company).toBeNull();
   });
 });

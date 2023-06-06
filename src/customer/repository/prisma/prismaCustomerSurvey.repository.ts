@@ -22,7 +22,11 @@ export class PrismaCustomerSurveyRepository
           include: {
             questions: {
               include: {
-                answers: true,
+                answers: {
+                  orderBy: {
+                    answer: 'asc',
+                  },
+                },
               },
               orderBy: {
                 order: 'asc',

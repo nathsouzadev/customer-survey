@@ -25,11 +25,11 @@ describe('CompanyController', () => {
         .send({
           name: 'New Company',
           email: 'new-company@email.com',
+          password: 'password',
         })
         .expect(201)
         .then(async (response) => {
           const companyId = response.body.id;
-          console.log(companyId);
           expect(response.body).toMatchObject({
             id: expect.any(String),
             active: true,
@@ -51,6 +51,24 @@ describe('CompanyController', () => {
         .send({
           name: '',
           email: 'new-company@email.com',
+          password: 'password',
+        })
+        .expect(400)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            error: 'Bad Request',
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should not create company with passowrd empty', async () => {
+      return request(app.getHttpServer())
+        .post('/company')
+        .send({
+          name: 'Company',
+          email: 'new-company@email.com',
+          password: '',
         })
         .expect(400)
         .then(async (response) => {
@@ -67,6 +85,7 @@ describe('CompanyController', () => {
         .send({
           name: 'new-company',
           email: '',
+          password: 'password',
         })
         .expect(400)
         .then(async (response) => {
@@ -83,6 +102,7 @@ describe('CompanyController', () => {
         .send({
           name: 'new-company',
           email: 'new-company',
+          password: 'password',
         })
         .expect(400)
         .then(async (response) => {
@@ -99,6 +119,7 @@ describe('CompanyController', () => {
         .send({
           name: 'new-company',
           email: 'company@email.com',
+          password: 'password',
         })
         .expect(500);
     });

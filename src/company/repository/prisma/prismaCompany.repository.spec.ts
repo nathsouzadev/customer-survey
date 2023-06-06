@@ -17,6 +17,7 @@ describe('PrismaCompanyRepository', () => {
             company: {
               create: jest.fn(),
               findFirst: jest.fn(),
+              exclude: jest.fn(),
             },
           },
         },
@@ -31,6 +32,7 @@ describe('PrismaCompanyRepository', () => {
     const mockCreateCompanyRequest = {
       name: 'Company',
       email: 'company@email.com',
+      password: 'password',
     };
 
     const mockCreate = jest
@@ -40,6 +42,7 @@ describe('PrismaCompanyRepository', () => {
         active: true,
         name: 'Company',
         email: 'company@email.com',
+        password: 'password',
       });
 
     const company = await repository.saveCompany(mockCreateCompanyRequest);
@@ -67,6 +70,7 @@ describe('PrismaCompanyRepository', () => {
         active: true,
         name: 'Company',
         email: 'company@email.com',
+        password: 'password',
         surveys: [
           {
             id: randomUUID(),
@@ -99,6 +103,32 @@ describe('PrismaCompanyRepository', () => {
           title: 'Main survey',
         },
       ],
+    });
+  });
+
+  it('should return company with email', async () => {
+    const mockFindFirst = jest
+      .spyOn(mockPrismaService.company, 'findFirst')
+      .mockResolvedValue({
+        id: randomUUID(),
+        active: true,
+        name: 'Company',
+        email: 'company@email.com',
+        password: 'password',
+      });
+
+    const company = await repository.getCompany('company@email.com');
+    expect(mockFindFirst).toHaveBeenCalledWith({
+      where: {
+        email: 'company@email.com',
+      },
+    });
+    expect(company).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      name: 'Company',
+      email: 'company@email.com',
+      password: 'password',
     });
   });
 });

@@ -3,6 +3,7 @@ import { CompanyController } from './company.controller';
 import { CompanyService } from './service/company.service';
 import { CompanyRepository } from './repository/company.repository';
 import { randomUUID } from 'crypto';
+import { AppLogger } from '../utils/appLogger';
 
 describe('CompanyController', () => {
   let controller: CompanyController;
@@ -17,6 +18,7 @@ describe('CompanyController', () => {
           provide: CompanyRepository,
           useValue: {},
         },
+        AppLogger,
       ],
     }).compile();
 
@@ -28,6 +30,7 @@ describe('CompanyController', () => {
     const mockCreateCompanyRequest = {
       name: 'Company',
       email: 'company@email.com',
+      password: 'password',
     };
     const mockCreate = jest
       .spyOn(mockCompanyService, 'createCompany')

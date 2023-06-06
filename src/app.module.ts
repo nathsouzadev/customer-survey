@@ -6,6 +6,7 @@ import { SurveyModule } from './survey/survey.module';
 import { CustomerModule } from './customer/customer.module';
 import { CompanyModule } from './company/company.module';
 import { RouterModule } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,10 +22,15 @@ import { RouterModule } from '@nestjs/core';
     SurveyModule,
     CustomerModule,
     CompanyModule,
+    AuthModule,
     RouterModule.register([
       {
         path: '',
         module: HookModule,
+      },
+      {
+        path: 'login',
+        module: AuthModule,
       },
       {
         path: 'company',
