@@ -11,6 +11,6 @@ export class AuthController {
   @Post()
   async login(@Request() request: any) {
     const data = request as AuthRequestModel;
-    return this.authService.getToken(data.company);
+    return this.authService.getToken(data.user);
   }
 }

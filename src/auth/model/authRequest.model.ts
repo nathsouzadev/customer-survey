@@ -1,9 +1,6 @@
+import { Request } from 'express';
 import { CompanyModel } from '../../company/model/company.model';
 
-export interface AuthRequestModel {
-  body: {
-    email: string;
-    password: string;
-  };
-  company: CompanyModel;
+export interface AuthRequestModel extends Request {
+  user: CompanyModel;
 }

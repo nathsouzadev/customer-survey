@@ -11,7 +11,6 @@ export class HookController {
     console.log(messageRequest);
     const response = await this.hookService.sendMessage(messageRequest);
 
-    console.log(response);
     return {
       status: 'ok',
       response,
