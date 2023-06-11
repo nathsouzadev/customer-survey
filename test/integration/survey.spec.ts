@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { getToken } from './aux/token';
 
 describe('SurveyController', () => {
   let app: INestApplication;
@@ -17,8 +18,11 @@ describe('SurveyController', () => {
 
   describe('Get survey by surveyId', () => {
     it('get survey', async () => {
+      const token = await getToken(app, request);
+
       return request(app.getHttpServer())
         .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+        .auth(token, { type: 'bearer' })
         .expect(200)
         .then((response) => {
           expect(response.body).toMatchObject({
@@ -46,6 +50,13 @@ describe('SurveyController', () => {
             ],
           });
         });
+    });
+
+    it('should return 401 when does not have token', async () => {
+      jest.clearAllMocks();
+      return request(app.getHttpServer())
+        .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+        .expect(401);
     });
   });
 });

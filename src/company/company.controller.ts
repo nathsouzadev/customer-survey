@@ -4,12 +4,14 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { CompanyService } from './service/company.service';
 import { CreateCompanyRequestDTO } from './dto/createCompanyRequest.dto';
 import { AppLogger } from '../utils/appLogger';
 import { CompanyModel } from './model/company.model';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class CompanyController {
@@ -32,6 +34,7 @@ export class CompanyController {
     return this.companyService.createCompany(createCompanyRequest);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':email')
   async getCompanyByEmail(
     @Param('email') email: string,

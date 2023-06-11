@@ -20,6 +20,7 @@ env:
   SERVICE_TWILIO_KEY_SECRET: ${{ secrets.SERVICE_TWILIO_KEY_SECRET }}
   SERVICE_TWILIO_KEY_SID: ${{ secrets.SERVICE_TWILIO_KEY_SID }}
   DATABASE_URL: 'postgresql://postgres:p4ssw0rd-t3st3-db@localhost:5010/postgres'
+  TOKEN='dev-secret'
 
 jobs:
   lint:
