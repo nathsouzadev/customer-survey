@@ -128,9 +128,9 @@ describe('CompanyController', () => {
 
   describe('Get company by email', () => {
     it('should get company with email', async () => {
-      const token = await getToken(app, request) 
+      const token = await getToken(app, request);
 
-      return  request(app.getHttpServer())
+      return request(app.getHttpServer())
         .get('/company/company@email.com')
         .auth(token, { type: 'bearer' })
         .expect(200)
@@ -154,7 +154,7 @@ describe('CompanyController', () => {
 
     it('should return empty object if company does not exists', async () => {
       jest.clearAllMocks();
-      const token = await getToken(app, request) 
+      const token = await getToken(app, request);
 
       return request(app.getHttpServer())
         .get('/company/not-exists@email.com')
@@ -169,7 +169,7 @@ describe('CompanyController', () => {
       jest.clearAllMocks();
       return request(app.getHttpServer())
         .get('/company/not-exists@email.com')
-        .expect(401)
+        .expect(401);
     });
   });
 });

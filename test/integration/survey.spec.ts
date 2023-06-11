@@ -18,7 +18,7 @@ describe('SurveyController', () => {
 
   describe('Get survey by surveyId', () => {
     it('get survey', async () => {
-      const token = await getToken(app, request) 
+      const token = await getToken(app, request);
 
       return request(app.getHttpServer())
         .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
@@ -56,7 +56,7 @@ describe('SurveyController', () => {
       jest.clearAllMocks();
       return request(app.getHttpServer())
         .get('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
-        .expect(401)
+        .expect(401);
     });
   });
 });
