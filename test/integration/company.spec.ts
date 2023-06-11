@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { PrismaClient } from '@prisma/client';
+import { getToken } from './aux/token';
 
 const prismaClient = new PrismaClient({ log: ['query'] });
 
@@ -127,8 +128,11 @@ describe('CompanyController', () => {
 
   describe('Get company by email', () => {
     it('should get company with email', async () => {
-      return request(app.getHttpServer())
+      const token = await getToken(app, request) 
+
+      return  request(app.getHttpServer())
         .get('/company/company@email.com')
+        .auth(token, { type: 'bearer' })
         .expect(200)
         .then(async (response) => {
           expect(response.body).toMatchObject({
@@ -150,12 +154,22 @@ describe('CompanyController', () => {
 
     it('should return empty object if company does not exists', async () => {
       jest.clearAllMocks();
+      const token = await getToken(app, request) 
+
       return request(app.getHttpServer())
         .get('/company/not-exists@email.com')
+        .auth(token, { type: 'bearer' })
         .expect(200)
         .then(async (response) => {
           expect(response.body).toStrictEqual({});
         });
+    });
+
+    it('should return 401 when does not have token', async () => {
+      jest.clearAllMocks();
+      return request(app.getHttpServer())
+        .get('/company/not-exists@email.com')
+        .expect(401)
     });
   });
 });

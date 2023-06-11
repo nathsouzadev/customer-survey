@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { companyProviders } from '../config/providers/companyProviders';
 import { PrismaService } from '../client/prisma/prisma.service';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [CompanyModule, PassportModule, JwtModule],
@@ -16,6 +17,7 @@ import { PrismaService } from '../client/prisma/prisma.service';
     AuthService,
     CompanyService,
     LocalStrategy,
+    JwtStrategy,
     ...companyProviders,
     PrismaService,
   ],
