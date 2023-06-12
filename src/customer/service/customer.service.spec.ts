@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CustomerService } from './customer.service';
-import { CustomerRepository } from './repository/customer.repository';
+import { CustomerRepository } from './../repository/customer.repository';
 import { randomUUID } from 'crypto';
-import { CustomerAnswerRepository } from './repository/customerAnswer.repository';
-import { CustomerSurveyRepository } from './repository/customerSurvey.repository';
-import { mockCustomerSurvey } from '../__mocks__/customerSurvey.mock';
+import { CustomerAnswerRepository } from './../repository/customerAnswer.repository';
+import { CustomerSurveyRepository } from './../repository/customerSurvey.repository';
+import { mockCustomerSurvey } from '../../__mocks__/customerSurvey.mock';
+import { AppLogger } from '../../utils/appLogger';
 
 describe('CustomerService', () => {
   let service: CustomerService;
@@ -22,6 +23,7 @@ describe('CustomerService', () => {
           provide: CustomerRepository,
           useValue: {
             getCustomerByPhoneNumber: jest.fn(),
+            createCustomer: jest.fn(),
           },
         },
         {
@@ -38,6 +40,7 @@ describe('CustomerService', () => {
             getSurveyByCustomerId: jest.fn(),
           },
         },
+        AppLogger,
       ],
     }).compile();
 
@@ -59,6 +62,7 @@ describe('CustomerService', () => {
           id: randomUUID(),
           name: 'Ada Lovelace',
           phoneNumber: '5511999991111',
+          companyId: randomUUID(),
         }),
       );
 
@@ -68,6 +72,7 @@ describe('CustomerService', () => {
       id: expect.any(String),
       name: 'Ada Lovelace',
       phoneNumber: mockPhoneNumber,
+      companyId: expect.any(String),
     });
   });
 
@@ -119,6 +124,7 @@ describe('CustomerService', () => {
           id: mockCustomerId,
           name: 'Ada Lovelace',
           phoneNumber: mockPhoneNumber,
+          companyId: randomUUID(),
         }),
       );
     const mockGetSurvey = jest
@@ -237,5 +243,61 @@ describe('CustomerService', () => {
         answer: 'bom',
       },
     ]);
+  });
+
+  it('should create a new customer', async () => {
+    const mockCompanyId = randomUUID();
+    const mockCreateCustomerRequest = {
+      name: 'Customer',
+      phoneNumber: '5511999992224',
+      companyId: mockCompanyId,
+    };
+    const mockGetCustomer = jest
+      .spyOn(service, 'getCustomer')
+      .mockImplementation(() => Promise.resolve(null));
+    const mockCreate = jest
+      .spyOn(mockCustomerRepository, 'createCustomer')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          ...mockCreateCustomerRequest,
+        }),
+      );
+
+    const customer = await service.createCustomer(mockCreateCustomerRequest);
+    expect(mockGetCustomer).toHaveBeenCalledWith('5511999992224');
+    expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest);
+    expect(customer).toMatchObject({
+      id: expect.any(String),
+      name: 'Customer',
+      phoneNumber: '5511999992224',
+      companyId: mockCompanyId,
+    });
+  });
+
+  it('should return a errorya if try create a customer already exists', async () => {
+    const mockCompanyId = randomUUID();
+    const mockCreateCustomerRequest = {
+      name: 'Customer',
+      phoneNumber: '5511999992224',
+      companyId: mockCompanyId,
+    };
+    const mockGetCustomer = jest
+      .spyOn(service, 'getCustomer')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          name: 'Customer',
+          phoneNumber: '5511999992224',
+          companyId: mockCompanyId,
+        }),
+      );
+    const mockCreate = jest.spyOn(mockCustomerRepository, 'createCustomer');
+
+    expect(service.createCustomer(mockCreateCustomerRequest)).rejects.toThrow(
+      new Error('Customer already exists'),
+    );
+    expect(mockGetCustomer).toHaveBeenCalledWith('5511999992224');
+    expect(mockCreate).not.toHaveBeenCalledWith(mockCreateCustomerRequest);
   });
 });

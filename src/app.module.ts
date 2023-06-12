@@ -40,6 +40,10 @@ import { AuthModule } from './auth/auth.module';
             path: 'survey',
             module: SurveyModule,
           },
+          {
+            path: 'customer',
+            module: CustomerModule,
+          },
         ],
       },
     ]),

@@ -5,10 +5,11 @@ import { TwilioService } from '../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
 import { SurveyService } from '../survey/service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
-import { CustomerService } from '../customer/customer.service';
+import { CustomerService } from '../customer/service/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 import { SurveyRepository } from '../survey/repository/survey.repository';
+import { AppLogger } from '../utils/appLogger';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -41,6 +42,7 @@ describe('HookController', () => {
           provide: SurveyRepository,
           useValue: {},
         },
+        AppLogger,
       ],
     }).compile();
 

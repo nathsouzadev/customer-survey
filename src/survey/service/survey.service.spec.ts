@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyService } from './survey.service';
-import { CustomerService } from '../../customer/customer.service';
+import { CustomerService } from '../../customer/service/customer.service';
 import { randomUUID } from 'crypto';
 import { mockCustomerSurvey } from '../../__mocks__/customerSurvey.mock';
 import { SurveyRepository } from '../repository/survey.repository';

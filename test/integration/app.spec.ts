@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { mockReceivedMessage } from '../../src/__mocks__/receivedMessage.mock';
 import { PrismaClient } from '@prisma/client';
+import { timeOut } from './aux/timeout';
 
 const prismaClient = new PrismaClient({ log: ['query'] });
 
@@ -17,6 +18,7 @@ describe('AppController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    await timeOut();
   });
 
   describe('receive message from twilio', () => {

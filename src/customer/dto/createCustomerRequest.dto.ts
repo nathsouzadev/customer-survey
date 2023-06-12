@@ -1,23 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
-export class CreateCompanyRequestDTO {
+export class CreateCustomerRequestDTO {
   @ApiProperty({
-    example: 'Company',
+    example: 'Customer',
   })
   @IsNotEmpty({ message: 'Required field' })
   name: string;
 
   @ApiProperty({
-    example: 'company@email.com',
+    example: '5511999992224',
   })
   @IsNotEmpty({ message: 'Required field' })
-  @IsEmail({}, { message: 'Inform a valid email' })
-  email: string;
+  phoneNumber: string;
 
   @ApiProperty({
-    example: 'password',
+    example: '5e4e10f1-033a-4cf2-8521-c5d5b1ec2a00',
   })
   @IsNotEmpty({ message: 'Required field' })
-  password: string;
+  companyId: string;
 }

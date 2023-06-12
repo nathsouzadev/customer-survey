@@ -3,10 +3,11 @@ import { HookController } from './hook.controller';
 import { HookService } from './service/hook.service';
 import { TwilioService } from '../client/twilio/twilio.service';
 import { SurveyService } from '../survey/service/survey.service';
-import { CustomerService } from '../customer/customer.service';
+import { CustomerService } from '../customer/service/customer.service';
 import { CustomerModule } from '../customer/customer.module';
 import { PrismaService } from '../client/prisma/prisma.service';
 import { hookProviders } from '../config/providers/hookProviders';
+import { AppLogger } from '../utils/appLogger';
 
 @Module({
   imports: [CustomerModule],
@@ -17,6 +18,7 @@ import { hookProviders } from '../config/providers/hookProviders';
     TwilioService,
     CustomerService,
     PrismaService,
+    AppLogger,
     ...hookProviders,
   ],
 })

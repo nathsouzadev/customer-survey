@@ -25,6 +25,8 @@ $ yarn start:dev
 $ yarn start:prod
 ```
 
+4 - Routes detalis available on [Swagger](http://localhost:5000/api)
+
 ## Test
 
 ```bash
@@ -32,7 +34,7 @@ $ yarn start:prod
 $ yarn test
 
 # e2e tests
-$ yarn test:e2e
+$ yarn test:integration
 
 # test coverage
 $ yarn test:cov

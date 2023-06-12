@@ -16,6 +16,8 @@ model Customer {
   phoneNumber String
   answers CustomerAnswer[]
   surveys CustomerSurvey[]
+  company Company @relation(fields: [companyId], references: [id])
+  companyId String
 }
 
 model CustomerAnswer {
@@ -71,4 +73,5 @@ model Company {
   email String @unique
   surveys Survey[]
   password String
+  customers Customer[]
 }
