@@ -38,10 +38,9 @@ describe('AuthController', () => {
         token: 'token',
       }),
     );
-    const mockRequest:Partial<AuthRequestModel> = {  user: mockCompany }
+    const mockRequest: Partial<AuthRequestModel> = { user: mockCompany };
 
-    const token = await controller.login(
-    mockRequest as AuthRequestModel);
+    const token = await controller.login(mockRequest as AuthRequestModel);
 
     expect(token).toMatchObject({
       token: 'token',

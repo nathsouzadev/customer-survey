@@ -8,8 +8,13 @@ import { ApiCreatedResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @ApiCreatedResponse({ schema: { example: { token: 'some-token' } } })
-  @ApiUnauthorizedResponse()
+  @ApiCreatedResponse({
+    description: 'Return token when user have valid credentials',
+    schema: { example: { token: 'some-token' } },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Return error when does not have token',
+  })
   @UseGuards(AuthGuard('local'))
   @Post()
   async login(@Request() request: AuthRequestModel) {
