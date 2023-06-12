@@ -42,7 +42,7 @@ describe('HookController', () => {
           provide: SurveyRepository,
           useValue: {},
         },
-        AppLogger
+        AppLogger,
       ],
     }).compile();
 

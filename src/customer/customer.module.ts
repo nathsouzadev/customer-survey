@@ -7,6 +7,6 @@ import { AppLogger } from '../utils/appLogger';
 
 @Module({
   providers: [CustomerService, PrismaService, AppLogger, ...customerProviders],
-  controllers: [CustomerController]
+  controllers: [CustomerController],
 })
 export class CustomerModule {}

@@ -11,7 +11,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('CustomerController', () => {
   let controller: CustomerController;
-  let mockCustomerService: CustomerService
+  let mockCustomerService: CustomerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,37 +20,41 @@ describe('CustomerController', () => {
         {
           provide: CustomerService,
           useValue: {
-            createCustomer: jest.fn()
-          }
+            createCustomer: jest.fn(),
+          },
         },
         getMockRepository(CustomerRepository),
         getMockRepository(CustomerAnswerRepository),
         getMockRepository(CustomerSurveyRepository),
-        AppLogger
+        AppLogger,
       ],
     }).compile();
 
     controller = module.get<CustomerController>(CustomerController);
-    mockCustomerService = module.get<CustomerService>(CustomerService)
+    mockCustomerService = module.get<CustomerService>(CustomerService);
   });
 
   it('should return a customer when created', async () => {
-    const mockCompanyId = randomUUID()
+    const mockCompanyId = randomUUID();
     const mockCreateCustomerRequest = {
       phoneNumber: '5511999992222',
       name: 'Grace Hooper',
       companyId: mockCompanyId,
     };
-    const mockCreate = jest.spyOn(mockCustomerService, 'createCustomer').mockImplementation(() => Promise.resolve({
-      id: randomUUID(),
-      ...mockCreateCustomerRequest
-    }))
+    const mockCreate = jest
+      .spyOn(mockCustomerService, 'createCustomer')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          ...mockCreateCustomerRequest,
+        }),
+      );
 
     const customer = await controller.createCustomer(
-      { headers: {}},
-      mockCreateCustomerRequest
-    )
-    expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest)
+      { headers: {} },
+      mockCreateCustomerRequest,
+    );
+    expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest);
     expect(customer).toMatchObject({
       id: expect.any(String),
       name: 'Grace Hooper',
@@ -60,20 +64,23 @@ describe('CustomerController', () => {
   });
 
   it('should return a error when customer alterady exists', async () => {
-    const mockCompanyId = randomUUID()
+    const mockCompanyId = randomUUID();
     const mockCreateCustomerRequest = {
       phoneNumber: '5511999992222',
       name: 'Grace Hooper',
       companyId: mockCompanyId,
     };
-    const mockCreate = jest.spyOn(mockCustomerService, 'createCustomer').mockImplementation(() => {throw new Error('Customer already exists')})
+    const mockCreate = jest
+      .spyOn(mockCustomerService, 'createCustomer')
+      .mockImplementation(() => {
+        throw new Error('Customer already exists');
+      });
 
-    expect(controller.createCustomer({ headers: {}}, mockCreateCustomerRequest)).rejects.toThrow(
-      new HttpException(
-        'Customer already exists',
-        HttpStatus.CONFLICT
-      )
-    )
-    expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest)
+    expect(
+      controller.createCustomer({ headers: {} }, mockCreateCustomerRequest),
+    ).rejects.toThrow(
+      new HttpException('Customer already exists', HttpStatus.CONFLICT),
+    );
+    expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest);
   });
 });

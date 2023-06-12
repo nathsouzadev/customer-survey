@@ -9,16 +9,20 @@ import { randomUUID } from 'crypto';
 export class PrismaCustomerRepository implements CustomerRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  getCustomerByPhoneNumber = async (phoneNumber: string): Promise<Customer> => this.prisma.customer.findFirst({
-    where: {
-      phoneNumber,
-    },
-  })
+  getCustomerByPhoneNumber = async (phoneNumber: string): Promise<Customer> =>
+    this.prisma.customer.findFirst({
+      where: {
+        phoneNumber,
+      },
+    });
 
-  createCustomer = async(createCustomerRequest: CreateCustomerRequestDTO): Promise<Customer> => this.prisma.customer.create({
-    data: {
-      id: randomUUID(),
-      ...createCustomerRequest
-    }
-  })
+  createCustomer = async (
+    createCustomerRequest: CreateCustomerRequestDTO,
+  ): Promise<Customer> =>
+    this.prisma.customer.create({
+      data: {
+        id: randomUUID(),
+        ...createCustomerRequest,
+      },
+    });
 }

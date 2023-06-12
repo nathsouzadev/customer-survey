@@ -18,20 +18,20 @@ describe('CustomerController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    await timeOut()
+    await timeOut();
   });
 
   describe('Create customer', () => {
     it('should create customer', async () => {
-        const token = await getToken(app, request);
-        
-        return request(app.getHttpServer())
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
         .post('/company/customer')
         .auth(token, { type: 'bearer' })
         .send({
           name: 'New Customer',
           phoneNumber: '5511999990000',
-          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
         .expect(201)
         .then(async (response) => {
@@ -40,7 +40,7 @@ describe('CustomerController', () => {
             id: expect.any(String),
             name: 'New Customer',
             phoneNumber: '5511999990000',
-            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
           });
 
           await prismaClient.customer.delete({
@@ -52,34 +52,34 @@ describe('CustomerController', () => {
     });
 
     it('should not create customer already exists', async () => {
-        const token = await getToken(app, request);
-        
-        return request(app.getHttpServer())
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
         .post('/company/customer')
         .auth(token, { type: 'bearer' })
         .send({
           name: 'Grace Hooper',
           phoneNumber: '5511999992222',
-          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
         .expect(409)
         .then(async (response) => {
           expect(response.body).toMatchObject({
-            message: 'Customer already exists'
+            message: 'Customer already exists',
           });
         });
     });
 
     it('should not create customer with name empty', async () => {
-        const token = await getToken(app, request);
-        
-        return request(app.getHttpServer())
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
         .post('/company/customer')
         .auth(token, { type: 'bearer' })
         .send({
           name: '',
           phoneNumber: '5511999990000',
-          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
         .expect(400)
         .then(async (response) => {
@@ -92,14 +92,14 @@ describe('CustomerController', () => {
 
     it('should not create customer with phoneNumber empty', async () => {
       const token = await getToken(app, request);
-      
+
       return request(app.getHttpServer())
         .post('/company/customer')
         .auth(token, { type: 'bearer' })
         .send({
           name: 'Ada Lovelace',
           phoneNumber: '',
-          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
         .expect(400)
         .then(async (response) => {
@@ -112,14 +112,14 @@ describe('CustomerController', () => {
 
     it('should not create customer with compnayId empty', async () => {
       const token = await getToken(app, request);
-      
+
       return request(app.getHttpServer())
         .post('/company/customer')
         .auth(token, { type: 'bearer' })
         .send({
           name: 'Ada Lovelace',
           phoneNumber: '5511999990000',
-          companyId: ''
+          companyId: '',
         })
         .expect(400)
         .then(async (response) => {
@@ -131,14 +131,14 @@ describe('CustomerController', () => {
     });
 
     it('should return 401 when does not have token', async () => {
-        return request(app.getHttpServer())
+      return request(app.getHttpServer())
         .post('/company/customer')
         .send({
           name: 'New Customer',
           phoneNumber: '5511999990000',
-          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
-          .expect(401);
-      });
+        .expect(401);
+    });
   });
 });

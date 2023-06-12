@@ -2,7 +2,11 @@ import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './service/auth.service';
 import { AuthRequestModel } from './model/authRequest.model';
-import { ApiBody, ApiCreatedResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { LoginRequestDTO } from './dto/loginRequest.dto';
 
 @Controller()

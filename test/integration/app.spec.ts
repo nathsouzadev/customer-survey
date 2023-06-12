@@ -18,7 +18,7 @@ describe('AppController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    await timeOut()
+    await timeOut();
   });
 
   describe('receive message from twilio', () => {

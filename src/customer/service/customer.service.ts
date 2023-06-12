@@ -14,7 +14,7 @@ export class CustomerService {
     private readonly customerRepository: CustomerRepository,
     private readonly customerAnswerRepository: CustomerAnswerRepository,
     private readonly customerSurveyRepository: CustomerSurveyRepository,
-    private readonly logger: AppLogger
+    private readonly logger: AppLogger,
   ) {}
 
   getCustomer = async (phoneNumber: string): Promise<Customer> =>
@@ -38,13 +38,13 @@ export class CustomerService {
       customerAnswersRequest,
     );
 
-  createCustomer = async(createCustomerRequest: CreateCustomerRequestDTO) => {
-    const customer = await this.getCustomer(createCustomerRequest.phoneNumber)
+  createCustomer = async (createCustomerRequest: CreateCustomerRequestDTO) => {
+    const customer = await this.getCustomer(createCustomerRequest.phoneNumber);
 
-    if(customer){
-      this.logger.errors('Customer already exists', CustomerService.name)
-      throw new Error('Customer already exists')
+    if (customer) {
+      this.logger.errors('Customer already exists', CustomerService.name);
+      throw new Error('Customer already exists');
     }
-    return this.customerRepository.createCustomer(createCustomerRequest)
-  }
+    return this.customerRepository.createCustomer(createCustomerRequest);
+  };
 }

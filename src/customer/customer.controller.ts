@@ -1,4 +1,13 @@
-import { Body, Controller, HttpException, HttpStatus, Post, Request, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CustomerService } from './service/customer.service';
@@ -9,8 +18,8 @@ import { AppLogger } from '../utils/appLogger';
 export class CustomerController {
   constructor(
     private readonly customerService: CustomerService,
-    private readonly logger: AppLogger
-    ) {}
+    private readonly logger: AppLogger,
+  ) {}
 
   @ApiCreatedResponse({
     description: 'Return contact saved',
@@ -28,20 +37,25 @@ export class CustomerController {
   })
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  async createCustomer(@Request() request: any,
-  @Body(new ValidationPipe()) createCustomerRequest: CreateCustomerRequestDTO) {
-    this.logger.logger({
-      headers: request.headers,
-      message: 'Request received'
-    }, CustomerController.name)
+  async createCustomer(
+    @Request() request: any,
+    @Body(new ValidationPipe()) createCustomerRequest: CreateCustomerRequestDTO,
+  ) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
+      },
+      CustomerController.name,
+    );
     try {
-      const customer = await this.customerService.createCustomer(createCustomerRequest)
-      return customer
+      const customer = await this.customerService.createCustomer(
+        createCustomerRequest,
+      );
+      return customer;
     } catch (error) {
-      if(error.message === 'Customer already exists'){
-        throw new HttpException(
-          error.message, 
-          HttpStatus.CONFLICT);
+      if (error.message === 'Customer already exists') {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
       }
     }
   }

@@ -42,8 +42,8 @@ import { AuthModule } from './auth/auth.module';
           },
           {
             path: 'customer',
-            module: CustomerModule
-          }
+            module: CustomerModule,
+          },
         ],
       },
     ]),

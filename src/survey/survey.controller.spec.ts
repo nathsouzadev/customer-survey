@@ -35,7 +35,7 @@ describe('SurveyController', () => {
           provide: SurveyRepository,
           useValue: {},
         },
-        AppLogger
+        AppLogger,
       ],
     }).compile();
 

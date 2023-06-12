@@ -15,7 +15,7 @@ describe('SurveyController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    await timeOut()
+    await timeOut();
   });
 
   describe('Get survey by surveyId', () => {
