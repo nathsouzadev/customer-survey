@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
+import { timeOut } from './aux/timeout';
 
 describe('CompanyController', () => {
   let app: INestApplication;
@@ -14,6 +15,7 @@ describe('CompanyController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    await timeOut()
   });
 
   describe('Login', () => {

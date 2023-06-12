@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { PrismaClient } from '@prisma/client';
 import { getToken } from './aux/token';
+import { timeOut } from './aux/timeout';
 
 const prismaClient = new PrismaClient({ log: ['query'] });
 
@@ -17,6 +18,7 @@ describe('CompanyController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    await timeOut()
   });
 
   describe('Create company', () => {

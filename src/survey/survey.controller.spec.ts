@@ -2,11 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SurveyController } from './survey.controller';
 import { SurveyService } from './service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
-import { CustomerService } from '../customer/customer.service';
+import { CustomerService } from '../customer/service/customer.service';
 import { CustomerRepository } from '../customer/repository/customer.repository';
 import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 import { SurveyRepository } from './repository/survey.repository';
 import { randomUUID } from 'crypto';
+import { AppLogger } from '../utils/appLogger';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -34,6 +35,7 @@ describe('SurveyController', () => {
           provide: SurveyRepository,
           useValue: {},
         },
+        AppLogger
       ],
     }).compile();
 

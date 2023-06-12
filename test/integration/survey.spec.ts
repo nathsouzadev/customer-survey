@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { getToken } from './aux/token';
+import { timeOut } from './aux/timeout';
 
 describe('SurveyController', () => {
   let app: INestApplication;
@@ -14,6 +15,7 @@ describe('SurveyController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    await timeOut()
   });
 
   describe('Get survey by surveyId', () => {

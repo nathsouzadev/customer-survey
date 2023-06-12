@@ -22,36 +22,43 @@ const customers = [
     id: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
     name: 'Ada Lovelace',
     phoneNumber: '5511999991111',
+    companyId: 'b5ff9e3a-9606-4d94-a085-333109e3ff2a'
   },
   {
     id: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
     name: 'Grace Hooper',
     phoneNumber: '5511999992222',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
   {
     id: 'e1347b38-dfcd-42a3-894c-42ccfc35a54f',
     name: 'Katherine Johnson',
     phoneNumber: '5511999992221',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
   {
     id: '74c6d4b8-dc06-4229-b3bf-46938f47861a',
     name: 'Hedy Lamarr',
     phoneNumber: '5511999992220',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
   {
     id: 'dd897118-472e-436c-9ba0-ced800a2eff4',
     name: 'Roberta Williams',
     phoneNumber: '5511999992223',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
   {
     id: '5e4e10f1-033a-4cf2-8521-c5d5b1ec2a00',
     name: 'Frances Allen',
     phoneNumber: '5511999992224',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
   {
     id: '29c7cdb6-3672-4f65-9caa-d026d982f479',
     name: 'Carol Shaw',
     phoneNumber: '5511999992225',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
 ];
 

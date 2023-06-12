@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SurveyModel } from '../model/survey.model';
-import { CustomerService } from '../../customer/customer.service';
+import { CustomerService } from '../../customer/service/customer.service';
 import { randomUUID } from 'crypto';
 import { CustomerAnswer } from '@prisma/client';
 import { CustomerSurveyModel } from '../../customer/model/customerSurvey.model';
