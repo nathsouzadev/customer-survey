@@ -7,4 +7,6 @@ export abstract class CustomerRepository {
   abstract createCustomer(
     createCustomerRequest: CreateCustomerRequestDTO,
   ): Promise<Customer>;
+
+  abstract getCustomersByCompanyId(companyId: string): Promise<Customer[]>;
 }

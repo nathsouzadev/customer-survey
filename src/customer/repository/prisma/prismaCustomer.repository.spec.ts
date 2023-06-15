@@ -18,6 +18,7 @@ describe('PrismaCustomerRepository', () => {
             customer: {
               findFirst: jest.fn(),
               create: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -81,5 +82,46 @@ describe('PrismaCustomerRepository', () => {
       phoneNumber: '5511999992224',
       companyId: mockCompanyId,
     });
+  });
+
+  it('should return all customers with companyId', async () => {
+    const mockCompanyId = randomUUID();
+    const mockFind = jest
+      .spyOn(mockPrismaService.customer, 'findMany')
+      .mockResolvedValue([
+        {
+          id: randomUUID(),
+          name: 'Customer',
+          phoneNumber: '5511999992224',
+          companyId: mockCompanyId,
+        },
+        {
+          id: randomUUID(),
+          name: 'Any Customer',
+          phoneNumber: '5511999992223',
+          companyId: mockCompanyId,
+        },
+      ]);
+
+    const customers = await repository.getCustomersByCompanyId(mockCompanyId);
+    expect(mockFind).toHaveBeenCalledWith({
+      where: {
+        companyId: mockCompanyId,
+      },
+    });
+    expect(customers).toMatchObject([
+      {
+        id: expect.any(String),
+        name: 'Customer',
+        phoneNumber: '5511999992224',
+        companyId: mockCompanyId,
+      },
+      {
+        id: expect.any(String),
+        name: 'Any Customer',
+        phoneNumber: '5511999992223',
+        companyId: mockCompanyId,
+      },
+    ]);
   });
 });

@@ -1,15 +1,21 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Request,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiCreatedResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { CustomerService } from './service/customer.service';
 import { CreateCustomerRequestDTO } from './dto/createCustomerRequest.dto';
 import { AppLogger } from '../utils/appLogger';
@@ -58,5 +64,50 @@ export class CustomerController {
         throw new HttpException(error.message, HttpStatus.CONFLICT);
       }
     }
+  }
+
+  @ApiOkResponse({
+    description: 'Return customers with companyId',
+    schema: {
+      example: {
+        customers: [
+          {
+            id: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
+            name: 'Grace Hooper',
+            phoneNumber: '5511999992222',
+            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          },
+          {
+            id: 'e1347b38-dfcd-42a3-894c-42ccfc35a54f',
+            name: 'Katherine Johnson',
+            phoneNumber: '5511999992221',
+            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          },
+        ],
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Return error when does not have token',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':companyId')
+  async getCustomers(
+    @Request() request: any,
+    @Param('companyId') companyId: string,
+  ) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
+      },
+      CustomerController.name,
+    );
+
+    const customers = await this.customerService.getCustomersByCompanyId(
+      companyId,
+    );
+
+    return { customers };
   }
 }

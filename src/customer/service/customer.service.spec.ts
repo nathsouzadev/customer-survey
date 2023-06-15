@@ -24,6 +24,7 @@ describe('CustomerService', () => {
           useValue: {
             getCustomerByPhoneNumber: jest.fn(),
             createCustomer: jest.fn(),
+            getCustomersByCompanyId: jest.fn(),
           },
         },
         {
@@ -275,7 +276,7 @@ describe('CustomerService', () => {
     });
   });
 
-  it('should return a errorya if try create a customer already exists', async () => {
+  it('should return a error if try create a customer already exists', async () => {
     const mockCompanyId = randomUUID();
     const mockCreateCustomerRequest = {
       name: 'Customer',
@@ -299,5 +300,44 @@ describe('CustomerService', () => {
     );
     expect(mockGetCustomer).toHaveBeenCalledWith('5511999992224');
     expect(mockCreate).not.toHaveBeenCalledWith(mockCreateCustomerRequest);
+  });
+
+  it('should return all customers with companyId', async () => {
+    const mockCompanyId = randomUUID();
+    const mockGetCustomer = jest
+      .spyOn(mockCustomerRepository, 'getCustomersByCompanyId')
+      .mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: randomUUID(),
+            name: 'Customer',
+            phoneNumber: '5511999992224',
+            companyId: mockCompanyId,
+          },
+          {
+            id: randomUUID(),
+            name: 'Any Customer',
+            phoneNumber: '5511999992223',
+            companyId: mockCompanyId,
+          },
+        ]),
+      );
+
+    const customers = await service.getCustomersByCompanyId(mockCompanyId);
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockCompanyId);
+    expect(customers).toMatchObject([
+      {
+        id: expect.any(String),
+        name: 'Customer',
+        phoneNumber: '5511999992224',
+        companyId: mockCompanyId,
+      },
+      {
+        id: expect.any(String),
+        name: 'Any Customer',
+        phoneNumber: '5511999992223',
+        companyId: mockCompanyId,
+      },
+    ]);
   });
 });
