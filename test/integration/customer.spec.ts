@@ -141,4 +141,27 @@ describe('CustomerController', () => {
         .expect(401);
     });
   });
+
+  describe('Get customers', () => {
+    it('should return all customers with companyId', async () => {
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .get('/company/customer/8defa50c-1187-49f9-95af-9f1c22ec94af')
+        .auth(token, { type: 'bearer' })
+        .expect(200)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            customers: expect.any(Array),
+          });
+          expect(response.body.customers).toHaveLength(6);
+        });
+    });
+
+    it('should return 401 when does not have token', async () => {
+      return request(app.getHttpServer())
+        .get('/company/customer/8defa50c-1187-49f9-95af-9f1c22ec94af')
+        .expect(401);
+    });
+  });
 });

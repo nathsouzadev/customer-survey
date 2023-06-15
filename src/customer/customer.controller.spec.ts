@@ -21,6 +21,7 @@ describe('CustomerController', () => {
           provide: CustomerService,
           useValue: {
             createCustomer: jest.fn(),
+            getCustomersByCompanyId: jest.fn(),
           },
         },
         getMockRepository(CustomerRepository),
@@ -82,5 +83,49 @@ describe('CustomerController', () => {
       new HttpException('Customer already exists', HttpStatus.CONFLICT),
     );
     expect(mockCreate).toHaveBeenCalledWith(mockCreateCustomerRequest);
+  });
+
+  it('should return all customers with companyId', async () => {
+    const mockCompanyId = randomUUID();
+    const mockGetCustomer = jest
+      .spyOn(mockCustomerService, 'getCustomersByCompanyId')
+      .mockImplementation(() =>
+        Promise.resolve([
+          {
+            id: randomUUID(),
+            name: 'Customer',
+            phoneNumber: '5511999992224',
+            companyId: mockCompanyId,
+          },
+          {
+            id: randomUUID(),
+            name: 'Any Customer',
+            phoneNumber: '5511999992223',
+            companyId: mockCompanyId,
+          },
+        ]),
+      );
+
+    const customers = await controller.getCustomers(
+      { headers: {} },
+      mockCompanyId,
+    );
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockCompanyId);
+    expect(customers).toMatchObject({
+      customers: [
+        {
+          id: expect.any(String),
+          name: 'Customer',
+          phoneNumber: '5511999992224',
+          companyId: mockCompanyId,
+        },
+        {
+          id: expect.any(String),
+          name: 'Any Customer',
+          phoneNumber: '5511999992223',
+          companyId: mockCompanyId,
+        },
+      ],
+    });
   });
 });

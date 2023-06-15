@@ -25,4 +25,9 @@ export class PrismaCustomerRepository implements CustomerRepository {
         ...createCustomerRequest,
       },
     });
+
+  getCustomersByCompanyId = async (companyId: string): Promise<Customer[]> =>
+    this.prisma.customer.findMany({
+      where: { companyId },
+    });
 }

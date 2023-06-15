@@ -47,4 +47,7 @@ export class CustomerService {
     }
     return this.customerRepository.createCustomer(createCustomerRequest);
   };
+
+  getCustomersByCompanyId = async (companyId: string): Promise<Customer[]> =>
+    this.customerRepository.getCustomersByCompanyId(companyId);
 }
