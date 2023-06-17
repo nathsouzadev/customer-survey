@@ -22,7 +22,7 @@ export interface QuestionModel {
   answers: Answer[];
 }
 
-interface Answer {
+export interface Answer {
   id: string;
   questionId: string;
   answer: string;

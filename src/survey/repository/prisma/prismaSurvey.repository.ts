@@ -7,7 +7,7 @@ import { SurveyResults } from '../../../survey/model/surveyResult';
 export class PrismaSurveyRepository implements SurveyRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  getSurveyById = async (surveyId: string): Promise<SurveyResults> =>
+  getSurveyResultById = async (surveyId: string): Promise<SurveyResults> =>
     this.prisma.survey.findFirst({
       where: {
         id: surveyId,

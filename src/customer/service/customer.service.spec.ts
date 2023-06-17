@@ -39,6 +39,7 @@ describe('CustomerService', () => {
           provide: CustomerSurveyRepository,
           useValue: {
             getSurveyByCustomerId: jest.fn(),
+            getCustomersBySurveyId: jest.fn(),
           },
         },
         AppLogger,
@@ -337,6 +338,68 @@ describe('CustomerService', () => {
         name: 'Any Customer',
         phoneNumber: '5511999992223',
         companyId: mockCompanyId,
+      },
+    ]);
+  });
+
+  it('should return customers registered on survey and without answers', async () => {
+    const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
+    const mockCustomerId = randomUUID();
+    const mockCustomerId2 = randomUUID();
+    const mockCustomerSurvey = [
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+        active: true,
+        customer: {
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+          companyId: mockCompanyId,
+          answers: [],
+        },
+      },
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+        active: true,
+        customer: {
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+          companyId: mockCompanyId,
+          answers: [
+            {
+              id: randomUUID(),
+              customerId: mockCustomerId2,
+              questionId: randomUUID(),
+              answer: 'bom',
+            },
+          ],
+        },
+      },
+    ];
+    const mockGetBySurveyId = jest
+      .spyOn(mockCustomerSurveyRepository, 'getCustomersBySurveyId')
+      .mockImplementation(() => Promise.resolve(mockCustomerSurvey));
+
+    const customers = await service.getCustomersBySurveyId(mockSurveyId);
+    expect(mockGetBySurveyId).toHaveBeenCalledWith(mockSurveyId);
+    expect(customers).toMatchObject([
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+        active: true,
+        customer: {
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+          companyId: mockCompanyId,
+        },
       },
     ]);
   });

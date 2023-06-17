@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { SurveyModel } from '../model/survey.model';
+import { SurveyResultModel } from '../model/survey.model';
 import { CustomerService } from '../../customer/service/customer.service';
 import { randomUUID } from 'crypto';
 import { CustomerAnswer } from '@prisma/client';
 import { CustomerSurveyModel } from '../../customer/model/customerSurvey.model';
 import { SurveyRepository } from '../repository/survey.repository';
+import { QuestionRepository } from '../repository/question.repository';
 
 @Injectable()
 export class SurveyService {
   constructor(
     private readonly surveyRepository: SurveyRepository,
     private readonly customerService: CustomerService,
+    private readonly questionService: QuestionRepository,
   ) {}
-  getSurvey = async (surveyId: string): Promise<SurveyModel> => {
-    const survey = await this.surveyRepository.getSurveyById(surveyId);
 
-    const surveyData: SurveyModel = {
+  getSurveyResults = async (surveyId: string): Promise<SurveyResultModel> => {
+    const survey = await this.surveyRepository.getSurveyResultById(surveyId);
+
+    const surveyData: SurveyResultModel = {
       id: survey.id,
       companyId: survey.companyId,
       name: survey.name,
@@ -90,8 +93,6 @@ export class SurveyService {
           } \n${this.getOptions(questions[customerAnswers.length + 1].answers)}`
         : null;
 
-    console.log(nextQuestion);
-
     return {
       answerReceived: answer,
       nextQuestion,
@@ -108,5 +109,16 @@ export class SurveyService {
     });
 
     return option;
+  };
+
+  getFirstQuestionBySurveyId = async (
+    surveyId: string,
+  ): Promise<{ question: string }> => {
+    const first = await this.questionService.getFirstQuestionBySurveyId(
+      surveyId,
+    );
+    return {
+      question: `${first.question} \n${this.getOptions(first.answers)}`,
+    };
   };
 }

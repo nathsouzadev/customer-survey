@@ -4,11 +4,13 @@ import { CustomerService } from '../../customer/service/customer.service';
 import { randomUUID } from 'crypto';
 import { mockCustomerSurvey } from '../../__mocks__/customerSurvey.mock';
 import { SurveyRepository } from '../repository/survey.repository';
+import { QuestionRepository } from '../repository/question.repository';
 
 describe('SurveyService', () => {
   let service: SurveyService;
   let mockCustomerService: CustomerService;
   let mockSurveyRepository: SurveyRepository;
+  let mockQuestionRepository: QuestionRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,12 +22,19 @@ describe('SurveyService', () => {
             saveCustomerAnswer: jest.fn(),
             getSurvey: jest.fn(),
             getCustomerAnswersToSurvey: jest.fn(),
+            getCustomersBySurveyId: jest.fn(),
           },
         },
         {
           provide: SurveyRepository,
           useValue: {
-            getSurveyById: jest.fn(),
+            getSurveyResultById: jest.fn(),
+          },
+        },
+        {
+          provide: QuestionRepository,
+          useValue: {
+            getFirstQuestionBySurveyId: jest.fn(),
           },
         },
       ],
@@ -34,14 +43,15 @@ describe('SurveyService', () => {
     service = module.get<SurveyService>(SurveyService);
     mockCustomerService = module.get<CustomerService>(CustomerService);
     mockSurveyRepository = module.get<SurveyRepository>(SurveyRepository);
+    mockQuestionRepository = module.get<QuestionRepository>(QuestionRepository);
   });
 
-  it('should be return survey', async () => {
+  it('should be return survey with results', async () => {
     const mockSurveyId = randomUUID();
     const mockQuestionId = randomUUID();
 
     const mockGetSurvey = jest
-      .spyOn<any, any>(mockSurveyRepository, 'getSurveyById')
+      .spyOn<any, any>(mockSurveyRepository, 'getSurveyResultById')
       .mockImplementation(() =>
         Promise.resolve({
           id: mockSurveyId,
@@ -85,7 +95,7 @@ describe('SurveyService', () => {
         }),
       );
 
-    const survey = await service.getSurvey(mockSurveyId);
+    const survey = await service.getSurveyResults(mockSurveyId);
     expect(mockGetSurvey).toHaveBeenCalledWith(mockSurveyId);
     expect(survey).toMatchObject({
       id: mockSurveyId,
@@ -230,6 +240,48 @@ describe('SurveyService', () => {
         answer: 'bom',
       },
       nextQuestion: null,
+    });
+  });
+
+  it('should retur first question to with surveyId', async () => {
+    const mockSurveyId = randomUUID();
+    const mockQuestionId = randomUUID();
+
+    const mockGetQuestion = jest
+      .spyOn(mockQuestionRepository, 'getFirstQuestionBySurveyId')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockQuestionId,
+          surveyId: mockSurveyId,
+          question: 'Question',
+          order: 1,
+          answers: [
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: '1',
+              label: 'Bom',
+            },
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: '2',
+              label: 'Regular',
+            },
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: '3',
+              label: 'Ruim',
+            },
+          ],
+        }),
+      );
+
+    const response = await service.getFirstQuestionBySurveyId(mockSurveyId);
+    expect(mockGetQuestion).toHaveBeenCalledWith(mockSurveyId);
+    expect(response).toMatchObject({
+      question: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
     });
   });
 });

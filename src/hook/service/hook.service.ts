@@ -3,12 +3,15 @@ import { TwilioService } from '../../client/twilio/twilio.service';
 import { MessageModel } from '../../model/message.model';
 import { MessageResponseModel } from '../../model/message.response.model';
 import { SurveyService } from '../../survey/service/survey.service';
+import { CustomerService } from '../../customer/service/customer.service';
+import { SendSurveyModel } from '../models/sendSurvey.model';
 
 @Injectable()
 export class HookService {
   constructor(
     private readonly client: TwilioService,
     private readonly surveyService: SurveyService,
+    private readonly customerService: CustomerService,
   ) {}
 
   sendMessage = async (
@@ -33,5 +36,29 @@ export class HookService {
       isValid,
       replyMessage: null,
     });
+  };
+
+  sendSurvey = async (surveyId: string): Promise<SendSurveyModel> => {
+    const customersToSend = await this.customerService.getCustomersBySurveyId(
+      surveyId,
+    );
+    const { question } = await this.surveyService.getFirstQuestionBySurveyId(
+      surveyId,
+    );
+
+    for (const survey of customersToSend) {
+      await this.client.sendFirstMessage({
+        customerPhone: survey.customer.phoneNumber,
+        body: question,
+      });
+    }
+
+    return {
+      surveySent: {
+        surveyId,
+        status: 'sent',
+        totalCustomers: customersToSend.length,
+      },
+    };
   };
 }

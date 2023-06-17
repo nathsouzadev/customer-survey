@@ -68,7 +68,7 @@ describe('PrismaSurveyRepository', () => {
         }),
       );
 
-    const answers = await repository.getSurveyById(mockSurveyId);
+    const answers = await repository.getSurveyResultById(mockSurveyId);
     expect(mockFindFirst).toHaveBeenCalledWith({
       where: {
         id: mockSurveyId,

@@ -1,11 +1,15 @@
-import { Controller, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { SurveyService } from './service/survey.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { AppLogger } from '../utils/appLogger';
 
 @Controller()
 export class SurveyController {
-  constructor(private readonly surveyService: SurveyService) {}
+  constructor(
+    private readonly surveyService: SurveyService,
+    private readonly logger: AppLogger,
+  ) {}
 
   @ApiOkResponse({
     description: 'Return survey with results',
@@ -35,35 +39,14 @@ export class SurveyController {
   })
   @UseGuards(AuthGuard('jwt'))
   @Get(':surveyId')
-  getSurvey(@Param('surveyId') surveyId: string) {
-    return this.surveyService.getSurvey(surveyId);
-  }
-
-  @ApiOkResponse({
-    description: 'Return surveySent with details',
-    schema: {
-      example: {
-        surveySent: {
-          surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
-          status: 'sent',
-          totalCustomers: 3
-        }
+  getSurvey(@Request() request: any, @Param('surveyId') surveyId: string) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
       },
-    },
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Return error when does not have token',
-  })
-  @UseGuards(AuthGuard('jwt'))
-  @Post(':surveyId')
-  @HttpCode(200)
-  sendSurvey(@Param('surveyId') surveyId: string) {
-    return {
-      surveySent: {
-        surveyId,
-        status: 'sent',
-        totalCustomers: 3
-      }
-    }
+      SurveyController.name,
+    );
+    return this.surveyService.getSurveyResults(surveyId);
   }
 }

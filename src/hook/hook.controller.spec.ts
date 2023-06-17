@@ -10,6 +10,8 @@ import { CustomerRepository } from '../customer/repository/customer.repository';
 import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.repository';
 import { SurveyRepository } from '../survey/repository/survey.repository';
 import { AppLogger } from '../utils/appLogger';
+import { QuestionRepository } from '../survey/repository/question.repository';
+import { randomUUID } from 'crypto';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -40,6 +42,10 @@ describe('HookController', () => {
         },
         {
           provide: SurveyRepository,
+          useValue: {},
+        },
+        {
+          provide: QuestionRepository,
           useValue: {},
         },
         AppLogger,
@@ -87,6 +93,36 @@ describe('HookController', () => {
           sid: 'FMsGH890912dasb',
         },
       });
+    });
+  });
+
+  it('should send survey to customers', async () => {
+    const mockSurveyId = randomUUID();
+    const mockSendSurvey = jest
+      .spyOn(mockHookService, 'sendSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          surveySent: {
+            surveyId: mockSurveyId,
+            status: 'sent',
+            totalCustomers: 2,
+          },
+        }),
+      );
+
+    const response = await hookController.sendSurvey(
+      {
+        headers: {},
+      },
+      mockSurveyId,
+    );
+    expect(mockSendSurvey).toHaveBeenCalledWith(mockSurveyId);
+    expect(response).toMatchObject({
+      surveySent: {
+        surveyId: mockSurveyId,
+        status: 'sent',
+        totalCustomers: 2,
+      },
     });
   });
 });
