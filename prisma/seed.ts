@@ -1,19 +1,23 @@
 import { PrismaClient } from '@prisma/client';
 
-const companys = [
+const password = process.env.ENV_DEPLOY === 'STAGE' ? 
+  '$2a$08$53xere8ZLbioAggU22Uf3u7EZq5Leddi.fAX7btSWylXzBxB9DVfe' : 
+  '$2a$08$GkIOV23NZSjVI9Mzr.I6FeZT5HkhgeP3L5CtD636jOSyFxzI9rH1K'
+
+  const companys = [
   {
     id: '8defa50c-1187-49f9-95af-9f1c22ec94af',
     active: true,
     name: 'Company',
     email: 'company@email.com',
-    password: '$2a$08$GkIOV23NZSjVI9Mzr.I6FeZT5HkhgeP3L5CtD636jOSyFxzI9rH1K',
+    password,
   },
   {
     id: 'b5ff9e3a-9606-4d94-a085-333109e3ff2a',
     active: true,
     name: 'Some Company',
     email: 'some-company@email.com',
-    password: '$2a$08$GkIOV23NZSjVI9Mzr.I6FeZT5HkhgeP3L5CtD636jOSyFxzI9rH1K',
+    password,
   },
 ];
 
@@ -58,6 +62,24 @@ const customers = [
     id: '29c7cdb6-3672-4f65-9caa-d026d982f479',
     name: 'Carol Shaw',
     phoneNumber: '5511999992225',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+  },
+  {
+    id: '21756114-904e-4936-9db1-2dbfddb979b8',
+    name: 'Daniela Andrade',
+    phoneNumber: '5511999992226',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+  },
+  {
+    id: 'ca2df2e1-b3ad-4229-8ba7-701e34cf52a0',
+    name: 'Nathally Souza',
+    phoneNumber: '5511999992227',
+    companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
+  },
+  {
+    id: 'a9fc15ab-0d17-4d8d-8740-16d56512952b',
+    name: 'Naomi Ceder ',
+    phoneNumber: '5511999992228',
     companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af'
   },
 ];
@@ -128,6 +150,24 @@ const customerSurveys = [
     active: true,
     customerId: '492f8f28-75f0-4bdf-ac75-f4487d2d0d39',
     surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
+  },
+  {
+    id: 'e15ac4e1-0b4e-4824-abea-9850be897965',
+    active: true,
+    customerId: '21756114-904e-4936-9db1-2dbfddb979b8',
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f'
+  },
+  {
+    id: '2c948bad-9d8c-44e7-92e5-9bc0ff2e545b',
+    active: true,
+    customerId: 'ca2df2e1-b3ad-4229-8ba7-701e34cf52a0',
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f'
+  },
+  {
+    id: '2f2b9610-0c61-48a7-be26-1f043cd0a96e',
+    active: true,
+    customerId: 'a9fc15ab-0d17-4d8d-8740-16d56512952b',
+    surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f'
   },
 ];
 

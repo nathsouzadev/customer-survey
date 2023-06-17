@@ -1,13 +1,9 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Development
-
+name: Production
 on:
   push:
-    branches:
-      - stage
-  pull_request:
     branches:
       - main
       
@@ -99,3 +95,18 @@ jobs:
 
     - name: Running integration tests
       run: yarn test:integration
+
+  stage:
+    if: needs.test.result == 'success' && needs.e2e.result == 'success' && ${{ github.ref }} == 'refs/heads/main'
+    needs:
+      - test
+      - integration
+    runs-on: ubuntu-latest
+
+    steps:
+     - uses: JorgeLNJunior/render-deploy@v1.3.2
+       with:
+         service_id: ${{ secrets.RENDER_SERVICE_ID_STAGE }}
+         api_key: ${{ secrets.RENDER_API_KEY }}
+         clear_cache: true
+         wait_deploy: true
