@@ -17,6 +17,7 @@ describe('PrismaCustomerSurveyRepository', () => {
           useValue: {
             customerSurvey: {
               findFirst: jest.fn(),
+              findMany: jest.fn(),
             },
           },
         },
@@ -138,5 +139,58 @@ describe('PrismaCustomerSurveyRepository', () => {
         ],
       },
     });
+  });
+
+  it('should return active customers with surveyId', async () => {
+    const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
+    const mockCustomerId = randomUUID();
+    const mockCustomerSurvey = [
+      {
+        id: randomUUID(),
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+        active: true,
+        customer: {
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+          companyId: mockCompanyId,
+          answers: [],
+        },
+      },
+    ];
+    const mockFindMany = jest
+      .spyOn<any, any>(mockPrismaService.customerSurvey, 'findMany')
+      .mockResolvedValue(mockCustomerSurvey);
+
+    const customers = await repository.getCustomersBySurveyId(mockSurveyId);
+    expect(mockFindMany).toHaveBeenCalledWith({
+      where: {
+        surveyId: mockSurveyId,
+        active: true,
+      },
+      include: {
+        customer: {
+          include: {
+            answers: true,
+          },
+        },
+      },
+    });
+    expect(customers).toMatchObject([
+      {
+        id: expect.any(String),
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+        active: true,
+        customer: {
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: '5511999991111',
+          companyId: mockCompanyId,
+        },
+      },
+    ]);
   });
 });

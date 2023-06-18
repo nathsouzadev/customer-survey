@@ -1,4 +1,4 @@
-export class SurveyModel {
+export class SurveyResultModel {
   id: string;
   companyId: string;
   name: string;

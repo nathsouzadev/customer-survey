@@ -61,4 +61,49 @@ describe('SurveyController', () => {
         .expect(401);
     });
   });
+
+  describe('Send survey by surveId', () => {
+    it('should send survey to customers registered', async () => {
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+        .auth(token, { type: 'bearer' })
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            surveySent: {
+              surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
+              status: 'sent',
+              totalCustomers: 3,
+            },
+          });
+        });
+    });
+  });
+
+  it('should not send survey twhe not have customers registered', async () => {
+    const token = await getToken(app, request);
+
+    return request(app.getHttpServer())
+      .post('/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
+      .auth(token, { type: 'bearer' })
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toMatchObject({
+          surveySent: {
+            surveyId: 'e5c02305-defc-444e-9ca9-7bbcb714063b',
+            status: 'no-customers',
+            totalCustomers: 0,
+          },
+        });
+      });
+  });
+
+  it('should return 401 when does not have token', async () => {
+    jest.clearAllMocks();
+    return request(app.getHttpServer())
+      .post('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+      .expect(401);
+  });
 });

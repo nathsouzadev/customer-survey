@@ -154,7 +154,7 @@ describe('CustomerController', () => {
           expect(response.body).toMatchObject({
             customers: expect.any(Array),
           });
-          expect(response.body.customers).toHaveLength(6);
+          expect(response.body.customers).toHaveLength(9);
         });
     });
 

@@ -1,6 +1,8 @@
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { mockMessageSentRespose } from '../../__mocks__/messageSentResponse.mock';
 import { TwilioService } from './twilio.service';
+import { AppLogger } from '../../utils/appLogger';
+import { Test, TestingModule } from '@nestjs/testing';
 
 const mockCreate = jest.fn().mockReturnValue(
   mockMessageSentRespose({
@@ -25,7 +27,15 @@ jest.mock('twilio', () => {
 });
 
 describe('TwilioService', () => {
-  const twilioService = new TwilioService();
+  let service: TwilioService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TwilioService, AppLogger],
+    }).compile();
+
+    service = module.get<TwilioService>(TwilioService);
+  });
   it('should return success message data when message have valid content and replyMessage', async () => {
     const mockMessage = mockReceivedMessage({
       body: '1',
@@ -36,7 +46,7 @@ describe('TwilioService', () => {
       accountSid: '50M34c01quertacggd9876',
     });
 
-    const response = await twilioService.replyToUser({
+    const response = await service.replyToUser({
       message: mockMessage,
       isValid: true,
       replyMessage: 'Other question',
@@ -67,7 +77,7 @@ describe('TwilioService', () => {
       accountSid: '50M34c01quertacggd9876',
     });
 
-    const response = await twilioService.replyToUser({
+    const response = await service.replyToUser({
       message: mockMessage,
       isValid: true,
       replyMessage: null,
@@ -98,7 +108,7 @@ describe('TwilioService', () => {
       accountSid: '50M34c01quertacggd9876',
     });
 
-    const response = await twilioService.replyToUser({
+    const response = await service.replyToUser({
       message: mockMessage,
       isValid: false,
       replyMessage: null,
@@ -107,6 +117,27 @@ describe('TwilioService', () => {
       from: process.env.ADMIN_PHONE,
       to: 'whatsapp:+5511988885555',
       body: 'Por favor responda apenas com o número de uma das alternativas',
+    });
+    expect(response).toMatchObject({
+      body: expect.any(String),
+      direction: 'outbound-api',
+      from: 'whatsapp:+12345678900',
+      to: 'whatsapp:+5511988885555',
+      dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
+      status: 'queued',
+      sid: 'FMsGH890912dasb',
+    });
+  });
+
+  it('should business start send first message', async () => {
+    const response = await service.sendFirstMessage({
+      customerPhone: '5511988885555',
+      body: 'First question',
+    });
+    expect(mockCreate).toHaveBeenCalledWith({
+      from: process.env.ADMIN_PHONE,
+      to: 'whatsapp:+5511988885555',
+      body: 'First question',
     });
     expect(response).toMatchObject({
       body: expect.any(String),

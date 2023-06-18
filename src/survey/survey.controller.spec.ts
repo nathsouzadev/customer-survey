@@ -8,6 +8,7 @@ import { CustomerSurveyRepository } from '../customer/repository/customerSurvey.
 import { SurveyRepository } from './repository/survey.repository';
 import { randomUUID } from 'crypto';
 import { AppLogger } from '../utils/appLogger';
+import { QuestionRepository } from './repository/question.repository';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -35,6 +36,10 @@ describe('SurveyController', () => {
           provide: SurveyRepository,
           useValue: {},
         },
+        {
+          provide: QuestionRepository,
+          useValue: {},
+        },
         AppLogger,
       ],
     }).compile();
@@ -45,7 +50,7 @@ describe('SurveyController', () => {
 
   it('should be return survey', async () => {
     const mockSurveyId = randomUUID();
-    jest.spyOn(mockSurveyService, 'getSurvey').mockImplementation(() =>
+    jest.spyOn(mockSurveyService, 'getSurveyResults').mockImplementation(() =>
       Promise.resolve({
         id: mockSurveyId,
         companyId: randomUUID(),
@@ -66,7 +71,12 @@ describe('SurveyController', () => {
       }),
     );
 
-    const response = await controller.getSurvey(mockSurveyId);
+    const response = await controller.getSurvey(
+      {
+        headers: {},
+      },
+      mockSurveyId,
+    );
     expect(response).toMatchObject({
       id: mockSurveyId,
       companyId: expect.any(String),
