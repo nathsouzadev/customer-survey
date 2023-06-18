@@ -42,21 +42,24 @@ export class HookService {
     const customersToSend = await this.customerService.getCustomersBySurveyId(
       surveyId,
     );
-    const { question } = await this.surveyService.getFirstQuestionBySurveyId(
-      surveyId,
-    );
 
-    for (const survey of customersToSend) {
-      await this.client.sendFirstMessage({
-        customerPhone: survey.customer.phoneNumber,
-        body: question,
-      });
+    if (customersToSend.length > 0) {
+      const { question } = await this.surveyService.getFirstQuestionBySurveyId(
+        surveyId,
+      );
+
+      for (const survey of customersToSend) {
+        await this.client.sendFirstMessage({
+          customerPhone: survey.customer.phoneNumber,
+          body: question,
+        });
+      }
     }
 
     return {
       surveySent: {
         surveyId,
-        status: 'sent',
+        status: customersToSend.length > 0 ? 'sent' : 'no-customers',
         totalCustomers: customersToSend.length,
       },
     };

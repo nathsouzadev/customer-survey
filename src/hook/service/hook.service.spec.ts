@@ -276,4 +276,27 @@ describe('HookService', () => {
       },
     });
   });
+
+  it('should not send survey when not have registered customers', async () => {
+    const mockSurveyId = randomUUID();
+
+    const mockGetCustomer = jest
+      .spyOn(mockCustomerService, 'getCustomersBySurveyId')
+      .mockImplementation(() => Promise.resolve([]));
+    const mockGetFirstQuestion = jest.spyOn(
+      mockSurveyService,
+      'getFirstQuestionBySurveyId',
+    );
+
+    const response = await service.sendSurvey(mockSurveyId);
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockGetFirstQuestion).not.toHaveBeenCalled();
+    expect(response).toMatchObject({
+      surveySent: {
+        surveyId: mockSurveyId,
+        status: 'no-customers',
+        totalCustomers: 0,
+      },
+    });
+  });
 });

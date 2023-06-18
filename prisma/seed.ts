@@ -19,6 +19,13 @@ const password = process.env.ENV_DEPLOY === 'STAGE' ?
     email: 'some-company@email.com',
     password,
   },
+  {
+    id: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7',
+    active: true,
+    name: 'Other Company',
+    email: 'other-company@email.com',
+    password,
+  },
 ];
 
 const customers = [
@@ -136,6 +143,12 @@ const surveys = [
     title: 'Customer Survey',
     companyId: 'b5ff9e3a-9606-4d94-a085-333109e3ff2a',
   },
+  {
+    id: 'e5c02305-defc-444e-9ca9-7bbcb714063b',  
+    name: 'No customers',
+    title: 'No customers',
+    companyId: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7'
+  }
 ];
 
 const customerSurveys = [

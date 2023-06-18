@@ -63,7 +63,7 @@ describe('SurveyController', () => {
   });
 
   describe('Send survey by surveId', () => {
-    it.only('should send survey to customers registered', async () => {
+    it('should send survey to customers registered', async () => {
       const token = await getToken(app, request);
 
       return request(app.getHttpServer())
@@ -80,6 +80,24 @@ describe('SurveyController', () => {
           });
         });
     });
+  });
+
+  it('should not send survey twhe not have customers registered', async () => {
+    const token = await getToken(app, request);
+
+    return request(app.getHttpServer())
+      .post('/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
+      .auth(token, { type: 'bearer' })
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toMatchObject({
+          surveySent: {
+            surveyId: 'e5c02305-defc-444e-9ca9-7bbcb714063b',
+            status: 'no-customers',
+            totalCustomers: 0,
+          },
+        });
+      });
   });
 
   it('should return 401 when does not have token', async () => {
