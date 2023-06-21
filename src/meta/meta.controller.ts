@@ -16,7 +16,7 @@ export class MetaController {
   }
 
   @Post()
-  receiveMessage(@Request() req: any){
-    console.log('msg received', req.body)
+  receiveMessage(@Request() req: any) {
+    console.log('msg received', req.body);
   }
 }

@@ -4,9 +4,6 @@
 name: Development
 
 on:
-  push:
-    branches:
-      - stage
   pull_request:
     branches:
       - main
