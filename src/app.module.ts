@@ -7,6 +7,7 @@ import { CustomerModule } from './customer/customer.module';
 import { CompanyModule } from './company/company.module';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { MetaModule } from './meta/meta.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AuthModule } from './auth/auth.module';
         ],
       },
     ]),
+    MetaModule,
   ],
 })
 export class AppModule {}
