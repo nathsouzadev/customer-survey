@@ -1,4 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Request,
+} from '@nestjs/common';
 import { MetaService } from './service/meta.service';
 
 @Controller('meta')
@@ -7,7 +11,7 @@ export class MetaController {
 
   @Get()
   findAll(@Request() req: any) {
-    console.log(req.body)
-    return 'MESSAGE-SERVICE'
+    console.log(req.body);
+    return 'MESSAGE-SERVICE';
   }
 }

@@ -4,6 +4,6 @@ import { MetaController } from './meta.controller';
 
 @Module({
   controllers: [MetaController],
-  providers: [MetaService]
+  providers: [MetaService],
 })
 export class MetaModule {}
