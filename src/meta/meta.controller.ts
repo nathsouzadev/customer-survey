@@ -7,7 +7,11 @@ export class MetaController {
 
   @Get()
   findAll(@Request() req: any) {
-    console.log(req.body);
-    return 'MESSAGE-SERVICE';
+    console.log(req.query);
+    const challenge = req.query['hub.challenge'];
+    if (req.query['hub.verify_token'] == 'MESSAGE-SERVICE') {
+      console.log('validate');
+      return challenge;
+    }
   }
 }
