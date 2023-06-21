@@ -1,4 +1,4 @@
-import { Controller, Get, Request } from '@nestjs/common';
+import { Controller, Get, Post, Request } from '@nestjs/common';
 import { MetaService } from './service/meta.service';
 
 @Controller('meta')
@@ -13,5 +13,10 @@ export class MetaController {
       console.log('validate');
       return challenge;
     }
+  }
+
+  @Post()
+  receiveMessage(@Request() req: any) {
+    console.log('msg received', req.body);
   }
 }
