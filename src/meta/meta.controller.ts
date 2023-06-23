@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Request } from '@nestjs/common';
+import { Controller, Get, HttpCode, Post, Request } from '@nestjs/common';
 import { MetaService } from './service/meta.service';
 import axios from 'axios';
 
@@ -17,24 +17,33 @@ export class MetaController {
   }
 
   @Post()
-  receiveMessage(@Request() req: any) {
+  @HttpCode(200)
+  async receiveMessage(@Request() req: any) {
     console.log('msg received', req.body);
-    axios({
-      method: 'POST', // Required, HTTP method, a string, e.g. POST, GET
-      url:
-        'https://graph.facebook.com/v12.0/' +
-        req.body.entry[0].changes[0].value.metadata.phone_number_id +
-        '/messages?access_token=' +
-        process.env.WHATSAPP_TOKEN,
-      data: {
-        messaging_product: 'whatsapp',
-        to: req.body.entry[0].changes[0].value.messages[0].from,
-        text: {
-          body:
-            'Ack: ' + req.body.entry[0].changes[0].value.messages[0].text.body,
+    try {
+      const response = await axios({
+        method: 'POST', // Required, HTTP method, a string, e.g. POST, GET
+        url:
+          'https://graph.facebook.com/v12.0/' +
+          req.body.entry[0].changes[0].value.metadata.phone_number_id +
+          '/messages?access_token=' +
+          process.env.WHATSAPP_TOKEN,
+        data: {
+          messaging_product: 'whatsapp',
+          to: req.body.entry[0].changes[0].value.messages[0].from,
+          text: {
+            body:
+              'Ack: ' +
+              req.body.entry[0].changes[0].value.messages[0].text.body,
+          },
         },
-      },
-      headers: { 'Content-Type': 'application/json' },
-    });
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log(response);
+      return 'ok';
+    } catch (error) {
+      console.error(error.message);
+      return 'erro';
+    }
   }
 }
