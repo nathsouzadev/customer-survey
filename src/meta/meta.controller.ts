@@ -20,6 +20,11 @@ export class MetaController {
   @HttpCode(200)
   async receiveMessage(@Request() req: any) {
     console.log('msg received', req.body);
+    console.log('FROM', req.body.entry[0].changes[0].value.messages[0].from);
+    console.log(
+      'BODY',
+      req.body.entry[0].changes[0].value.messages[0].text.body,
+    );
     try {
       const response = await axios({
         method: 'POST', // Required, HTTP method, a string, e.g. POST, GET
@@ -32,9 +37,7 @@ export class MetaController {
           messaging_product: 'whatsapp',
           to: req.body.entry[0].changes[0].value.messages[0].from,
           text: {
-            body:
-              'Ack: ' +
-              req.body.entry[0].changes[0].value.messages[0].text.body,
+            body: 'Ack REPLY ',
           },
         },
         headers: { 'Content-Type': 'application/json' },
