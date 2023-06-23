@@ -33,16 +33,17 @@ export class MetaController {
           to: req.body.entry[0].changes[0].value.messages[0].from,
           text: {
             body:
-              'Ack: ' + req.body.entry[0].changes[0].value.messages[0].text.body,
+              'Ack: ' +
+              req.body.entry[0].changes[0].value.messages[0].text.body,
           },
         },
         headers: { 'Content-Type': 'application/json' },
       });
-      console.log(response)
-      return 'ok'
+      console.log(response);
+      return 'ok';
     } catch (error) {
-      console.error(error.message)
-      return 'erro'
+      console.error(error.message);
+      return 'erro';
     }
   }
 }
