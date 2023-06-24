@@ -31,8 +31,7 @@ export class MetaController {
         url:
           'https://graph.facebook.com/v12.0/' +
           req.body.entry[0].changes[0].value.metadata.phone_number_id +
-          '/messages?access_token=' +
-          process.env.WHATSAPP_TOKEN,
+          '/messages',
         data: {
           messaging_product: 'whatsapp',
           to: req.body.entry[0].changes[0].value.messages[0].from,
@@ -40,7 +39,10 @@ export class MetaController {
             body: 'Ack REPLY ',
           },
         },
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+        },
       });
       console.log(response);
       return 'ok';
