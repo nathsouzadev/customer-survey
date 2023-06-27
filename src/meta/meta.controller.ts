@@ -1,10 +1,8 @@
 import { Controller, Get, HttpCode, Post, Request } from '@nestjs/common';
-import { MetaService } from './service/meta.service';
 import axios from 'axios';
 
 @Controller('meta')
 export class MetaController {
-  constructor(private readonly metaService: MetaService) {}
 
   @Get()
   findAll(@Request() req: any) {
