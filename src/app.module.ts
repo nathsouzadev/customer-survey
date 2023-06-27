@@ -7,7 +7,6 @@ import { CustomerModule } from './customer/customer.module';
 import { CompanyModule } from './company/company.module';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
-import { MetaModule } from './meta/meta.module';
 
 @Module({
   imports: [
@@ -26,7 +25,7 @@ import { MetaModule } from './meta/meta.module';
     AuthModule,
     RouterModule.register([
       {
-        path: '',
+        path: 'meta',
         module: HookModule,
       },
       {
@@ -48,7 +47,6 @@ import { MetaModule } from './meta/meta.module';
         ],
       },
     ]),
-    MetaModule,
   ],
 })
 export class AppModule {}
