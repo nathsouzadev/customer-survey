@@ -67,7 +67,7 @@ describe('SurveyController', () => {
       const token = await getToken(app, request);
 
       return request(app.getHttpServer())
-        .post('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+        .post('/meta/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
         .auth(token, { type: 'bearer' })
         .expect(200)
         .then((response) => {
@@ -86,7 +86,7 @@ describe('SurveyController', () => {
     const token = await getToken(app, request);
 
     return request(app.getHttpServer())
-      .post('/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
+      .post('/meta/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
       .auth(token, { type: 'bearer' })
       .expect(200)
       .then((response) => {
@@ -103,7 +103,7 @@ describe('SurveyController', () => {
   it('should return 401 when does not have token', async () => {
     jest.clearAllMocks();
     return request(app.getHttpServer())
-      .post('/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+      .post('/meta/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
       .expect(401);
   });
 });

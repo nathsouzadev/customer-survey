@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HookController } from './hook.controller';
 import { HookService } from '../hook/service/hook.service';
 import { TwilioService } from '../client/twilio/twilio.service';
-import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
+import { mockReceivedMessage } from '../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../survey/service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/service/customer.service';
@@ -12,6 +12,8 @@ import { SurveyRepository } from '../survey/repository/survey.repository';
 import { AppLogger } from '../utils/appLogger';
 import { QuestionRepository } from '../survey/repository/question.repository';
 import { randomUUID } from 'crypto';
+import { WBService } from '../client/wb/wb.service';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -25,6 +27,10 @@ describe('HookController', () => {
         SurveyService,
         {
           provide: TwilioService,
+          useValue: {},
+        },
+        {
+          provide: WBService,
           useValue: {},
         },
         CustomerService,
@@ -60,37 +66,24 @@ describe('HookController', () => {
     it('should return message after sent', async () => {
       jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
         Promise.resolve({
-          body: '1',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
         }),
       );
 
       const response = await hookController.getMessage(
         mockReceivedMessage({
-          body: '1',
-          profileName: 'Ada Lovelace',
-          to: 'whatsapp:+12345678900',
-          waId: '5511988885555',
-          smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-          accountSid: '50M34c01quertacggd9876',
+          message: '1',
+          receiver: '12345678900',
+          sender: '5511988885555',
         }),
       );
 
       expect(response).toMatchObject({
         status: 'ok',
         response: {
-          body: '1',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
         },
       });
     });
@@ -124,5 +117,32 @@ describe('HookController', () => {
         totalCustomers: 2,
       },
     });
+  });
+
+  it('should activate webhook', async () => {
+    const mockToken = randomUUID();
+    const mockChallenge = randomUUID();
+    process.env.WEBHOOK_TOKEN = mockToken;
+    const response = await hookController.activate({
+      query: {
+        'hub.verify_token': mockToken,
+        'hub.challenge': mockChallenge,
+      },
+    });
+    expect(response).toBe(mockChallenge);
+  });
+
+  it('should throw a erro if has invalid token', async () => {
+    const mockToken = randomUUID();
+    const mockChallenge = randomUUID();
+    process.env.WEBHOOK_TOKEN = mockToken;
+    expect(
+      hookController.activate({
+        query: {
+          'hub.verify_token': randomUUID(),
+          'hub.challenge': mockChallenge,
+        },
+      }),
+    ).rejects.toThrow(new UnauthorizedException());
   });
 });

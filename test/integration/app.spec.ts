@@ -2,14 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { mockReceivedMessage } from '../../src/__mocks__/receivedMessage.mock';
+import { mockReceivedMessage } from '../../src/__mocks__/metaReceivedMessage.mock';
 import { PrismaClient } from '@prisma/client';
 import { timeOut } from './aux/timeout';
+import nock from 'nock';
+import { randomUUID } from 'crypto';
 
 const prismaClient = new PrismaClient({ log: ['query'] });
 
 describe('AppController', () => {
   let app: INestApplication;
+  const mockUrl = 'https://graph.facebook.com/v17.0';
+  process.env.WB_URL = mockUrl;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -21,32 +25,42 @@ describe('AppController', () => {
     await timeOut();
   });
 
-  describe('receive message from twilio', () => {
+  describe('receive message from meta', () => {
     it('send next question when user do not finish survey', async () => {
+      const mockCompanyPhone = '12345678900';
+      const mockCustomerPhone = '5511999991111';
+      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
       return request(app.getHttpServer())
-        .post('/')
+        .post('/meta')
         .send(
           mockReceivedMessage({
-            body: '1',
-            profileName: 'Ada Lovelace',
-            to: 'whatsapp:+12345678900',
-            waId: '5511999991111',
-            smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-            accountSid: '50M34c01quertacggd9876',
+            message: '1',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
           }),
         )
-        .expect(201)
+        .expect(200)
         .then(async (response) => {
           expect(response.body).toMatchObject({
             status: 'ok',
             response: {
-              body: 'Some Question 2 \n1 - bom\n2 - regular\n3 - ruim',
-              direction: 'outbound-api',
-              from: 'whatsapp:+14155238886',
-              to: 'whatsapp:+5511999991111',
-              dateUpdated: expect.any(String),
-              status: 'queued',
-              sid: expect.any(String),
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
             },
           });
 
@@ -71,30 +85,40 @@ describe('AppController', () => {
     });
 
     it('send thank message when user do not finish survey', async () => {
+      const mockCompanyPhone = '12345678900';
+      const mockCustomerPhone = '5511999992222';
+      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
       return request(app.getHttpServer())
-        .post('/')
+        .post('/meta')
         .send(
           mockReceivedMessage({
-            body: '2',
-            profileName: 'Ada Lovelace',
-            to: 'whatsapp:+12345678900',
-            waId: '5511999992222',
-            smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-            accountSid: '50M34c01quertacggd9876',
+            message: '2',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
           }),
         )
-        .expect(201)
+        .expect(200)
         .then(async (response) => {
           expect(response.body).toMatchObject({
             status: 'ok',
             response: {
-              body: 'Obrigada pela sua resposta!',
-              direction: 'outbound-api',
-              from: 'whatsapp:+14155238886',
-              to: 'whatsapp:+5511999992222',
-              dateUpdated: expect.any(String),
-              status: 'queued',
-              sid: expect.any(String),
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
             },
           });
 
@@ -119,33 +143,66 @@ describe('AppController', () => {
     });
 
     it('receive message with invalid body', async () => {
+      const mockCompanyPhone = '12345678900';
+      const mockCustomerPhone = '5511988885555';
+      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
       return request(app.getHttpServer())
-        .post('/')
+        .post('/meta')
         .send(
           mockReceivedMessage({
-            body: 'Invalid body',
-            profileName: 'Ada Lovelace',
-            to: 'whatsapp:+12345678900',
-            waId: '5511988885555',
-            smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-            accountSid: '50M34c01quertacggd9876',
+            message: 'Invalid body',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
           }),
         )
-        .expect(201)
+        .expect(200)
         .then((response) => {
           expect(response.body).toMatchObject({
             status: 'ok',
             response: {
-              body: 'Por favor responda apenas com o número de uma das alternativas',
-              direction: 'outbound-api',
-              from: 'whatsapp:+14155238886',
-              to: 'whatsapp:+5511988885555',
-              dateUpdated: expect.any(String),
-              status: 'queued',
-              sid: expect.any(String),
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
             },
           });
         });
+    });
+  });
+
+  describe('activate webhook with Meta', () => {
+    const mockToken = randomUUID();
+    process.env.WEBHOOK_TOKEN = mockToken;
+    const mockChallenge = '1158201444';
+
+    it('should return 200 with challenge', () => {
+      return request(app.getHttpServer())
+        .get(
+          `/meta/activate?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${mockToken}`,
+        )
+        .expect(200)
+        .then((response) => expect(response.text).toBe(mockChallenge));
+    });
+
+    it('should return 401 when have invalid token', () => {
+      return request(app.getHttpServer())
+        .get(
+          `/meta/activate?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${randomUUID()}`,
+        )
+        .expect(401);
     });
   });
 });

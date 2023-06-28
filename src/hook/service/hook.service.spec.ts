@@ -1,16 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
 import { TwilioService } from '../../client/twilio/twilio.service';
-import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
+import { mockReceivedMessage } from '../../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
 import { randomUUID } from 'crypto';
 import { CustomerService } from '../../customer/service/customer.service';
+import { WBService } from '../../client/wb/wb.service';
 
 describe('HookService', () => {
   let service: HookService;
   let mockTwilioService: TwilioService;
   let mockSurveyService: SurveyService;
   let mockCustomerService: CustomerService;
+  let mockWbService: WBService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +38,12 @@ describe('HookService', () => {
             getFirstQuestionBySurveyId: jest.fn(),
           },
         },
+        {
+          provide: WBService,
+          useValue: {
+            replyToUser: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -43,20 +51,28 @@ describe('HookService', () => {
     mockTwilioService = module.get<TwilioService>(TwilioService);
     mockSurveyService = module.get<SurveyService>(SurveyService);
     mockCustomerService = module.get<CustomerService>(CustomerService);
+    mockWbService = module.get<WBService>(WBService);
   });
 
   it('should send message replyMessage with next question when customerAnswers is less than surveyLength', async () => {
+    const mockSenderPhone = '5511988885555';
+    const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockTwilioService, 'replyToUser')
+      .spyOn(mockWbService, 'replyToUser')
       .mockImplementation(() =>
         Promise.resolve({
-          body: 'Next question',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockReceiverPhone,
+              wa_id: mockReceiverPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
         }),
       );
     const mockUpdate = jest
@@ -74,47 +90,46 @@ describe('HookService', () => {
       );
 
     const mockMessage = mockReceivedMessage({
-      body: '1',
-      profileName: 'Ada Lovelace',
-      to: 'whatsapp:+12345678900',
-      waId: '5511988885555',
-      smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-      accountSid: '50M34c01quertacggd9876',
+      sender: mockSenderPhone,
+      receiver: mockReceiverPhone,
+      message: '1',
     });
 
     const response = await service.sendMessage(mockMessage);
     expect(mockReplyToUser).toHaveBeenCalledWith({
-      message: mockMessage,
-      isValid: true,
-      replyMessage: 'Next Question \n1 - bom\n2 - regular\n3 - ruim',
+      sender: mockReceiverPhone,
+      receiver: mockSenderPhone,
+      message: 'Next Question \n1 - bom\n2 - regular\n3 - ruim',
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
       customer: '5511988885555',
     });
     expect(response).toMatchObject({
-      body: 'Next question',
-      direction: 'outbound-api',
-      from: 'whatsapp:+12345678900',
-      to: 'whatsapp:+5511988885555',
-      dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-      status: 'queued',
-      sid: 'FMsGH890912dasb',
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
 
   it('should send message replyMessage null when customerAnswers is equal than surveyLength', async () => {
+    const mockSenderPhone = '5511988885555';
+    const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockTwilioService, 'replyToUser')
+      .spyOn(mockWbService, 'replyToUser')
       .mockImplementation(() =>
         Promise.resolve({
-          body: 'Obrigada pela sua resposta',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockReceiverPhone,
+              wa_id: mockReceiverPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
         }),
       );
     const mockUpdate = jest
@@ -132,72 +147,63 @@ describe('HookService', () => {
       );
 
     const mockMessage = mockReceivedMessage({
-      body: '1',
-      profileName: 'Ada Lovelace',
-      to: 'whatsapp:+12345678900',
-      waId: '5511988885555',
-      smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-      accountSid: '50M34c01quertacggd9876',
+      sender: mockSenderPhone,
+      receiver: mockReceiverPhone,
+      message: '1',
     });
 
     const response = await service.sendMessage(mockMessage);
     expect(mockReplyToUser).toHaveBeenCalledWith({
-      message: mockMessage,
-      isValid: true,
-      replyMessage: null,
+      sender: mockReceiverPhone,
+      receiver: mockSenderPhone,
+      message: 'Obrigada pela sua resposta!',
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
       customer: '5511988885555',
     });
     expect(response).toMatchObject({
-      body: 'Obrigada pela sua resposta',
-      direction: 'outbound-api',
-      from: 'whatsapp:+12345678900',
-      to: 'whatsapp:+5511988885555',
-      dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-      status: 'queued',
-      sid: 'FMsGH890912dasb',
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
 
   it('should return failed response when send message with invalid content', async () => {
+    const mockSenderPhone = '5511988885555';
+    const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockTwilioService, 'replyToUser')
+      .spyOn(mockWbService, 'replyToUser')
       .mockImplementation(() =>
         Promise.resolve({
-          body: 'Por favor responda apenas com o número de uma das alternativas',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockReceiverPhone,
+              wa_id: mockReceiverPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
         }),
       );
     const mockMessage = mockReceivedMessage({
-      body: 'Invalid',
-      profileName: 'Ada Lovelace',
-      to: 'whatsapp:+12345678900',
-      waId: '5511988885555',
-      smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-      accountSid: '50M34c01quertacggd9876',
+      sender: mockSenderPhone,
+      receiver: mockReceiverPhone,
+      message: 'teste',
     });
 
     const response = await service.sendMessage(mockMessage);
     expect(mockReplyToUser).toHaveBeenCalledWith({
-      message: mockMessage,
-      isValid: false,
-      replyMessage: null,
+      sender: mockReceiverPhone,
+      receiver: mockSenderPhone,
+      message: 'Por favor responda apenas com o número de uma das alternativas',
     });
     expect(response).toMatchObject({
-      body: 'Por favor responda apenas com o número de uma das alternativas',
-      direction: 'outbound-api',
-      from: 'whatsapp:+12345678900',
-      to: 'whatsapp:+5511988885555',
-      dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-      status: 'queued',
-      sid: 'FMsGH890912dasb',
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
 

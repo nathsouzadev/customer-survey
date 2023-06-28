@@ -8,6 +8,7 @@ import { CustomerModule } from '../customer/customer.module';
 import { PrismaService } from '../client/prisma/prisma.service';
 import { hookProviders } from '../config/providers/hookProviders';
 import { AppLogger } from '../utils/appLogger';
+import { WBService } from '../client/wb/wb.service';
 
 @Module({
   imports: [CustomerModule],
@@ -16,6 +17,7 @@ import { AppLogger } from '../utils/appLogger';
     HookService,
     SurveyService,
     TwilioService,
+    WBService,
     CustomerService,
     PrismaService,
     AppLogger,

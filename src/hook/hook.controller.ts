@@ -7,13 +7,15 @@ import {
   Request,
   UseGuards,
   HttpCode,
+  Get,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { HookService } from './service/hook.service';
-import { MessageRequest } from './dto/messageRequest.dto';
 import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
+import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 
 @Controller()
 export class HookController {
@@ -23,25 +25,30 @@ export class HookController {
   ) {}
 
   @ApiOkResponse({
-    description: 'Webhook receive whatsapp messages from Twilio',
+    description: 'Webhook receive whatsapp messages from Whatsapp API',
     schema: {
       example: {
         status: 'ok',
         response: {
-          body: 'message content',
-          direction: 'outbound-api',
-          from: 'whatsapp:+12345678900',
-          to: 'whatsapp:+5511988885555',
-          dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-          status: 'queued',
-          sid: 'FMsGH890912dasb',
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
         },
       },
     },
   })
   @Post()
-  async getMessage(@Body(new ValidationPipe()) messageRequest: MessageRequest) {
-    console.log(messageRequest);
+  @HttpCode(200)
+  async getMessage(
+    @Body(new ValidationPipe()) messageRequest: ReceivedMessageRequestDTO,
+  ) {
+    this.logger.logger(
+      {
+        requestData: messageRequest,
+        message: 'Request received',
+      },
+      HookController.name,
+    );
+
     const response = await this.hookService.sendMessage(messageRequest);
 
     return {
@@ -80,5 +87,13 @@ export class HookController {
       HookController.name,
     );
     return this.hookService.sendSurvey(surveyId);
+  }
+
+  @Get('/activate')
+  async activate(@Request() req: any) {
+    if (req.query['hub.verify_token'] == process.env.WEBHOOK_TOKEN) {
+      return req.query['hub.challenge'];
+    }
+    throw new UnauthorizedException();
   }
 }
