@@ -3,7 +3,6 @@ import axios from 'axios';
 
 @Controller('meta')
 export class MetaController {
-
   @Get()
   findAll(@Request() req: any) {
     console.log(req.query);
