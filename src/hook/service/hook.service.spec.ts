@@ -41,7 +41,7 @@ describe('HookService', () => {
         {
           provide: WBService,
           useValue: {
-            replyToUser: jest.fn(),
+            sendMessage: jest.fn(),
           },
         },
       ],
@@ -58,7 +58,7 @@ describe('HookService', () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockWbService, 'replyToUser')
+      .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
         Promise.resolve({
           messaging_product: 'whatsapp',
@@ -115,7 +115,7 @@ describe('HookService', () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockWbService, 'replyToUser')
+      .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
         Promise.resolve({
           messaging_product: 'whatsapp',
@@ -172,7 +172,7 @@ describe('HookService', () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
     const mockReplyToUser = jest
-      .spyOn(mockWbService, 'replyToUser')
+      .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
         Promise.resolve({
           messaging_product: 'whatsapp',

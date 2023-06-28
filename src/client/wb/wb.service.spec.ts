@@ -17,7 +17,7 @@ describe('WBService', () => {
     service = module.get<WBService>(WBService);
   });
 
-  it('should send message message to user', async () => {
+  it('should send message', async () => {
     const mockCompanyPhone = '5511999991111';
     const mockReceiverPhone = '5511999991110';
     nock(`${mockUrl}/${mockCompanyPhone}/messages`)
@@ -37,10 +37,52 @@ describe('WBService', () => {
         ],
       });
 
-    const response = await service.replyToUser({
+    const response = await service.sendMessage({
       receiver: mockReceiverPhone,
       sender: mockCompanyPhone,
       message: 'Reply',
+    });
+    expect(response).toMatchObject({
+      messaging_product: 'whatsapp',
+      contacts: [
+        {
+          input: mockReceiverPhone,
+          wa_id: mockReceiverPhone,
+        },
+      ],
+      messages: [
+        {
+          id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        },
+      ],
+    });
+  });
+
+  it('should send template message', async () => {
+    const mockCompanyPhone = '5511999991111';
+    const mockReceiverPhone = '5511999991110';
+    nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+      .post('')
+      .reply(200, {
+        messaging_product: 'whatsapp',
+        contacts: [
+          {
+            input: mockReceiverPhone,
+            wa_id: mockReceiverPhone,
+          },
+        ],
+        messages: [
+          {
+            id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          },
+        ],
+      });
+
+    const response = await service.sendMessage({
+      receiver: mockReceiverPhone,
+      sender: mockCompanyPhone,
+      type: 'template',
+      template: 'hello_world'
     });
     expect(response).toMatchObject({
       messaging_product: 'whatsapp',

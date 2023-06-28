@@ -33,7 +33,7 @@ export class HookService {
         answer: messageBody,
         customer,
       });
-      const messageSent = await this.wbService.replyToUser({
+      const messageSent = await this.wbService.sendMessage({
         sender:
           receivedMessage.entry[0].changes[0].value.metadata.phone_number_id,
         receiver: customer,
@@ -42,7 +42,7 @@ export class HookService {
 
       return { messageId: messageSent.messages[0].id };
     }
-    const messageSent = await this.wbService.replyToUser({
+    const messageSent = await this.wbService.sendMessage({
       sender:
         receivedMessage.entry[0].changes[0].value.metadata.phone_number_id,
       receiver: customer,
