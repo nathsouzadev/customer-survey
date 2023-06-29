@@ -4,9 +4,12 @@ import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { getToken } from './aux/token';
 import { timeOut } from './aux/timeout';
+import nock from 'nock';
 
 describe('SurveyController', () => {
   let app: INestApplication;
+  const mockUrl = 'https://graph.facebook.com/v17.0';
+  process.env.WB_URL = mockUrl;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -64,11 +67,33 @@ describe('SurveyController', () => {
 
   describe('Send survey by surveId', () => {
     it('should send survey to customers registered', async () => {
+      const mockCompanyPhone = '551199991234';
+      for (let i = 0; i < 6; i++) {
+        nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+          .post('')
+          .reply(200, {
+            messaging_product: 'whatsapp',
+            contacts: [
+              {
+                input: '5511999991111',
+                wa_id: '5511999991111',
+              },
+            ],
+            messages: [
+              {
+                id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+              },
+            ],
+          });
+      }
       const token = await getToken(app, request);
 
       return request(app.getHttpServer())
         .post('/meta/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
         .auth(token, { type: 'bearer' })
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+        })
         .expect(200)
         .then((response) => {
           expect(response.body).toMatchObject({
@@ -88,6 +113,9 @@ describe('SurveyController', () => {
     return request(app.getHttpServer())
       .post('/meta/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
       .auth(token, { type: 'bearer' })
+      .send({
+        companyId: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7',
+      })
       .expect(200)
       .then((response) => {
         expect(response.body).toMatchObject({

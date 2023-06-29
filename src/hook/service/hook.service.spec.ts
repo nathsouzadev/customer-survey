@@ -1,30 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
-import { TwilioService } from '../../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
 import { randomUUID } from 'crypto';
 import { CustomerService } from '../../customer/service/customer.service';
 import { WBService } from '../../client/wb/wb.service';
+import { CompanyService } from '../../company/service/company.service';
 
 describe('HookService', () => {
   let service: HookService;
-  let mockTwilioService: TwilioService;
   let mockSurveyService: SurveyService;
   let mockCustomerService: CustomerService;
   let mockWbService: WBService;
+  let mockCompanyService: CompanyService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         HookService,
-        {
-          provide: TwilioService,
-          useValue: {
-            replyToUser: jest.fn(),
-            sendFirstMessage: jest.fn(),
-          },
-        },
         {
           provide: CustomerService,
           useValue: {
@@ -44,14 +37,20 @@ describe('HookService', () => {
             sendMessage: jest.fn(),
           },
         },
+        {
+          provide: CompanyService,
+          useValue: {
+            getPhoneByCompanyId: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<HookService>(HookService);
-    mockTwilioService = module.get<TwilioService>(TwilioService);
     mockSurveyService = module.get<SurveyService>(SurveyService);
     mockCustomerService = module.get<CustomerService>(CustomerService);
     mockWbService = module.get<WBService>(WBService);
+    mockCompanyService = module.get<CompanyService>(CompanyService);
   });
 
   it('should send message replyMessage with next question when customerAnswers is less than surveyLength', async () => {
@@ -212,6 +211,7 @@ describe('HookService', () => {
     const mockCompanyId = randomUUID();
     const mockCustomerId = randomUUID();
     const mockCustomerId2 = randomUUID();
+    const mockCompanyPhone = '5511999995555';
 
     const mockCustomerSurvey = [
       {
@@ -235,7 +235,7 @@ describe('HookService', () => {
         customer: {
           id: mockCustomerId2,
           name: 'Grace Hooper',
-          phoneNumber: '5511999991111',
+          phoneNumber: '5511999991112',
           companyId: mockCompanyId,
           answers: [],
         },
@@ -244,6 +244,16 @@ describe('HookService', () => {
     const mockGetCustomer = jest
       .spyOn(mockCustomerService, 'getCustomersBySurveyId')
       .mockImplementation(() => Promise.resolve(mockCustomerSurvey));
+    const mockGetPhone = jest
+      .spyOn(mockCompanyService, 'getPhoneByCompanyId')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          companyId: mockCompanyId,
+          phoneNumber: mockCompanyPhone,
+        }),
+      );
     const mockGetFirstQuestion = jest
       .spyOn(mockSurveyService, 'getFirstQuestionBySurveyId')
       .mockImplementation(() =>
@@ -252,26 +262,60 @@ describe('HookService', () => {
         }),
       );
 
-    const response = await service.sendSurvey(mockSurveyId);
+    const response = await service.sendSurvey({
+      surveyId: mockSurveyId,
+      companyId: mockCompanyId,
+    });
     expect(mockGetCustomer).toHaveBeenCalledWith(mockSurveyId);
     expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockGetPhone).toHaveBeenCalledWith(mockCompanyId);
     mockCustomerSurvey.map((survey) => {
-      const mockSendFirstMessage = jest
-        .spyOn(mockTwilioService, 'sendFirstMessage')
+      const mockSendTemplate = jest
+        .spyOn(mockWbService, 'sendMessage')
         .mockImplementation(() =>
           Promise.resolve({
-            body: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
-            direction: 'outbound-api',
-            from: 'whatsapp:+12345678900',
-            to: `whatsapp:+${survey.customer.phoneNumber}`,
-            dateUpdated: new Date('2023-05-25T22:04:01.000Z'),
-            status: 'queued',
-            sid: 'FMsGH890912dasb',
+            messaging_product: 'whatsapp',
+            contacts: [
+              {
+                input: survey.customer.phoneNumber,
+                wa_id: survey.customer.phoneNumber,
+              },
+            ],
+            messages: [
+              {
+                id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+              },
+            ],
           }),
         );
-      expect(mockSendFirstMessage).toHaveBeenCalledWith({
-        customerPhone: survey.customer.phoneNumber,
-        body: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
+      const mockSendQuestion = jest
+        .spyOn(mockWbService, 'sendMessage')
+        .mockImplementation(() =>
+          Promise.resolve({
+            messaging_product: 'whatsapp',
+            contacts: [
+              {
+                input: survey.customer.phoneNumber,
+                wa_id: survey.customer.phoneNumber,
+              },
+            ],
+            messages: [
+              {
+                id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MBB=',
+              },
+            ],
+          }),
+        );
+      expect(mockSendTemplate).toHaveBeenCalledWith({
+        receiver: survey.customer.phoneNumber,
+        sender: mockCompanyPhone,
+        type: 'template',
+        template: 'hello_world',
+      });
+      expect(mockSendQuestion).toHaveBeenCalledWith({
+        receiver: survey.customer.phoneNumber,
+        sender: mockCompanyPhone,
+        message: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
       });
     });
     expect(response).toMatchObject({
@@ -285,6 +329,7 @@ describe('HookService', () => {
 
   it('should not send survey when not have registered customers', async () => {
     const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
 
     const mockGetCustomer = jest
       .spyOn(mockCustomerService, 'getCustomersBySurveyId')
@@ -294,7 +339,10 @@ describe('HookService', () => {
       'getFirstQuestionBySurveyId',
     );
 
-    const response = await service.sendSurvey(mockSurveyId);
+    const response = await service.sendSurvey({
+      surveyId: mockSurveyId,
+      companyId: mockCompanyId,
+    });
     expect(mockGetCustomer).toHaveBeenCalledWith(mockSurveyId);
     expect(mockGetFirstQuestion).not.toHaveBeenCalled();
     expect(response).toMatchObject({

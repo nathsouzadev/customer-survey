@@ -4,6 +4,7 @@ import { CompanyService } from './service/company.service';
 import { CompanyRepository } from './repository/company.repository';
 import { randomUUID } from 'crypto';
 import { AppLogger } from '../utils/appLogger';
+import { PhoneCompanyRepository } from './repository/phoneCompany.repository';
 
 describe('CompanyController', () => {
   let controller: CompanyController;
@@ -16,6 +17,10 @@ describe('CompanyController', () => {
         CompanyService,
         {
           provide: CompanyRepository,
+          useValue: {},
+        },
+        {
+          provide: PhoneCompanyRepository,
           useValue: {},
         },
         AppLogger,

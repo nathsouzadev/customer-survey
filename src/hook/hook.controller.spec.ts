@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookController } from './hook.controller';
 import { HookService } from '../hook/service/hook.service';
-import { TwilioService } from '../client/twilio/twilio.service';
 import { mockReceivedMessage } from '../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../survey/service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
@@ -14,6 +13,9 @@ import { QuestionRepository } from '../survey/repository/question.repository';
 import { randomUUID } from 'crypto';
 import { WBService } from '../client/wb/wb.service';
 import { UnauthorizedException } from '@nestjs/common';
+import { CompanyRepository } from '../company/repository/company.repository';
+import { CompanyService } from '../company/service/company.service';
+import { PhoneCompanyRepository } from '../company/repository/phoneCompany.repository';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -25,10 +27,7 @@ describe('HookController', () => {
       providers: [
         HookService,
         SurveyService,
-        {
-          provide: TwilioService,
-          useValue: {},
-        },
+        CompanyService,
         {
           provide: WBService,
           useValue: {},
@@ -54,6 +53,14 @@ describe('HookController', () => {
           provide: QuestionRepository,
           useValue: {},
         },
+        {
+          provide: CompanyRepository,
+          useValue: {},
+        },
+        {
+          provide: PhoneCompanyRepository,
+          useValue: {},
+        },
         AppLogger,
       ],
     }).compile();
@@ -62,7 +69,7 @@ describe('HookController', () => {
     mockHookService = app.get<HookService>(HookService);
   });
 
-  describe('root', () => {
+  describe('hook', () => {
     it('should return message after sent', async () => {
       jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
         Promise.resolve({
@@ -91,6 +98,7 @@ describe('HookController', () => {
 
   it('should send survey to customers', async () => {
     const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
     const mockSendSurvey = jest
       .spyOn(mockHookService, 'sendSurvey')
       .mockImplementation(() =>
@@ -108,8 +116,14 @@ describe('HookController', () => {
         headers: {},
       },
       mockSurveyId,
+      {
+        companyId: mockCompanyId,
+      },
     );
-    expect(mockSendSurvey).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockSendSurvey).toHaveBeenCalledWith({
+      surveyId: mockSurveyId,
+      companyId: mockCompanyId,
+    });
     expect(response).toMatchObject({
       surveySent: {
         surveyId: mockSurveyId,

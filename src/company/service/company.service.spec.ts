@@ -4,12 +4,14 @@ import { CompanyRepository } from '../repository/company.repository';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import { AppLogger } from '../../utils/appLogger';
+import { PhoneCompanyRepository } from '../repository/phoneCompany.repository';
 
 jest.mock('bcryptjs');
 
 describe('CompanyService', () => {
   let service: CompanyService;
   let mockCompanyRepository: CompanyRepository;
+  let mockPhoneCompanyRepository: PhoneCompanyRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,12 +25,21 @@ describe('CompanyService', () => {
             getCompany: jest.fn(),
           },
         },
+        {
+          provide: PhoneCompanyRepository,
+          useValue: {
+            getPhoneByCompanyId: jest.fn(),
+          },
+        },
         AppLogger,
       ],
     }).compile();
 
     service = module.get<CompanyService>(CompanyService);
     mockCompanyRepository = module.get<CompanyRepository>(CompanyRepository);
+    mockPhoneCompanyRepository = module.get<PhoneCompanyRepository>(
+      PhoneCompanyRepository,
+    );
   });
 
   it('should be return company create', async () => {
@@ -157,5 +168,28 @@ describe('CompanyService', () => {
     const company = await service.getAuthCompany(mockAuthRequest);
     expect(mockGetAuthCompany).toHaveBeenCalledWith('company@email.com');
     expect(company).toBeNull();
+  });
+
+  it('should be return phoneCompany with companyId', async () => {
+    const mockCompanyId = randomUUID();
+    const mockGetPhone = jest
+      .spyOn(mockPhoneCompanyRepository, 'getPhoneByCompanyId')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          phoneNumber: '5511999995555',
+          companyId: mockCompanyId,
+        }),
+      );
+
+    const phoneCompany = await service.getPhoneByCompanyId(mockCompanyId);
+    expect(mockGetPhone).toHaveBeenCalledWith(mockCompanyId);
+    expect(phoneCompany).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      phoneNumber: '5511999995555',
+      companyId: mockCompanyId,
+    });
   });
 });

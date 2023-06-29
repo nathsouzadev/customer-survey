@@ -9,6 +9,7 @@ const clearDb = async () => {
   await prismaClient.questionAnswer.deleteMany();
   await prismaClient.question.deleteMany();
   await prismaClient.survey.deleteMany();
+  await prismaClient.phoneCompany.deleteMany();
   await prismaClient.company.deleteMany();
 };
 

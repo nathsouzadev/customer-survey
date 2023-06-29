@@ -4,11 +4,14 @@ import { CreateCompanyRequestDTO } from '../dto/createCompanyRequest.dto';
 import { CompanyModel } from '../model/company.model';
 import { compare, hash } from 'bcryptjs';
 import { AppLogger } from '../../utils/appLogger';
+import { PhoneCompany } from '@prisma/client';
+import { PhoneCompanyRepository } from '../repository/phoneCompany.repository';
 
 @Injectable()
 export class CompanyService {
   constructor(
     private readonly companyRepository: CompanyRepository,
+    private readonly phoneCompanyRepository: PhoneCompanyRepository,
     private readonly logger: AppLogger,
   ) {}
 
@@ -49,4 +52,7 @@ export class CompanyService {
 
     return company;
   };
+
+  getPhoneByCompanyId = async (companyId: string): Promise<PhoneCompany> =>
+    this.phoneCompanyRepository.getPhoneByCompanyId(companyId);
 }
