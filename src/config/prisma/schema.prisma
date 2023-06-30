@@ -74,4 +74,13 @@ model Company {
   surveys Survey[]
   password String
   customers Customer[]
+  phoneNumbers PhoneCompany[]
+}
+
+model PhoneCompany {
+  id String @id @default(uuid())
+  active Boolean
+  phoneNumber String
+  company Company @relation(fields: [companyId], references: [id])
+  companyId String
 }

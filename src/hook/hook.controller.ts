@@ -16,6 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
+import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
 
 @Controller()
 export class HookController {
@@ -78,6 +79,7 @@ export class HookController {
   async sendSurvey(
     @Request() request: any,
     @Param('surveyId') surveyId: string,
+    @Body(new ValidationPipe()) sendSurveyRequest: SendSurveyRequestDTO,
   ): Promise<Promise<SendSurveyModel>> {
     this.logger.logger(
       {
@@ -86,7 +88,10 @@ export class HookController {
       },
       HookController.name,
     );
-    return this.hookService.sendSurvey(surveyId);
+    return this.hookService.sendSurvey({
+      surveyId,
+      companyId: sendSurveyRequest.companyId,
+    });
   }
 
   @Get('/activate')

@@ -28,6 +28,13 @@ const password = process.env.ENV_DEPLOY === 'STAGE' ?
   },
 ];
 
+const phoneCompany = {
+  id: '4d8813a8-8d84-415c-a6d2-964ef7206243',
+  active: true,
+  phoneNumber: '551199991234',
+  companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+}
+
 const customers = [
   {
     id: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
@@ -294,6 +301,8 @@ const main = async () => {
       data: company,
     });
   }
+
+  await prisma.phoneCompany.create({ data: phoneCompany })
 
   for (const customer of customers) {
     await prisma.customer.create({

@@ -3,27 +3,49 @@ import axios from 'axios';
 import { MessageSentModel } from './models/messageSent.model';
 import { Injectable } from '@nestjs/common';
 
-interface ReplyData {
+interface MessageData {
   receiver: string;
   sender: string;
   message: string;
+}
+
+interface TemplateData {
+  receiver: string;
+  sender: string;
+  type: string;
+  template: string;
 }
 
 @Injectable()
 export class WBService {
   constructor(private readonly logger: AppLogger) {}
 
-  replyToUser = async (replyData: ReplyData): Promise<MessageSentModel> => {
+  sendMessage = async (
+    messageData: MessageData | TemplateData,
+  ): Promise<MessageSentModel> => {
     const response = await axios({
       method: 'POST',
-      url: 'https://graph.facebook.com/v17.0/' + replyData.sender + '/messages',
-      data: {
-        messaging_product: 'whatsapp',
-        to: replyData.receiver,
-        text: {
-          body: replyData.message,
-        },
-      },
+      url:
+        'https://graph.facebook.com/v17.0/' + messageData.sender + '/messages',
+      data: Object.keys(messageData).includes['template']
+        ? {
+            messaging_product: 'whatsapp',
+            to: messageData.receiver,
+            type: 'template',
+            template: {
+              name: messageData['template'],
+              language: {
+                code: 'en_US',
+              },
+            },
+          }
+        : {
+            messaging_product: 'whatsapp',
+            to: messageData.receiver,
+            text: {
+              body: messageData['message'],
+            },
+          },
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
