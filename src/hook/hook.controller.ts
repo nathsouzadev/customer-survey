@@ -96,7 +96,7 @@ export class HookController {
     });
   }
 
-  @Get('/activate')
+  @Get()
   async activate(@Request() req: any) {
     if (req.query['hub.verify_token'] == process.env.WEBHOOK_TOKEN) {
       return req.query['hub.challenge'];

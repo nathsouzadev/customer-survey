@@ -191,7 +191,7 @@ describe('AppController', () => {
     it('should return 200 with challenge', () => {
       return request(app.getHttpServer())
         .get(
-          `/meta/activate?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${mockToken}`,
+          `/meta?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${mockToken}`,
         )
         .expect(200)
         .then((response) => expect(response.text).toBe(mockChallenge));
@@ -200,7 +200,7 @@ describe('AppController', () => {
     it('should return 401 when have invalid token', () => {
       return request(app.getHttpServer())
         .get(
-          `/meta/activate?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${randomUUID()}`,
+          `/meta?hub.mode=subscribe&hub.challenge=${mockChallenge}&hub.verify_token=${randomUUID()}`,
         )
         .expect(401);
     });
