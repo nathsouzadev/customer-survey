@@ -43,8 +43,10 @@ export class HookController {
     @Body(new ValidationPipe()) messageRequest: ReceivedMessageRequestDTO,
   ) {
     console.log('HERE');
-    console.log('BODY', 
-      messageRequest.entry[0].changes[0].value.messages[0].text.body);
+    console.log(
+      'BODY',
+      messageRequest.entry[0].changes[0].value.messages[0].text.body,
+    );
     console.log(messageRequest);
     this.logger.logger(
       {
