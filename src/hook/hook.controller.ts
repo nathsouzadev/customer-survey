@@ -42,6 +42,8 @@ export class HookController {
   async getMessage(
     @Body(new ValidationPipe()) messageRequest: ReceivedMessageRequestDTO,
   ) {
+    console.log('HERE')
+    console.log(messageRequest)
     this.logger.logger(
       {
         requestData: messageRequest,
