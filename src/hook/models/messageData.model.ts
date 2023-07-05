@@ -28,7 +28,7 @@ export interface UpdateStatus extends MessageData {
   statuses: Array<{
     id: string;
     status: string;
-    timestamp: string;
+    timestamp: number;
     recipient_id: string;
     conversation: {
       id: string;

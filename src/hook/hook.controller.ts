@@ -43,15 +43,17 @@ export class HookController {
   async getMessage(
     @Body(new ValidationPipe()) messageRequest: ReceivedMessageRequestDTO,
   ) {
-    console.log('HERE');
+    this.logger.logger(
+      {
+        requestData: messageRequest,
+        message: 'Request received',
+      },
+      HookController.name,
+    );
+
     if (
       Object.keys(messageRequest.entry[0].changes[0].value).includes('messages')
     ) {
-      console.log(
-        'BODY',
-        messageRequest.entry[0].changes[0].value['messages'][0].text.body,
-      );
-
       const response = await this.hookService.sendMessage(
         messageRequest.entry[0].changes[0].value as MessageReceived,
       );
@@ -60,13 +62,6 @@ export class HookController {
         response,
       };
     }
-    this.logger.logger(
-      {
-        requestData: messageRequest,
-        message: 'Request received',
-      },
-      HookController.name,
-    );
 
     return {
       status: 'ok',

@@ -22,7 +22,7 @@ export class AppLogger extends ConsoleLogger {
       this.log(
         JSON.stringify({
           correlationId: global.correlationId,
-          requestData: Object.keys(requestData).includes('entry')
+          requestData: Object.keys(requestData).includes('entry') && Object.keys(requestData.entry[0].changes[0].value).includes('messages')
             ? this.maskPersonalInfoReceived(deepCopy(requestData))
             : requestData,
           message,
