@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookService } from './hook.service';
-import { mockReceivedMessage } from '../../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../../survey/service/survey.service';
 import { randomUUID } from 'crypto';
 import { CustomerService } from '../../customer/service/customer.service';
 import { WBService } from '../../client/wb/wb.service';
 import { CompanyService } from '../../company/service/company.service';
+import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 
 describe('HookService', () => {
   let service: HookService;

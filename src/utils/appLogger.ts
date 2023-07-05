@@ -22,7 +22,7 @@ export class AppLogger extends ConsoleLogger {
       this.log(
         JSON.stringify({
           correlationId: global.correlationId,
-          requestData: Object.keys(requestData).includes('WaId')
+          requestData: Object.keys(requestData).includes('entry')
             ? this.maskPersonalInfoReceived(deepCopy(requestData))
             : requestData,
           message,
@@ -50,13 +50,44 @@ export class AppLogger extends ConsoleLogger {
     '*'.repeat(info.length - 4) + info.substring(info.length - 4);
 
   private maskPersonalInfoReceived = (data: any): any => {
-    const maskedWaid = this.mask(data.WaId);
+    console.log(data.entry[0].changes);
+    const maskedReceiver = this.mask(
+      data.entry[0].changes[0].value.metadata.display_phone_number,
+    );
+    const maskedSender = this.mask(
+      data.entry[0].changes[0].value.messages[0].from,
+    );
     return {
       ...data,
-      WaId: maskedWaid,
-      ProfileName: this.mask(data.ProfileName),
-      From: `whatsapp:+${maskedWaid}`,
-      To: `whatsapp:+${this.mask(data.To.slice(10))}`,
+      entry: [
+        {
+          ...data.entry[0],
+          changes: [
+            {
+              ...data.entry[0].changes[0],
+              value: {
+                ...data.entry[0].changes[0].value,
+                metadata: {
+                  ...data.entry[0].changes[0].value.metadata,
+                  display_phone_number: maskedReceiver,
+                },
+                contacts: [
+                  {
+                    ...data.entry[0].changes[0].value.contacts[0],
+                    wa_id: maskedReceiver,
+                  },
+                ],
+                messages: [
+                  {
+                    ...data.entry[0].changes[0].value.messages[0],
+                    from: maskedSender,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
     };
   };
 }

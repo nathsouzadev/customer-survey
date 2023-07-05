@@ -1,29 +1,36 @@
-import { MessageModel } from '../model/message.model';
+import { MessageReceived } from '../hook/models/messageData.model';
 
-interface MockReceivedMessage {
-  body: string;
-  profileName: string;
-  to: string;
-  waId: string;
-  smsSid: string;
-  accountSid: string;
+interface MockReceivedMessageData {
+  sender: string;
+  receiver: string;
+  message: string;
 }
 
 export const mockReceivedMessage = (
-  data: MockReceivedMessage,
-): MessageModel => ({
-  SmsMessageSid: 'SMba82e029e2ba3f080b2d49c0c0328eff',
-  NumMedia: '0',
-  ProfileName: data.profileName,
-  SmsSid: data.smsSid,
-  WaId: data.waId,
-  SmsStatus: 'received',
-  Body: data.body,
-  To: data.to,
-  NumSegments: '1',
-  ReferralNumMedia: '0',
-  MessageSid: data.smsSid,
-  AccountSid: data.accountSid,
-  From: `whatsapp:+${data.waId}`,
-  ApiVersion: '2010-04-01',
+  data: MockReceivedMessageData,
+): MessageReceived => ({
+  messaging_product: 'whatsapp',
+  metadata: {
+    display_phone_number: data.receiver,
+    phone_number_id: data.receiver,
+  },
+  contacts: [
+    {
+      profile: {
+        name: 'NAME',
+      },
+      wa_id: data.receiver,
+    },
+  ],
+  messages: [
+    {
+      from: data.sender,
+      id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjU1MzE4NTYxRjk5NzI1MkEyRgA=',
+      timestamp: Date.now(),
+      text: {
+        body: data.message,
+      },
+      type: 'text',
+    },
+  ],
 });

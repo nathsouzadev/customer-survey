@@ -6,7 +6,7 @@ interface MockReceivedMessageData {
   message: string;
 }
 
-export const mockReceivedMessage = (
+export const mockReceivedMessageFromMeta = (
   data: MockReceivedMessageData,
 ): ReceivedMessageRequestDTO => ({
   object: 'whatsapp_business_account',
@@ -19,7 +19,7 @@ export const mockReceivedMessage = (
             messaging_product: 'whatsapp',
             metadata: {
               display_phone_number: data.receiver,
-              phone_number_id: data.receiver,
+              phone_number_id: '123456378901234',
             },
             contacts: [
               {
@@ -33,7 +33,7 @@ export const mockReceivedMessage = (
               {
                 from: data.sender,
                 id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjU1MzE4NTYxRjk5NzI1MkEyRgA=',
-                timestamp: new Date(),
+                timestamp: Date.now(),
                 text: {
                   body: data.message,
                 },

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HookController } from './hook.controller';
 import { HookService } from '../hook/service/hook.service';
-import { mockReceivedMessage } from '../__mocks__/metaReceivedMessage.mock';
+import { mockReceivedMessageFromMeta } from '../__mocks__/metaReceivedMessage.mock';
 import { SurveyService } from '../survey/service/survey.service';
 import { CustomerAnswerRepository } from '../customer/repository/customerAnswer.repository';
 import { CustomerService } from '../customer/service/customer.service';
@@ -79,7 +79,7 @@ describe('HookController', () => {
       );
 
       const response = await hookController.getMessage(
-        mockReceivedMessage({
+        mockReceivedMessageFromMeta({
           message: '1',
           receiver: '12345678900',
           sender: '5511988885555',

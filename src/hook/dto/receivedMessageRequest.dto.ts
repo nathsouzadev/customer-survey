@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MessageReceived, UpdateStatus } from '../models/messageData.model';
 
 export class ReceivedMessageRequestDTO {
   @ApiProperty({
@@ -42,42 +43,50 @@ export class ReceivedMessageRequestDTO {
           },
         ],
       },
+      {
+        id: 'WHATSAPP_BUSINESS_ACCOUNT_ID',
+        changes: [
+          {
+            value: {
+              messaging_product: 'whatsapp',
+              metadata: {
+                display_phone_number: '5511988885555',
+                phone_number_id: 'PHONE_NUMBER_ID',
+              },
+              statuses: [
+                {
+                  id: 'WHATSAPP_MESSAGE_ID',
+                  status: 'sent',
+                  timestamp: 'TIMESTAMP',
+                  recipient_id: 'CUSTOMER_PHONE_NUMBER',
+                  conversation: {
+                    id: 'CONVERSATION_ID',
+                    expiration_timestamp: 'CONVERSATION_EXPIRATION_TIMESTAMP',
+                    origin: {
+                      type: 'user_initiated',
+                    },
+                  },
+                  pricing: {
+                    billable: true,
+                    pricing_model: 'CBP',
+                    category: 'user_initiated',
+                  },
+                },
+              ],
+            },
+            field: 'messages',
+          },
+        ],
+      },
     ],
   })
-  entry: [
-    {
-      id: string;
-      changes: [
-        {
-          value: {
-            messaging_product: 'whatsapp';
-            metadata: {
-              display_phone_number: string;
-              phone_number_id: string;
-            };
-            contacts: [
-              {
-                profile: {
-                  name: string;
-                };
-                wa_id: string;
-              },
-            ];
-            messages: [
-              {
-                from: string;
-                id: string;
-                timestamp: Date;
-                text: {
-                  body: string;
-                };
-                type: string;
-              },
-            ];
-          };
-          field: string;
-        },
-      ];
-    },
-  ];
+  entry: WBRequest[];
+}
+
+interface WBRequest {
+  id: string;
+  changes: Array<{
+    value: MessageReceived | UpdateStatus;
+    field: 'messages';
+  }>;
 }

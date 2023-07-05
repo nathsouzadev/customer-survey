@@ -34,7 +34,7 @@ describe('CompanyController', () => {
         });
     });
 
-    it('sshould return token with correct credentials', async () => {
+    it('should return token with correct credentials', async () => {
       return request(app.getHttpServer())
         .post('/login')
         .send({
