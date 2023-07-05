@@ -74,6 +74,7 @@ describe('AppLogger', () => {
       message: '1',
       receiver: '12345678900',
       sender: '5511988885555',
+      type: 'message',
     });
     jest
       .spyOn(crypto, 'randomUUID')
@@ -114,6 +115,37 @@ describe('AppLogger', () => {
           },
         ],
       },
+      message: 'Some message to log',
+    });
+
+    const context = 'Some context';
+    appLogger.logger(
+      {
+        headers: {},
+        requestData: mockMessage,
+        message: 'Some message to log',
+      },
+      context,
+    );
+    expect(global.correlationId).toBe(mockCorrelationId);
+    expect(appLogger.log).toHaveBeenCalledWith(message, context);
+  });
+
+  it('should masked all personal data on request with updateRequest', () => {
+    const mockMessage = mockReceivedMessageFromMeta({
+      message: '1',
+      receiver: '12345678900',
+      sender: '5511988885555',
+      type: 'update',
+    });
+    jest
+      .spyOn(crypto, 'randomUUID')
+      .mockImplementation(() => mockCorrelationId),
+      jest.spyOn(appLogger, 'log');
+
+    const message = JSON.stringify({
+      correlationId: mockCorrelationId,
+      requestData: mockMessage,
       message: 'Some message to log',
     });
 
