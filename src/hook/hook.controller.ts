@@ -17,6 +17,7 @@ import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
+import { MessageReceived } from './models/messageData.model';
 
 @Controller()
 export class HookController {
@@ -43,11 +44,22 @@ export class HookController {
     @Body(new ValidationPipe()) messageRequest: ReceivedMessageRequestDTO,
   ) {
     console.log('HERE');
-    console.log(
-      'BODY',
-      messageRequest.entry[0].changes[0].value.messages[0].text.body,
-    );
-    console.log(messageRequest);
+    if (
+      Object.keys(messageRequest.entry[0].changes[0].value).includes('messages')
+    ) {
+      console.log(
+        'BODY',
+        messageRequest.entry[0].changes[0].value['messages'][0].text.body,
+      );
+
+      const response = await this.hookService.sendMessage(
+        messageRequest.entry[0].changes[0].value as MessageReceived,
+      );
+      return {
+        status: 'ok',
+        response,
+      };
+    }
     this.logger.logger(
       {
         requestData: messageRequest,
@@ -56,11 +68,8 @@ export class HookController {
       HookController.name,
     );
 
-    const response = await this.hookService.sendMessage(messageRequest);
-
     return {
       status: 'ok',
-      response,
     };
   }
 

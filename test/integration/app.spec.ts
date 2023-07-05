@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { mockReceivedMessage } from '../../src/__mocks__/metaReceivedMessage.mock';
+import { mockReceivedMessageFromMeta } from '../../src/__mocks__/metaReceivedMessage.mock';
 import { PrismaClient } from '@prisma/client';
 import { timeOut } from './aux/timeout';
 import nock from 'nock';
@@ -13,6 +13,7 @@ const prismaClient = new PrismaClient({ log: ['query'] });
 describe('AppController', () => {
   let app: INestApplication;
   const mockUrl = 'https://graph.facebook.com/v17.0';
+  const mockWhatsappId = '123456378901234';
   process.env.WB_URL = mockUrl;
 
   beforeEach(async () => {
@@ -29,7 +30,7 @@ describe('AppController', () => {
     it('send next question when user do not finish survey', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511999991111';
-      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+      nock(`${mockUrl}/${mockWhatsappId}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
@@ -48,7 +49,7 @@ describe('AppController', () => {
       return request(app.getHttpServer())
         .post('/meta')
         .send(
-          mockReceivedMessage({
+          mockReceivedMessageFromMeta({
             message: '1',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,
@@ -87,7 +88,7 @@ describe('AppController', () => {
     it('send thank message when user do not finish survey', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511999992222';
-      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+      nock(`${mockUrl}/${mockWhatsappId}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
@@ -106,7 +107,7 @@ describe('AppController', () => {
       return request(app.getHttpServer())
         .post('/meta')
         .send(
-          mockReceivedMessage({
+          mockReceivedMessageFromMeta({
             message: '2',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,
@@ -145,7 +146,7 @@ describe('AppController', () => {
     it('receive message with invalid body', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511988885555';
-      nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+      nock(`${mockUrl}/${mockWhatsappId}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
@@ -164,7 +165,7 @@ describe('AppController', () => {
       return request(app.getHttpServer())
         .post('/meta')
         .send(
-          mockReceivedMessage({
+          mockReceivedMessageFromMeta({
             message: 'Invalid body',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,

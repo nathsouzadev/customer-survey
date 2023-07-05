@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { SurveyService } from '../../survey/service/survey.service';
 import { CustomerService } from '../../customer/service/customer.service';
 import { SendSurveyModel } from '../models/sendSurvey.model';
-import { ReceivedMessageRequestDTO } from '../dto/receivedMessageRequest.dto';
 import { WBService } from '../../client/wb/wb.service';
 import { CompanyService } from '../../company/service/company.service';
+import { MessageReceived } from '../models/messageData.model';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
@@ -21,11 +21,10 @@ export class HookService {
   ) {}
 
   sendMessage = async (
-    receivedMessage: ReceivedMessageRequestDTO,
+    receivedMessage: MessageReceived,
   ): Promise<{ messageId: string }> => {
-    const messageBody =
-      receivedMessage.entry[0].changes[0].value.messages[0].text.body;
-    const customer = receivedMessage.entry[0].changes[0].value.messages[0].from;
+    const messageBody = receivedMessage.messages[0].text.body;
+    const customer = receivedMessage.messages[0].from;
     const isValid: boolean = ['1', '2', '3'].includes(messageBody);
 
     if (isValid) {
@@ -34,8 +33,7 @@ export class HookService {
         customer,
       });
       const messageSent = await this.wbService.sendMessage({
-        sender:
-          receivedMessage.entry[0].changes[0].value.metadata.phone_number_id,
+        sender: receivedMessage.metadata.phone_number_id,
         receiver: customer,
         message: answer.nextQuestion ?? ReplyMessage.finish,
       });
@@ -43,8 +41,7 @@ export class HookService {
       return { messageId: messageSent.messages[0].id };
     }
     const messageSent = await this.wbService.sendMessage({
-      sender:
-        receivedMessage.entry[0].changes[0].value.metadata.phone_number_id,
+      sender: receivedMessage.metadata.phone_number_id,
       receiver: customer,
       message: ReplyMessage.invalid,
     });

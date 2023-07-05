@@ -1,6 +1,6 @@
 import { AppLogger } from './appLogger';
-import { mockReceivedMessage } from '../__mocks__/receivedMessage.mock';
 import * as crypto from 'crypto';
+import { mockReceivedMessageFromMeta } from '../__mocks__/metaReceivedMessage.mock';
 
 const mockCorrelationId = '33999170-7f14-4f19-ac5b-437165a77958';
 jest.mock('crypto', () => ({
@@ -70,13 +70,10 @@ describe('AppLogger', () => {
   });
 
   it('should masked all personal data on request', () => {
-    const mockMessage = mockReceivedMessage({
-      body: '1',
-      profileName: 'Ada Lovelace',
-      to: 'whatsapp:+12345678900',
-      waId: '5511988885555',
-      smsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-      accountSid: '50M34c01quertacggd9876',
+    const mockMessage = mockReceivedMessageFromMeta({
+      message: '1',
+      receiver: '12345678900',
+      sender: '5511988885555',
     });
     jest
       .spyOn(crypto, 'randomUUID')
@@ -86,20 +83,36 @@ describe('AppLogger', () => {
     const message = JSON.stringify({
       correlationId: mockCorrelationId,
       requestData: {
-        SmsMessageSid: 'SMba82e029e2ba3f080b2d49c0c0328eff',
-        NumMedia: '0',
-        ProfileName: '********lace',
-        SmsSid: 'SMba83e029e2ba3f080b2d49c0c03',
-        WaId: '*********5555',
-        SmsStatus: 'received',
-        Body: '1',
-        To: 'whatsapp:+*******8900',
-        NumSegments: '1',
-        ReferralNumMedia: '0',
-        MessageSid: 'SMba83e029e2ba3f080b2d49c0c03',
-        AccountSid: '50M34c01quertacggd9876',
-        From: `whatsapp:+*********5555`,
-        ApiVersion: '2010-04-01',
+        ...mockMessage,
+        entry: [
+          {
+            ...mockMessage.entry[0],
+            changes: [
+              {
+                ...mockMessage.entry[0].changes[0],
+                value: {
+                  ...mockMessage.entry[0].changes[0].value,
+                  metadata: {
+                    ...mockMessage.entry[0].changes[0].value.metadata,
+                    display_phone_number: '*******8900',
+                  },
+                  contacts: [
+                    {
+                      ...mockMessage.entry[0].changes[0].value['contacts'][0],
+                      wa_id: '*******8900',
+                    },
+                  ],
+                  messages: [
+                    {
+                      ...mockMessage.entry[0].changes[0].value['messages'][0],
+                      from: '*********5555',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
       },
       message: 'Some message to log',
     });
