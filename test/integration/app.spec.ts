@@ -53,6 +53,7 @@ describe('AppController', () => {
             message: '1',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,
+            type: 'message'
           }),
         )
         .expect(200)
@@ -111,6 +112,7 @@ describe('AppController', () => {
             message: '2',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,
+            type: 'message'
           }),
         )
         .expect(200)
@@ -169,6 +171,7 @@ describe('AppController', () => {
             message: 'Invalid body',
             receiver: mockCompanyPhone,
             sender: mockCustomerPhone,
+            type: 'message'
           }),
         )
         .expect(200)
