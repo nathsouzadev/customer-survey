@@ -7,6 +7,7 @@ import { CustomerModule } from './customer/customer.module';
 import { CompanyModule } from './company/company.module';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
+import { SenderModule } from './sender/sender.module';
 
 @Module({
   imports: [
@@ -44,9 +45,14 @@ import { AuthModule } from './auth/auth.module';
             path: 'customer',
             module: CustomerModule,
           },
+          {
+            path: 'sender',
+            module: SenderModule,
+          },
         ],
       },
     ]),
+    SenderModule,
   ],
 })
 export class AppModule {}
