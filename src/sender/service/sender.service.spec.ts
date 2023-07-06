@@ -15,6 +15,7 @@ describe('SenderService', () => {
           provide: SenderRepository,
           useValue: {
             createSender: jest.fn(),
+            getSender: jest.fn(),
           },
         },
       ],
@@ -36,9 +37,16 @@ describe('SenderService', () => {
           companyId: mockCompanyId,
         }),
       );
+    const mockGet = jest
+      .spyOn(mockSenderRepository, 'getSender')
+      .mockImplementation(() => Promise.resolve(null));
 
     const sender = await service.createSender({
       name: 'New Sender',
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
+    });
+    expect(mockGet).toHaveBeenCalledWith({
       email: 'sender@company.com',
       companyId: mockCompanyId,
     });
@@ -49,6 +57,33 @@ describe('SenderService', () => {
     });
     expect(sender).toMatchObject({
       id: expect.any(String),
+    });
+  });
+
+  it('should return sender already exists', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderId = randomUUID();
+    const mockGet = jest
+      .spyOn(mockSenderRepository, 'getSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockSenderId,
+          name: 'New Sender',
+          email: 'sender@company.com',
+          companyId: mockCompanyId,
+        }),
+      );
+
+    expect(
+      service.createSender({
+        name: 'New Sender',
+        email: 'sender@company.com',
+        companyId: mockCompanyId,
+      }),
+    ).rejects.toThrowError(new Error(`Sender already exists`));
+    expect(mockGet).toHaveBeenCalledWith({
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
     });
   });
 });

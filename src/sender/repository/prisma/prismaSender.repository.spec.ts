@@ -16,6 +16,7 @@ describe('PrismaSenderRepository', () => {
           useValue: {
             sender: {
               create: jest.fn(),
+              findFirst: jest.fn(),
             },
           },
         },
@@ -47,6 +48,36 @@ describe('PrismaSenderRepository', () => {
       data: {
         id: expect.any(String),
         name: 'Sender',
+        email: 'sender@email.com',
+        companyId: mockCompanyId,
+      },
+    });
+    expect(sender).toMatchObject({
+      id: expect.any(String),
+      name: 'Sender',
+      email: 'sender@email.com',
+      companyId: mockCompanyId,
+    });
+  });
+
+  it('should return sender with email and companyId', async () => {
+    const mockCompanyId = randomUUID();
+
+    const mockFind = jest
+      .spyOn(mockPrismaService.sender, 'findFirst')
+      .mockResolvedValue({
+        id: randomUUID(),
+        name: 'Sender',
+        email: 'sender@email.com',
+        companyId: mockCompanyId,
+      });
+
+    const sender = await repository.getSender({
+      email: 'sender@email.com',
+      companyId: mockCompanyId,
+    });
+    expect(mockFind).toHaveBeenCalledWith({
+      where: {
         email: 'sender@email.com',
         companyId: mockCompanyId,
       },

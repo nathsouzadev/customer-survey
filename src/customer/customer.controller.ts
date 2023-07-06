@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
@@ -35,6 +36,14 @@ export class CustomerController {
         phoneNumber: '5511999992222',
         name: 'Grace Hooper',
         companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+      },
+    },
+  })
+  @ApiConflictResponse({
+    description: 'Return erro if customer already exists',
+    schema: {
+      example: {
+        message: 'Customer already exists',
       },
     },
   })
