@@ -4,6 +4,7 @@ import { SenderRepository } from '../sender.repository';
 import { randomUUID } from 'crypto';
 import { Sender } from '@prisma/client';
 import { CreateSenderRequestDTO } from '../../../sender/dto/createSenderRequest.dto';
+import { GetSenderModel } from '../../../sender/model/getSender.model';
 
 @Injectable()
 export class PrismaSenderRepository implements SenderRepository {
@@ -17,5 +18,10 @@ export class PrismaSenderRepository implements SenderRepository {
         id: randomUUID(),
         ...createSenderRequest,
       },
+    });
+
+  getSender = async (senderData: GetSenderModel): Promise<Sender> =>
+    this.prisma.sender.findFirst({
+      where: senderData,
     });
 }

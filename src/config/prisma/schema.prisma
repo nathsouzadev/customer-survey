@@ -89,7 +89,7 @@ model PhoneCompany {
 model Sender {
   id String @id @default(uuid())
   name String
-  email String
+  email String @unique
   company Company @relation(fields: [companyId], references: [id])
   companyId String
 }

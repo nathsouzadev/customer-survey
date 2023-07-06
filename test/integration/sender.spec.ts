@@ -30,7 +30,7 @@ describe('SenderController', () => {
         .auth(token, { type: 'bearer' })
         .send({
           name: 'New Sender',
-          email: 'sender@company.com',
+          email: 'new-sender@company.com',
           companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
         })
         .expect(201)
@@ -40,7 +40,7 @@ describe('SenderController', () => {
             senderCreated: {
               id: expect.any(String),
               name: 'New Sender',
-              email: 'sender@company.com',
+              email: 'new-sender@company.com',
               companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
             },
           });
@@ -109,6 +109,25 @@ describe('SenderController', () => {
           expect(response.body).toMatchObject({
             error: 'Bad Request',
             message: ['Required field'],
+          });
+        });
+    });
+
+    it('should not create customer already exists', async () => {
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/sender')
+        .auth(token, { type: 'bearer' })
+        .send({
+          name: 'Sender',
+          email: 'sender@company.com',
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+        })
+        .expect(409)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            message: 'Sender already exists',
           });
         });
     });

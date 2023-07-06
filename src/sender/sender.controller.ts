@@ -5,13 +5,19 @@ import {
   Body,
   ValidationPipe,
   UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { SenderService } from './service/sender.service';
 import { CreateSenderRequestDTO } from './dto/createSenderRequest.dto';
 import { AppLogger } from '../utils/appLogger';
 import { SenderCreated } from './model/senderCreatedResponse.model';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiCreatedResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller()
 export class SenderController {
@@ -33,6 +39,14 @@ export class SenderController {
       },
     },
   })
+  @ApiConflictResponse({
+    description: 'Return erro if sender already exists',
+    schema: {
+      example: {
+        message: 'Sender already exists',
+      },
+    },
+  })
   @ApiUnauthorizedResponse({
     description: 'Return error when does not have token',
   })
@@ -50,9 +64,15 @@ export class SenderController {
       },
       SenderController.name,
     );
-    const sender = await this.senderService.createSender(createSenderRequest);
-    return {
-      senderCreated: sender,
-    };
+    try {
+      const sender = await this.senderService.createSender(createSenderRequest);
+      return {
+        senderCreated: sender,
+      };
+    } catch (error) {
+      if (error.message === 'Sender already exists') {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      }
+    }
   }
 }

@@ -8,6 +8,16 @@ export class SenderService {
   constructor(private readonly senderReqpository: SenderRepository) {}
   createSender = async (
     createSenderRequest: CreateSenderRequestDTO,
-  ): Promise<Sender> =>
-    this.senderReqpository.createSender(createSenderRequest);
+  ): Promise<Sender> => {
+    const sender = await this.senderReqpository.getSender({
+      email: createSenderRequest.email,
+      companyId: createSenderRequest.companyId,
+    });
+
+    if (sender) {
+      throw new Error(`Sender already exists`);
+    }
+
+    return this.senderReqpository.createSender(createSenderRequest);
+  };
 }

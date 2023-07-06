@@ -4,6 +4,7 @@ import { SenderService } from './service/sender.service';
 import { AppLogger } from '../utils/appLogger';
 import { randomUUID } from 'crypto';
 import { SenderRepository } from './repository/sender.repository';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('SenderController', () => {
   let controller: SenderController;
@@ -65,6 +66,34 @@ describe('SenderController', () => {
         email: 'sender@company.com',
         companyId: mockCompanyId,
       },
+    });
+  });
+
+  it('should return error when sender already exists', async () => {
+    const mockCompanyId = randomUUID();
+    const mockCreate = jest
+      .spyOn(mockSenderService, 'createSender')
+      .mockImplementation(() => {
+        throw new Error('Sender already exists');
+      });
+    expect(
+      controller.createSender(
+        {
+          headers: {},
+        },
+        {
+          name: 'New Sender',
+          email: 'sender@company.com',
+          companyId: mockCompanyId,
+        },
+      ),
+    ).rejects.toThrow(
+      new HttpException('Sender already exists', HttpStatus.CONFLICT),
+    );
+    expect(mockCreate).toHaveBeenCalledWith({
+      name: 'New Sender',
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
     });
   });
 });
