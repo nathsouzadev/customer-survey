@@ -2,7 +2,7 @@
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
   "testEnvironment": "node",
-  "testRegex": "sender.spec.ts$",
+  "testRegex": ".spec.ts$",
   "testTimeout": 15000,
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"

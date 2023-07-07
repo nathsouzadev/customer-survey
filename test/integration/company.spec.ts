@@ -2,23 +2,30 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { PrismaClient } from '@prisma/client';
 import { getToken } from './aux/token';
 import { timeOut } from './aux/timeout';
-
-const prismaClient = new PrismaClient({ log: ['query'] });
+import { prismaClient } from './aux/prisma';
+import { PrismaService } from '../../src/client/prisma/prisma.service';
 
 describe('CompanyController', () => {
   let app: INestApplication;
+  let prismaService: PrismaService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [PrismaService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    prismaService = moduleFixture.get(PrismaService);
     await app.init();
     await timeOut();
+  });
+
+  afterAll(async () => {
+    await prismaService.$disconnect();
+    await app.close();
   });
 
   describe('Create company', () => {

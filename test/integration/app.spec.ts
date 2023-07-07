@@ -3,15 +3,16 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { mockReceivedMessageFromMeta } from '../../src/__mocks__/metaReceivedMessage.mock';
-import { PrismaClient } from '@prisma/client';
 import { timeOut } from './aux/timeout';
 import nock from 'nock';
 import { randomUUID } from 'crypto';
-
-const prismaClient = new PrismaClient({ log: ['query'] });
+import { prismaClient } from './aux/prisma';
+import { PrismaService } from '../../src/client/prisma/prisma.service';
 
 describe('AppController', () => {
   let app: INestApplication;
+  let prismaService: PrismaService;
+
   const mockUrl = 'https://graph.facebook.com/v17.0';
   const mockWhatsappId = '123456378901234';
   process.env.WB_URL = mockUrl;
@@ -19,11 +20,19 @@ describe('AppController', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [PrismaService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    prismaService = moduleFixture.get(PrismaService);
+
     await app.init();
     await timeOut();
+  });
+
+  afterAll(async () => {
+    await prismaService.$disconnect();
+    await app.close();
   });
 
   describe('receive message from meta', () => {
