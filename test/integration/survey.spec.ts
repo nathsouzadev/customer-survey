@@ -5,20 +5,29 @@ import { AppModule } from '../../src/app.module';
 import { getToken } from './aux/token';
 import { timeOut } from './aux/timeout';
 import nock from 'nock';
+import { PrismaService } from '../../src/client/prisma/prisma.service';
 
 describe('SurveyController', () => {
   let app: INestApplication;
+  let prismaService: PrismaService;
   const mockUrl = 'https://graph.facebook.com/v17.0';
   process.env.WB_URL = mockUrl;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [PrismaService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    prismaService = moduleFixture.get(PrismaService);
     await app.init();
     await timeOut();
+  });
+
+  afterAll(async () => {
+    await prismaService.$disconnect();
+    await app.close();
   });
 
   describe('Get survey by surveyId', () => {

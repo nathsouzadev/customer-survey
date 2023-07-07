@@ -42,6 +42,16 @@ const sender = {
   companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
 }
 
+const waitingCompanys = [
+  {
+    id: 'cc5ed597-cdc3-4c54-b396-d4959eb35439',
+    name: 'Morganna Giovanelli',
+    email: 'morganna@email.com',
+    phoneNumber: '5511999998888',
+    companyName: 'Company',
+  },
+]
+
 const customers = [
   {
     id: 'eb05a7a9-3c5b-460f-866b-1dbd321f38b6',
@@ -312,6 +322,12 @@ const main = async () => {
   await prisma.phoneCompany.create({ data: phoneCompany })
 
   await prisma.sender.create({ data: sender })
+
+  for (const waitingCompany of waitingCompanys){
+    await prisma.waitingCompany.create({
+      data: waitingCompany
+    })
+  }
 
   for (const customer of customers) {
     await prisma.customer.create({

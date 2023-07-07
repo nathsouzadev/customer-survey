@@ -22,7 +22,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:integration": "yarn reset:db && jest --config ./test/integration/jest.json",
+    "test:integration": "yarn reset:db && jest --runInBand --config ./test/integration/jest.json",
     "db": "docker-compose up -d",
     "seed:db": "npx prisma db seed",
     "clear:db": "ts-node ./test/configDb.ts",

@@ -93,3 +93,11 @@ model Sender {
   company Company @relation(fields: [companyId], references: [id])
   companyId String
 }
+
+model WaitingCompany {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  phoneNumber String @unique
+  companyName String
+}

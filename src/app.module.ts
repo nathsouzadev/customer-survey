@@ -8,6 +8,8 @@ import { CompanyModule } from './company/company.module';
 import { RouterModule } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { SenderModule } from './sender/sender.module';
+import { WaitingListModule } from './waitingList/waitingList.module';
+import { router } from './config/router';
 
 @Module({
   imports: [
@@ -24,35 +26,9 @@ import { SenderModule } from './sender/sender.module';
     CustomerModule,
     CompanyModule,
     AuthModule,
-    RouterModule.register([
-      {
-        path: 'meta',
-        module: HookModule,
-      },
-      {
-        path: 'login',
-        module: AuthModule,
-      },
-      {
-        path: 'company',
-        module: CompanyModule,
-        children: [
-          {
-            path: 'survey',
-            module: SurveyModule,
-          },
-          {
-            path: 'customer',
-            module: CustomerModule,
-          },
-          {
-            path: 'sender',
-            module: SenderModule,
-          },
-        ],
-      },
-    ]),
+    RouterModule.register(router),
     SenderModule,
+    WaitingListModule,
   ],
 })
 export class AppModule {}
