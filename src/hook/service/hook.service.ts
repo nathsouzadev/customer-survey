@@ -5,6 +5,8 @@ import { SendSurveyModel } from '../models/sendSurvey.model';
 import { WBService } from '../../client/wb/wb.service';
 import { CompanyService } from '../../company/service/company.service';
 import { MessageReceived } from '../models/messageData.model';
+import { SendSurveyRequest } from '../models/sendSurveyRequest.model';
+import { getSurveyTemplate } from '../templates/survey.template';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
@@ -16,7 +18,7 @@ export class HookService {
   constructor(
     private readonly surveyService: SurveyService,
     private readonly customerService: CustomerService,
-    private readonly companyServie: CompanyService,
+    private readonly companyService: CompanyService,
     private readonly wbService: WBService,
   ) {}
 
@@ -40,6 +42,7 @@ export class HookService {
 
       return { messageId: messageSent.messages[0].id };
     }
+
     const messageSent = await this.wbService.sendMessage({
       sender: receivedMessage.metadata.phone_number_id,
       receiver: customer,
@@ -48,17 +51,16 @@ export class HookService {
     return { messageId: messageSent.messages[0].id };
   };
 
-  sendSurvey = async (surveyData: {
-    surveyId: string;
-    companyId: string;
-  }): Promise<SendSurveyModel> => {
-    const { surveyId, companyId } = surveyData;
+  sendSurvey = async (
+    surveyData: SendSurveyRequest,
+  ): Promise<SendSurveyModel> => {
+    const { surveyId, companyId, name } = surveyData;
     const customersToSend = await this.customerService.getCustomersBySurveyId(
       surveyId,
     );
 
     if (customersToSend.length > 0) {
-      const { phoneNumber } = await this.companyServie.getPhoneByCompanyId(
+      const { phoneNumber } = await this.companyService.getPhoneByCompanyId(
         companyId,
       );
       const { question } = await this.surveyService.getFirstQuestionBySurveyId(
@@ -66,12 +68,13 @@ export class HookService {
       );
 
       for (const survey of customersToSend) {
-        await this.wbService.sendMessage({
-          receiver: survey.customer.phoneNumber,
-          sender: phoneNumber,
-          type: 'template',
-          template: 'hello_world',
-        });
+        await this.wbService.sendMessage(
+          getSurveyTemplate({
+            receiver: survey.customer.phoneNumber,
+            sender: phoneNumber,
+            company: name,
+          }),
+        );
 
         await this.wbService.sendMessage({
           receiver: survey.customer.phoneNumber,

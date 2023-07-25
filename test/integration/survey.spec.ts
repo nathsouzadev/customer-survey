@@ -102,6 +102,7 @@ describe('SurveyController', () => {
         .auth(token, { type: 'bearer' })
         .send({
           companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: 'Company',
         })
         .expect(200)
         .then((response) => {
@@ -124,6 +125,7 @@ describe('SurveyController', () => {
       .auth(token, { type: 'bearer' })
       .send({
         companyId: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7',
+        name: 'Company',
       })
       .expect(200)
       .then((response) => {

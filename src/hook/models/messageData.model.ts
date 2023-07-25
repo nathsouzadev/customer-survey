@@ -6,13 +6,15 @@ interface MessageData {
   };
 }
 
+interface Contact {
+  profile: {
+    name: string;
+  };
+  wa_id: string;
+}
+
 export interface MessageReceived extends MessageData {
-  contacts: Array<{
-    profile: {
-      name: string;
-    };
-    wa_id: string;
-  }>;
+  contacts: Contact[];
   messages: Array<{
     from: string;
     id: string;
@@ -42,5 +44,23 @@ export interface UpdateStatus extends MessageData {
       pricing_model: string;
       category: string;
     };
+  }>;
+}
+
+export interface QuickReplyInterface extends MessageData {
+  contacts: Contact[];
+  messages: Array<{
+    context: {
+      from: string,
+      id: string
+    },
+    from: string;
+    id: string;
+    timestamp: number;
+    button: {
+      text: string,
+      payload: string
+    },
+    type: string;
   }>;
 }

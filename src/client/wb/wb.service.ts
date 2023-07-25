@@ -2,19 +2,8 @@ import { AppLogger } from '../../utils/appLogger';
 import axios from 'axios';
 import { MessageSentModel } from './models/messageSent.model';
 import { Injectable } from '@nestjs/common';
-
-interface MessageData {
-  receiver: string;
-  sender: string;
-  message: string;
-}
-
-interface TemplateData {
-  receiver: string;
-  sender: string;
-  type: string;
-  template: string;
-}
+import { MessageData } from './models/messageData.model';
+import { TemplateData } from './models/templateData.model';
 
 @Injectable()
 export class WBService {
@@ -35,8 +24,14 @@ export class WBService {
             template: {
               name: messageData['template'],
               language: {
-                code: 'en_US',
+                code: 'pt_BR',
               },
+              components: [
+                {
+                  type: 'body',
+                  parameters: messageData['parameters'],
+                },
+              ],
             },
           }
         : {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MessageReceived, UpdateStatus } from '../models/messageData.model';
+import { MessageReceived, QuickReplyInterface, UpdateStatus } from '../models/messageData.model';
 
 export class ReceivedMessageRequestDTO {
   @ApiProperty({
@@ -86,7 +86,7 @@ export class ReceivedMessageRequestDTO {
 interface WBRequest {
   id: string;
   changes: Array<{
-    value: MessageReceived | UpdateStatus;
+    value: MessageReceived | UpdateStatus | QuickReplyInterface;
     field: 'messages';
   }>;
 }

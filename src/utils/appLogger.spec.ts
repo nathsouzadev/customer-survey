@@ -12,6 +12,7 @@ describe('AppLogger', () => {
 
   beforeEach(() => {
     global.correlationId = '';
+    global.t0 = undefined;
     appLogger = new AppLogger();
   });
 
@@ -83,6 +84,7 @@ describe('AppLogger', () => {
 
     const message = JSON.stringify({
       correlationId: mockCorrelationId,
+      message: 'Some message to log',
       requestData: {
         ...mockMessage,
         entry: [
@@ -115,7 +117,6 @@ describe('AppLogger', () => {
           },
         ],
       },
-      message: 'Some message to log',
     });
 
     const context = 'Some context';
@@ -145,8 +146,8 @@ describe('AppLogger', () => {
 
     const message = JSON.stringify({
       correlationId: mockCorrelationId,
-      requestData: mockMessage,
       message: 'Some message to log',
+      requestData: mockMessage,
     });
 
     const context = 'Some context';
@@ -159,6 +160,72 @@ describe('AppLogger', () => {
       context,
     );
     expect(global.correlationId).toBe(mockCorrelationId);
+    expect(appLogger.log).toHaveBeenCalledWith(message, context);
+  });
+
+  it('should show performance message with request time', () => {
+    Object.defineProperty(performance, 'now', {
+      value: jest.fn(),
+      configurable: true,
+      writable: true,
+    });
+
+    const mockT0 = 3467.258791089058;
+    const mockT1 = 3467.5278750658035;
+    global.t0 = mockT0;
+    jest
+      .spyOn(crypto, 'randomUUID')
+      .mockImplementation(() => mockCorrelationId),
+      jest
+        .spyOn(performance, 'now')
+        .mockImplementation(() => 3467.5278750658035),
+      jest.spyOn(appLogger, 'log');
+    const context = 'Some context';
+    const requestPerformance = `${(mockT1 - mockT0).toFixed(4)} ms`;
+
+    const message = JSON.stringify({
+      correlationId: mockCorrelationId,
+      message: 'Some message to log',
+      requestPerformance,
+    });
+
+    appLogger.logger(
+      {
+        headers: {},
+        message: 'Some message to log',
+      },
+      context,
+    );
+    expect(appLogger.log).toHaveBeenCalledWith(message, context);
+  });
+
+  it('should show performance message with request time when pass t0', () => {
+    const mockT0 = 3467.258791089058;
+    const mockT1 = 3467.5278750658035;
+    jest
+      .spyOn(crypto, 'randomUUID')
+      .mockImplementation(() => mockCorrelationId),
+      jest
+        .spyOn(performance, 'now')
+        .mockImplementation(() => 3467.5278750658035),
+      jest.spyOn(appLogger, 'log');
+    const context = 'Some context';
+    const requestPerformance = `${(mockT1 - mockT0).toFixed(4)} ms`;
+
+    const message = JSON.stringify({
+      correlationId: mockCorrelationId,
+      message: 'Some message to log',
+      requestPerformance,
+    });
+
+    appLogger.logger(
+      {
+        headers: {},
+        message: 'Some message to log',
+        t0: mockT0,
+      },
+      context,
+    );
     expect(appLogger.log).toHaveBeenCalledWith(message, context);
   });
 });

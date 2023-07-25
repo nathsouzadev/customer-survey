@@ -100,6 +100,7 @@ describe('HookController', () => {
   it('should send survey to customers', async () => {
     const mockSurveyId = randomUUID();
     const mockCompanyId = randomUUID();
+    const mockCompanyName = 'Company';
     const mockSendSurvey = jest
       .spyOn(mockHookService, 'sendSurvey')
       .mockImplementation(() =>
@@ -119,11 +120,13 @@ describe('HookController', () => {
       mockSurveyId,
       {
         companyId: mockCompanyId,
+        name: mockCompanyName,
       },
     );
     expect(mockSendSurvey).toHaveBeenCalledWith({
       surveyId: mockSurveyId,
       companyId: mockCompanyId,
+      name: mockCompanyName,
     });
     expect(response).toMatchObject({
       surveySent: {
