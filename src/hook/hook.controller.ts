@@ -52,8 +52,12 @@ export class HookController {
     );
 
     if (
-      Object.keys(messageRequest.entry[0].changes[0].value).includes('messages') &&
-      Object.keys(messageRequest.entry[0].changes[0].value['messages'][0].text).includes('body')
+      Object.keys(messageRequest.entry[0].changes[0].value).includes(
+        'messages',
+      ) &&
+      Object.keys(
+        messageRequest.entry[0].changes[0].value['messages'][0].text,
+      ).includes('body')
     ) {
       const response = await this.hookService.sendMessage(
         messageRequest.entry[0].changes[0].value as MessageReceived,

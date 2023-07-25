@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MessageReceived, QuickReplyInterface, UpdateStatus } from '../models/messageData.model';
+import {
+  MessageReceived,
+  QuickReplyInterface,
+  UpdateStatus,
+} from '../models/messageData.model';
 
 export class ReceivedMessageRequestDTO {
   @ApiProperty({

@@ -51,16 +51,16 @@ export interface QuickReplyInterface extends MessageData {
   contacts: Contact[];
   messages: Array<{
     context: {
-      from: string,
-      id: string
-    },
+      from: string;
+      id: string;
+    };
     from: string;
     id: string;
     timestamp: number;
     button: {
-      text: string,
-      payload: string
-    },
+      text: string;
+      payload: string;
+    };
     type: string;
   }>;
 }
