@@ -7,4 +7,10 @@ export class SendSurveyRequestDTO {
   })
   @IsNotEmpty({ message: 'Required field' })
   companyId: string;
+
+  @ApiProperty({
+    example: 'Company',
+  })
+  @IsNotEmpty({ message: 'Required field' })
+  name: string;
 }

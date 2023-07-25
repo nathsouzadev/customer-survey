@@ -82,7 +82,13 @@ describe('WBService', () => {
       receiver: mockReceiverPhone,
       sender: mockCompanyPhone,
       type: 'template',
-      template: 'hello_world',
+      template: 'survey',
+      parameters: [
+        {
+          type: 'text',
+          text: 'Company',
+        },
+      ],
     });
     expect(response).toMatchObject({
       messaging_product: 'whatsapp',

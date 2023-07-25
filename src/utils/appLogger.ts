@@ -7,6 +7,7 @@ interface DataLogger {
   headers?: IncomingHttpHeaders;
   requestData?: any;
   message: string;
+  t0?: number;
 }
 
 @Injectable()
@@ -16,12 +17,25 @@ export class AppLogger extends ConsoleLogger {
       global.correlationId = data.headers['x-correlation-id'] ?? randomUUID();
     }
 
+    Object.keys(data).includes('t0')
+      ? (global.t0 = data.t0)
+      : (global.t1 = performance.now());
+
     const { message, requestData } = data;
+
+    const logData =
+      global.t0 && global.t1
+        ? {
+            correlationId: global.correlationId,
+            message,
+            requestPerformance: `${(global.t1 - global.t0).toFixed(4)} ms`,
+          }
+        : { correlationId: global.correlationId, message };
 
     if (requestData) {
       this.log(
         JSON.stringify({
-          correlationId: global.correlationId,
+          ...logData,
           requestData:
             Object.keys(requestData).includes('entry') &&
             Object.keys(requestData.entry[0].changes[0].value).includes(
@@ -29,7 +43,6 @@ export class AppLogger extends ConsoleLogger {
             )
               ? this.maskPersonalInfoReceived(deepCopy(requestData))
               : requestData,
-          message,
         }),
         context,
       );
@@ -37,10 +50,7 @@ export class AppLogger extends ConsoleLogger {
       return;
     }
 
-    this.log(
-      JSON.stringify({ correlationId: global.correlationId, message }),
-      context,
-    );
+    this.log(JSON.stringify(logData), context);
   };
 
   errors = (error: string, context: string) => {
