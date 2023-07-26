@@ -316,11 +316,6 @@ describe('HookService', () => {
           company: mockCompanyName,
         }),
       );
-      expect(mockSendQuestion).toHaveBeenCalledWith({
-        receiver: survey.customer.phoneNumber,
-        sender: mockCompanyPhone,
-        message: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
-      });
     });
     expect(response).toMatchObject({
       surveySent: {

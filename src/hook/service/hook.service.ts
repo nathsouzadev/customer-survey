@@ -75,12 +75,6 @@ export class HookService {
             company: name,
           }),
         );
-
-        await this.wbService.sendMessage({
-          receiver: survey.customer.phoneNumber,
-          sender: phoneNumber,
-          message: question,
-        });
       }
     }
 
