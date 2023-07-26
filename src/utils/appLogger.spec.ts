@@ -137,7 +137,7 @@ describe('AppLogger', () => {
       message: '1',
       receiver: '12345678900',
       sender: '5511988885555',
-      type: 'update',
+      type: 'status',
     });
     jest
       .spyOn(crypto, 'randomUUID')

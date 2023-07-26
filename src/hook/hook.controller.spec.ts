@@ -95,6 +95,28 @@ describe('HookController', () => {
         },
       });
     });
+
+    it('should return message after receive quickReply', async () => {
+      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
+        Promise.resolve({
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        }),
+      );
+
+      const response = await hookController.getMessage(
+        mockReceivedMessageFromMeta({
+          message: 'Participar da pesquisa',
+          receiver: '12345678900',
+          sender: '5511988885555',
+          type: 'quickReply',
+        }),
+      );
+
+      expect(response).toMatchObject({
+        status: 'ok'
+      });
+    });
   });
 
   it('should send survey to customers', async () => {
