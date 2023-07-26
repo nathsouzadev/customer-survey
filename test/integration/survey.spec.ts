@@ -12,6 +12,7 @@ describe('SurveyController', () => {
   let prismaService: PrismaService;
   const mockUrl = 'https://graph.facebook.com/v17.0';
   process.env.WB_URL = mockUrl;
+  process.env.ADMIN_PHONE = '1234567890';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -76,9 +77,9 @@ describe('SurveyController', () => {
 
   describe('Send survey by surveId', () => {
     it('should send survey to customers registered', async () => {
-      const mockCompanyPhone = '551199991234';
+      // const mockCompanyPhone = '1234567890';
       for (let i = 0; i < 6; i++) {
-        nock(`${mockUrl}/${mockCompanyPhone}/messages`)
+        nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
           .post('')
           .reply(200, {
             messaging_product: 'whatsapp',

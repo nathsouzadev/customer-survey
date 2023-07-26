@@ -15,7 +15,9 @@ export class WBService {
     const response = await axios({
       method: 'POST',
       url:
-        'https://graph.facebook.com/v17.0/' + messageData.sender + '/messages',
+        'https://graph.facebook.com/v17.0/' +
+        process.env.ADMIN_PHONE +
+        '/messages',
       data: Object.keys(messageData).includes['template']
         ? {
             messaging_product: 'whatsapp',
