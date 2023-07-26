@@ -63,9 +63,9 @@ export class HookService {
       const { phoneNumber } = await this.companyService.getPhoneByCompanyId(
         companyId,
       );
-      const { question } = await this.surveyService.getFirstQuestionBySurveyId(
-        surveyId,
-      );
+      // const { question } = await this.surveyService.getFirstQuestionBySurveyId(
+      //   surveyId,
+      // );
 
       for (const survey of customersToSend) {
         await this.wbService.sendMessage(
@@ -75,12 +75,6 @@ export class HookService {
             company: name,
           }),
         );
-
-        await this.wbService.sendMessage({
-          receiver: survey.customer.phoneNumber,
-          sender: phoneNumber,
-          message: question,
-        });
       }
     }
 
