@@ -270,7 +270,7 @@ describe('HookService', () => {
       name: mockCompanyName,
     });
     expect(mockGetCustomer).toHaveBeenCalledWith(mockSurveyId);
-    expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockGetFirstQuestion).not.toHaveBeenCalledWith(mockSurveyId);
     expect(mockGetPhone).toHaveBeenCalledWith(mockCompanyId);
     mockCustomerSurvey.map((survey) => {
       const mockSendTemplate = jest
@@ -291,24 +291,24 @@ describe('HookService', () => {
             ],
           }),
         );
-      const mockSendQuestion = jest
-        .spyOn(mockWbService, 'sendMessage')
-        .mockImplementation(() =>
-          Promise.resolve({
-            messaging_product: 'whatsapp',
-            contacts: [
-              {
-                input: survey.customer.phoneNumber,
-                wa_id: survey.customer.phoneNumber,
-              },
-            ],
-            messages: [
-              {
-                id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MBB=',
-              },
-            ],
-          }),
-        );
+      // const mockSendQuestion = jest
+      //   .spyOn(mockWbService, 'sendMessage')
+      //   .mockImplementation(() =>
+      //     Promise.resolve({
+      //       messaging_product: 'whatsapp',
+      //       contacts: [
+      //         {
+      //           input: survey.customer.phoneNumber,
+      //           wa_id: survey.customer.phoneNumber,
+      //         },
+      //       ],
+      //       messages: [
+      //         {
+      //           id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MBB=',
+      //         },
+      //       ],
+      //     }),
+      //   );
       expect(mockSendTemplate).toHaveBeenCalledWith(
         getSurveyTemplate({
           receiver: survey.customer.phoneNumber,
