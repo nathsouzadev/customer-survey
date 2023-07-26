@@ -14,8 +14,9 @@ describe('AppController', () => {
   let prismaService: PrismaService;
 
   const mockUrl = 'https://graph.facebook.com/v17.0';
-  const mockWhatsappId = '123456378901234';
+  // const mockWhatsappId = '123456378901234';
   process.env.WB_URL = mockUrl;
+  process.env.ADMIN_PHONE = '1234567890';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -39,7 +40,7 @@ describe('AppController', () => {
     it('send next question when user do not finish survey', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511999991111';
-      nock(`${mockUrl}/${mockWhatsappId}/messages`)
+      nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
@@ -98,7 +99,7 @@ describe('AppController', () => {
     it('send thank message when user do not finish survey', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511999992222';
-      nock(`${mockUrl}/${mockWhatsappId}/messages`)
+      nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
@@ -157,7 +158,7 @@ describe('AppController', () => {
     it('receive message with invalid body', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511988885555';
-      nock(`${mockUrl}/${mockWhatsappId}/messages`)
+      nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
         .post('')
         .reply(200, {
           messaging_product: 'whatsapp',
