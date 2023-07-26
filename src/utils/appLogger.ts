@@ -64,7 +64,6 @@ export class AppLogger extends ConsoleLogger {
     '*'.repeat(info.length - 4) + info.substring(info.length - 4);
 
   private maskPersonalInfoReceived = (data: any): any => {
-    console.log(data.entry[0].changes);
     const maskedReceiver = this.mask(
       data.entry[0].changes[0].value.metadata.display_phone_number,
     );
