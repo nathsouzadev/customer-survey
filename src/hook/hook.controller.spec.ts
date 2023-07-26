@@ -114,7 +114,7 @@ describe('HookController', () => {
       );
 
       expect(response).toMatchObject({
-        status: 'ok'
+        status: 'ok',
       });
     });
   });

@@ -38,8 +38,7 @@ const messageTypes = {
         recipient_id: data.receiver,
         conversation: {
           id: 'CONVERSATION_ID',
-          expiration_timestamp:
-            'CONVERSATION_EXPIRATION_TIMESTAMP',
+          expiration_timestamp: 'CONVERSATION_EXPIRATION_TIMESTAMP',
           origin: {
             type: 'user_initiated',
           },
@@ -65,7 +64,7 @@ const messageTypes = {
       {
         context: {
           from: '15550836351',
-          id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjgxNEZEMzk4MjQ4MTQyQ0I0BQA='
+          id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjgxNEZEMzk4MjQ4MTQyQ0I0BQA=',
         },
         from: data.sender,
         id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjU1MzE4NTYxRjk5NzI1MkEyRgA=',
@@ -73,12 +72,12 @@ const messageTypes = {
         type: 'button',
         button: {
           payload: data.message,
-          text: data.message
-        }
-      }
-    ]
-  })
-}
+          text: data.message,
+        },
+      },
+    ],
+  }),
+};
 
 export const mockReceivedMessageFromMeta = (
   data: MockReceivedMessageData,
@@ -95,7 +94,7 @@ export const mockReceivedMessageFromMeta = (
               display_phone_number: data.receiver,
               phone_number_id: '123456378901234',
             },
-            ...messageTypes[data.type](data)
+            ...messageTypes[data.type](data),
           },
           field: 'messages',
         },
