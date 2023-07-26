@@ -13,7 +13,7 @@ export class WBService {
     messageData: MessageData | TemplateData,
   ): Promise<MessageSentModel> => {
     try {
-      const requestData = Object.keys(messageData).includes['template']
+      const requestData = Object.keys(messageData).includes('template')
         ? {
             messaging_product: 'whatsapp',
             to: messageData.receiver,
@@ -70,6 +70,7 @@ export class WBService {
       return response.data;
     } catch (error) {
       this.logger.errors(error.message, WBService.name);
+      throw new Error(error.message);
     }
   };
 }
