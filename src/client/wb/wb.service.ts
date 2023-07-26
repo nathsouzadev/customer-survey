@@ -49,7 +49,7 @@ export class WBService {
           Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
         },
       });
-  
+
       this.logger.logger(
         {
           requestData: response.data,
@@ -57,13 +57,10 @@ export class WBService {
         },
         WBService.name,
       );
-  
+
       return response.data;
     } catch (error) {
-      this.logger.errors(
-        error.message,
-        WBService.name,
-      );
+      this.logger.errors(error.message, WBService.name);
     }
   };
 }
