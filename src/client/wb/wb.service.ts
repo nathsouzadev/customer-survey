@@ -13,37 +13,46 @@ export class WBService {
     messageData: MessageData | TemplateData,
   ): Promise<MessageSentModel> => {
     try {
+      const requestData = Object.keys(messageData).includes['template']
+        ? {
+            messaging_product: 'whatsapp',
+            to: messageData.receiver,
+            type: 'template',
+            template: {
+              name: messageData['template'],
+              language: {
+                code: 'pt_BR',
+              },
+              components: [
+                {
+                  type: 'body',
+                  parameters: messageData['parameters'],
+                },
+              ],
+            },
+          }
+        : {
+            messaging_product: 'whatsapp',
+            to: messageData.receiver,
+            text: {
+              body: messageData['message'],
+            },
+          };
+
+      this.logger.logger(
+        {
+          message: 'Send whatsapp message',
+          requestData,
+        },
+        WBService.name,
+      );
       const response = await axios({
         method: 'POST',
         url:
           'https://graph.facebook.com/v17.0/' +
           process.env.ADMIN_PHONE +
           '/messages',
-        data: Object.keys(messageData).includes['template']
-          ? {
-              messaging_product: 'whatsapp',
-              to: messageData.receiver,
-              type: 'template',
-              template: {
-                name: messageData['template'],
-                language: {
-                  code: 'pt_BR',
-                },
-                components: [
-                  {
-                    type: 'body',
-                    parameters: messageData['parameters'],
-                  },
-                ],
-              },
-            }
-          : {
-              messaging_product: 'whatsapp',
-              to: messageData.receiver,
-              text: {
-                body: messageData['message'],
-              },
-            },
+        data: requestData,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
