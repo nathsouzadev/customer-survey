@@ -7,6 +7,7 @@ import { WBService } from '../../client/wb/wb.service';
 import { CompanyService } from '../../company/service/company.service';
 import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { getSurveyTemplate } from '../templates/survey.template';
+import { mockQuickReplyReceived } from '../../__mocks__/quickReplyReceived.mock';
 
 describe('HookService', () => {
   let service: HookService;
@@ -23,6 +24,7 @@ describe('HookService', () => {
           provide: CustomerService,
           useValue: {
             getCustomersBySurveyId: jest.fn(),
+            getSurvey: jest.fn(),
           },
         },
         {
@@ -52,6 +54,73 @@ describe('HookService', () => {
     mockCustomerService = module.get<CustomerService>(CustomerService);
     mockWbService = module.get<WBService>(WBService);
     mockCompanyService = module.get<CompanyService>(CompanyService);
+  });
+
+  it('should send first question from survey to customer', async () => {
+    const mockCustomerPhoneNumber = '5511988885555';
+    const mockCompanyPhoneNumber = '12345678900';
+    const mockCustomerId = randomUUID();
+    const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
+    const mockMessageReceived = mockQuickReplyReceived({
+      message: 'Participar da pesquisa',
+      receiver: mockCompanyPhoneNumber,
+      sender: mockCustomerPhoneNumber,
+    });
+
+    const mockGetCustomer = jest
+      .spyOn(mockCustomerService, 'getSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          customerId: mockCustomerId,
+          surveyId: mockSurveyId,
+          survey: {
+            id: mockSurveyId,
+            name: 'Survey',
+            title: 'Survey title',
+            companyId: mockCompanyId,
+            questions: [],
+          },
+        }),
+      );
+    const mockGetFirstQuestion = jest
+      .spyOn(mockSurveyService, 'getFirstQuestionBySurveyId')
+      .mockImplementation(() => Promise.resolve({ question: 'Question 1' }));
+    const mockSendMessage = jest
+      .spyOn(mockWbService, 'sendMessage')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhoneNumber,
+              wa_id: mockCustomerPhoneNumber,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        }),
+      );
+
+    const response = await service.sendFirstQuestionFromSurvey(
+      mockMessageReceived,
+    );
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockCustomerPhoneNumber);
+    expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockSendMessage).toHaveBeenCalledWith({
+      sender: mockCompanyPhoneNumber,
+      receiver: mockCustomerPhoneNumber,
+      message: 'Question 1',
+    });
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
   });
 
   it('should send message replyMessage with next question when customerAnswers is less than surveyLength', async () => {

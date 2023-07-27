@@ -77,7 +77,6 @@ describe('SurveyController', () => {
 
   describe('Send survey by surveId', () => {
     it('should send survey to customers registered', async () => {
-      // const mockCompanyPhone = '1234567890';
       for (let i = 0; i < 6; i++) {
         nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
           .post('')

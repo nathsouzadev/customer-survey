@@ -14,7 +14,6 @@ describe('AppController', () => {
   let prismaService: PrismaService;
 
   const mockUrl = 'https://graph.facebook.com/v17.0';
-  // const mockWhatsappId = '123456378901234';
   process.env.WB_URL = mockUrl;
   process.env.ADMIN_PHONE = '1234567890';
 

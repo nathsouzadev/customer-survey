@@ -5,6 +5,7 @@ interface MockReceivedMessageData {
   receiver: string;
   message: string;
   type: 'message' | 'status' | 'quickReply';
+  phoneNumberId?: string;
 }
 
 const messageTypes = {
@@ -63,7 +64,7 @@ const messageTypes = {
     messages: [
       {
         context: {
-          from: '15550836351',
+          from: data.receiver,
           id: 'wamid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjgxNEZEMzk4MjQ4MTQyQ0I0BQA=',
         },
         from: data.sender,
@@ -90,10 +91,15 @@ export const mockReceivedMessageFromMeta = (
         {
           value: {
             messaging_product: 'whatsapp',
-            metadata: {
-              display_phone_number: data.receiver,
-              phone_number_id: '123456378901234',
-            },
+            metadata: Object.keys(data).includes('phoneNumberId')
+              ? {
+                  display_phone_number: data.receiver,
+                  phone_number_id: data.phoneNumberId,
+                }
+              : {
+                  display_phone_number: data.receiver,
+                  phone_number_id: '123456378901234',
+                },
             ...messageTypes[data.type](data),
           },
           field: 'messages',
