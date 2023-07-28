@@ -12,7 +12,7 @@ describe('SurveyController', () => {
   let prismaService: PrismaService;
   const mockUrl = 'https://graph.facebook.com/v17.0';
   process.env.WB_URL = mockUrl;
-  process.env.ADMIN_PHONE = '1234567890';
+  const mockPhoneNumberId = '1234567890';
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -77,24 +77,23 @@ describe('SurveyController', () => {
 
   describe('Send survey by surveId', () => {
     it('should send survey to customers registered', async () => {
-      for (let i = 0; i < 6; i++) {
-        nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
-          .post('')
-          .reply(200, {
-            messaging_product: 'whatsapp',
-            contacts: [
-              {
-                input: '5511999991111',
-                wa_id: '5511999991111',
-              },
-            ],
-            messages: [
-              {
-                id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-              },
-            ],
-          });
-      }
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .times(6)
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: '5511999991111',
+              wa_id: '5511999991111',
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
       const token = await getToken(app, request);
 
       return request(app.getHttpServer())

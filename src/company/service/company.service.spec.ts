@@ -180,6 +180,7 @@ describe('CompanyService', () => {
           active: true,
           phoneNumber: '5511999995555',
           companyId: mockCompanyId,
+          metaId: '1234567890',
         }),
       );
 
@@ -190,6 +191,7 @@ describe('CompanyService', () => {
       active: true,
       phoneNumber: '5511999995555',
       companyId: mockCompanyId,
+      metaId: '1234567890',
     });
   });
 });

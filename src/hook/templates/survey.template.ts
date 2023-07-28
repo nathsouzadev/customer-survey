@@ -4,6 +4,7 @@ interface TemplateBody {
   receiver: string;
   sender: string;
   company: string;
+  phoneNumberId: string;
 }
 
 export const getSurveyTemplate = (
@@ -13,6 +14,7 @@ export const getSurveyTemplate = (
   sender: templateBody.sender,
   type: 'template',
   template: 'survey',
+  phoneNumberId: templateBody.phoneNumberId,
   parameters: [
     {
       type: 'text',

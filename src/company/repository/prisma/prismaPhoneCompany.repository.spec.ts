@@ -38,6 +38,7 @@ describe('PrismaPhoneCompanyRepository', () => {
         active: true,
         phoneNumber: '5511999995555',
         companyId: mockCompanyId,
+        metaId: '1234567890',
       });
 
     const company = await repository.getPhoneByCompanyId(mockCompanyId);
@@ -51,6 +52,7 @@ describe('PrismaPhoneCompanyRepository', () => {
       active: true,
       phoneNumber: '5511999995555',
       companyId: mockCompanyId,
+      metaId: '1234567890',
     });
   });
 });

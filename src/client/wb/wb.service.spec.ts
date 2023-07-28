@@ -8,7 +8,6 @@ describe('WBService', () => {
   const mockUrl = 'https://graph.facebook.com/v17.0';
   process.env.WB_URL = mockUrl;
   process.env.WHATSAPP_TOKEN = 'TOKEN';
-  process.env.ADMIN_PHONE = '1234567890';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +20,8 @@ describe('WBService', () => {
   it('should send message', async () => {
     const mockCompanyPhone = '5511999991111';
     const mockReceiverPhone = '5511999991110';
-    nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
+    const mockPhoneNumberId = '1234567890';
+    nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
       .post('')
       .reply(200, {
         messaging_product: 'whatsapp',
@@ -42,6 +42,7 @@ describe('WBService', () => {
       receiver: mockReceiverPhone,
       sender: mockCompanyPhone,
       message: 'Reply',
+      phoneNumberId: mockPhoneNumberId,
     });
     expect(response).toMatchObject({
       messaging_product: 'whatsapp',
@@ -62,7 +63,8 @@ describe('WBService', () => {
   it('should send template message', async () => {
     const mockCompanyPhone = '5511999991111';
     const mockReceiverPhone = '5511999991110';
-    nock(`${mockUrl}/${process.env.ADMIN_PHONE}/messages`)
+    const mockPhoneNumberId = '1234567890';
+    nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
       .post('')
       .reply(200, {
         messaging_product: 'whatsapp',
@@ -84,6 +86,7 @@ describe('WBService', () => {
       sender: mockCompanyPhone,
       type: 'template',
       template: 'survey',
+      phoneNumberId: mockPhoneNumberId,
       parameters: [
         {
           type: 'text',

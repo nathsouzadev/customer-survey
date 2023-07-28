@@ -4,6 +4,7 @@ interface MockReceivedMessageData {
   sender: string;
   receiver: string;
   message: string;
+  phoneNumberId: string;
 }
 
 export const mockReceivedMessage = (
@@ -12,7 +13,7 @@ export const mockReceivedMessage = (
   messaging_product: 'whatsapp',
   metadata: {
     display_phone_number: data.receiver,
-    phone_number_id: data.receiver,
+    phone_number_id: data.phoneNumberId,
   },
   contacts: [
     {

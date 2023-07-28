@@ -34,9 +34,10 @@ export class HookService {
       customer.surveyId,
     );
     const messageSent = await this.wbService.sendMessage({
-      sender: quickReply.metadata.phone_number_id,
+      sender: quickReply.metadata.display_phone_number,
       receiver: customerPhoneNumber,
       message: message.question,
+      phoneNumberId: quickReply.metadata.phone_number_id,
     });
     return { messageId: messageSent.messages[0].id };
   };
@@ -54,18 +55,20 @@ export class HookService {
         customer,
       });
       const messageSent = await this.wbService.sendMessage({
-        sender: receivedMessage.metadata.phone_number_id,
+        sender: receivedMessage.metadata.display_phone_number,
         receiver: customer,
         message: answer.nextQuestion ?? ReplyMessage.finish,
+        phoneNumberId: receivedMessage.metadata.phone_number_id,
       });
 
       return { messageId: messageSent.messages[0].id };
     }
 
     const messageSent = await this.wbService.sendMessage({
-      sender: receivedMessage.metadata.phone_number_id,
+      sender: receivedMessage.metadata.display_phone_number,
       receiver: customer,
       message: ReplyMessage.invalid,
+      phoneNumberId: receivedMessage.metadata.phone_number_id,
     });
     return { messageId: messageSent.messages[0].id };
   };
@@ -79,9 +82,8 @@ export class HookService {
     );
 
     if (customersToSend.length > 0) {
-      const { phoneNumber } = await this.companyService.getPhoneByCompanyId(
-        companyId,
-      );
+      const { phoneNumber, metaId } =
+        await this.companyService.getPhoneByCompanyId(companyId);
 
       for (const survey of customersToSend) {
         await this.wbService.sendMessage(
@@ -89,6 +91,7 @@ export class HookService {
             receiver: survey.customer.phoneNumber,
             sender: phoneNumber,
             company: name,
+            phoneNumberId: metaId,
           }),
         );
       }

@@ -59,6 +59,7 @@ describe('HookService', () => {
   it('should send first question from survey to customer', async () => {
     const mockCustomerPhoneNumber = '5511988885555';
     const mockCompanyPhoneNumber = '12345678900';
+    const mockPhoneNumberId = `1234567890`;
     const mockCustomerId = randomUUID();
     const mockSurveyId = randomUUID();
     const mockCompanyId = randomUUID();
@@ -66,6 +67,7 @@ describe('HookService', () => {
       message: 'Participar da pesquisa',
       receiver: mockCompanyPhoneNumber,
       sender: mockCustomerPhoneNumber,
+      phoneNumberId: mockPhoneNumberId,
     });
 
     const mockGetCustomer = jest
@@ -116,6 +118,7 @@ describe('HookService', () => {
       sender: mockCompanyPhoneNumber,
       receiver: mockCustomerPhoneNumber,
       message: 'Question 1',
+      phoneNumberId: mockPhoneNumberId,
     });
     expect(response).toMatchObject({
       messageId:
@@ -126,6 +129,7 @@ describe('HookService', () => {
   it('should send message replyMessage with next question when customerAnswers is less than surveyLength', async () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
+    const mockPhoneNumberId = `1234567890`;
     const mockReplyToUser = jest
       .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
@@ -162,6 +166,7 @@ describe('HookService', () => {
       sender: mockSenderPhone,
       receiver: mockReceiverPhone,
       message: '1',
+      phoneNumberId: mockPhoneNumberId,
     });
 
     const response = await service.sendMessage(mockMessage);
@@ -169,6 +174,7 @@ describe('HookService', () => {
       sender: mockReceiverPhone,
       receiver: mockSenderPhone,
       message: 'Next Question \n1 - bom\n2 - regular\n3 - ruim',
+      phoneNumberId: mockPhoneNumberId,
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
@@ -183,6 +189,7 @@ describe('HookService', () => {
   it('should send message replyMessage null when customerAnswers is equal than surveyLength', async () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
+    const mockPhoneNumberId = `1234567890`;
     const mockReplyToUser = jest
       .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
@@ -219,6 +226,7 @@ describe('HookService', () => {
       sender: mockSenderPhone,
       receiver: mockReceiverPhone,
       message: '1',
+      phoneNumberId: mockPhoneNumberId,
     });
 
     const response = await service.sendMessage(mockMessage);
@@ -226,6 +234,7 @@ describe('HookService', () => {
       sender: mockReceiverPhone,
       receiver: mockSenderPhone,
       message: 'Obrigada pela sua resposta!',
+      phoneNumberId: mockPhoneNumberId,
     });
     expect(mockUpdate).toHaveBeenCalledWith({
       answer: '1',
@@ -240,6 +249,7 @@ describe('HookService', () => {
   it('should return failed response when send message with invalid content', async () => {
     const mockSenderPhone = '5511988885555';
     const mockReceiverPhone = '5511999991110';
+    const mockPhoneNumberId = `1234567890`;
     const mockReplyToUser = jest
       .spyOn(mockWbService, 'sendMessage')
       .mockImplementation(() =>
@@ -262,6 +272,7 @@ describe('HookService', () => {
       sender: mockSenderPhone,
       receiver: mockReceiverPhone,
       message: 'teste',
+      phoneNumberId: mockPhoneNumberId,
     });
 
     const response = await service.sendMessage(mockMessage);
@@ -269,6 +280,7 @@ describe('HookService', () => {
       sender: mockReceiverPhone,
       receiver: mockSenderPhone,
       message: 'Por favor responda apenas com o número de uma das alternativas',
+      phoneNumberId: mockPhoneNumberId,
     });
     expect(response).toMatchObject({
       messageId:
@@ -283,6 +295,7 @@ describe('HookService', () => {
     const mockCustomerId = randomUUID();
     const mockCustomerId2 = randomUUID();
     const mockCompanyPhone = '5511999995555';
+    const mockPhoneNumberId = `1234567890`;
 
     const mockCustomerSurvey = [
       {
@@ -323,6 +336,7 @@ describe('HookService', () => {
           active: true,
           companyId: mockCompanyId,
           phoneNumber: mockCompanyPhone,
+          metaId: mockPhoneNumberId,
         }),
       );
     const mockGetFirstQuestion = jest
@@ -360,29 +374,12 @@ describe('HookService', () => {
             ],
           }),
         );
-      // const mockSendQuestion = jest
-      //   .spyOn(mockWbService, 'sendMessage')
-      //   .mockImplementation(() =>
-      //     Promise.resolve({
-      //       messaging_product: 'whatsapp',
-      //       contacts: [
-      //         {
-      //           input: survey.customer.phoneNumber,
-      //           wa_id: survey.customer.phoneNumber,
-      //         },
-      //       ],
-      //       messages: [
-      //         {
-      //           id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MBB=',
-      //         },
-      //       ],
-      //     }),
-      //   );
       expect(mockSendTemplate).toHaveBeenCalledWith(
         getSurveyTemplate({
           receiver: survey.customer.phoneNumber,
           sender: mockCompanyPhone,
           company: mockCompanyName,
+          phoneNumberId: mockPhoneNumberId,
         }),
       );
     });
