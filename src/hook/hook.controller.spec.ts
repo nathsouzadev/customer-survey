@@ -97,22 +97,26 @@ describe('HookController', () => {
     });
 
     it('should return message after receive quickReply', async () => {
-      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
-        Promise.resolve({
-          messageId:
-            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-        }),
-      );
+      const mockMessageReceived = mockReceivedMessageFromMeta({
+        message: 'Participar da pesquisa',
+        receiver: '12345678900',
+        sender: '5511988885555',
+        type: 'quickReply',
+      });
+      const mockSend = jest
+        .spyOn(mockHookService, 'sendMessage')
+        .mockImplementation(() =>
+          Promise.resolve({
+            messageId:
+              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          }),
+        );
 
-      const response = await hookController.getMessage(
-        mockReceivedMessageFromMeta({
-          message: 'Participar da pesquisa',
-          receiver: '12345678900',
-          sender: '5511988885555',
-          type: 'quickReply',
-        }),
-      );
+      const response = await hookController.getMessage(mockMessageReceived);
 
+      expect(mockSend).toHaveBeenCalledWith(
+        mockMessageReceived.entry[0].changes[0].value,
+      );
       expect(response).toMatchObject({
         status: 'ok',
       });

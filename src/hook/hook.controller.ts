@@ -51,11 +51,15 @@ export class HookController {
       HookController.name,
     );
 
+    console.log(messageRequest.entry[0].changes[0].value['messages'][0].type);
+
     if (
-      Object.keys(messageRequest.entry[0].changes[0].value).includes(
+      (Object.keys(messageRequest.entry[0].changes[0].value).includes(
         'messages',
       ) &&
-      messageRequest.entry[0].changes[0].value['messages'][0].type === 'text'
+        messageRequest.entry[0].changes[0].value['messages'][0].type ===
+          'text') ||
+      messageRequest.entry[0].changes[0].value['messages'][0].type === 'button'
     ) {
       const response = await this.hookService.sendMessage(
         messageRequest.entry[0].changes[0].value as MessageReceived,

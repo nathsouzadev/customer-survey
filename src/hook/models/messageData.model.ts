@@ -47,7 +47,7 @@ export interface UpdateStatus extends MessageData {
   }>;
 }
 
-export interface QuickReplyInterface extends MessageData {
+export interface QuickReplyReceived extends MessageData {
   contacts: Contact[];
   messages: Array<{
     context: {

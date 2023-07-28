@@ -4,7 +4,10 @@ import { CustomerService } from '../../customer/service/customer.service';
 import { SendSurveyModel } from '../models/sendSurvey.model';
 import { WBService } from '../../client/wb/wb.service';
 import { CompanyService } from '../../company/service/company.service';
-import { MessageReceived } from '../models/messageData.model';
+import {
+  MessageReceived,
+  QuickReplyReceived,
+} from '../models/messageData.model';
 import { SendSurveyRequest } from '../models/sendSurveyRequest.model';
 import { getSurveyTemplate } from '../templates/survey.template';
 
@@ -21,6 +24,22 @@ export class HookService {
     private readonly companyService: CompanyService,
     private readonly wbService: WBService,
   ) {}
+
+  sendFirstQuestionFromSurvey = async (
+    quickReply: QuickReplyReceived,
+  ): Promise<{ messageId: string }> => {
+    const customerPhoneNumber = quickReply.messages[0].from;
+    const customer = await this.customerService.getSurvey(customerPhoneNumber);
+    const message = await this.surveyService.getFirstQuestionBySurveyId(
+      customer.surveyId,
+    );
+    const messageSent = await this.wbService.sendMessage({
+      sender: quickReply.metadata.phone_number_id,
+      receiver: customerPhoneNumber,
+      message: message.question,
+    });
+    return { messageId: messageSent.messages[0].id };
+  };
 
   sendMessage = async (
     receivedMessage: MessageReceived,
@@ -63,9 +82,6 @@ export class HookService {
       const { phoneNumber } = await this.companyService.getPhoneByCompanyId(
         companyId,
       );
-      // const { question } = await this.surveyService.getFirstQuestionBySurveyId(
-      //   surveyId,
-      // );
 
       for (const survey of customersToSend) {
         await this.wbService.sendMessage(
