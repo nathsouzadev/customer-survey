@@ -50,7 +50,7 @@ export class WBService {
         method: 'POST',
         url:
           'https://graph.facebook.com/v17.0/' +
-          process.env.ADMIN_PHONE +
+          messageData.phoneNumberId +
           '/messages',
         data: requestData,
         headers: {

@@ -51,8 +51,6 @@ export class HookController {
       HookController.name,
     );
 
-    console.log(messageRequest.entry[0].changes[0].value['messages'][0].type);
-
     if (
       (Object.keys(messageRequest.entry[0].changes[0].value).includes(
         'messages',

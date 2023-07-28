@@ -82,6 +82,7 @@ model PhoneCompany {
   id String @id @default(uuid())
   active Boolean
   phoneNumber String
+  metaId String
   company Company @relation(fields: [companyId], references: [id])
   companyId String
 }

@@ -33,6 +33,7 @@ const phoneCompany = {
   active: true,
   phoneNumber: '551199991234',
   companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+  metaId: '1234567890'
 }
 
 const sender = {
