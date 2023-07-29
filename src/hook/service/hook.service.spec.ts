@@ -430,6 +430,7 @@ describe('HookService', () => {
     const mockCompanyId = randomUUID();
     const mockSurveyId = randomUUID();
     const mockMessage = mockReceivedMessage({
+      name: 'Ada Lovelace',
       sender: mockSenderPhone,
       receiver: mockReceiverPhone,
       message: 'teste',
@@ -490,8 +491,10 @@ describe('HookService', () => {
     const response = await service.registerCustomerToSurvey(mockMessage);
     expect(mockGetSurvey).toHaveBeenCalledWith(mockReceiverPhone);
     expect(mockRegisterCustomer).toHaveBeenCalledWith({
+      name: 'Ada Lovelace',
       phoneNumber: mockSenderPhone,
       surveyId: mockSurveyId,
+      companyId: mockCompanyId,
     });
     expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
     expect(mockSend).toHaveBeenCalledWith({

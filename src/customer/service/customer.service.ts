@@ -70,6 +70,21 @@ export class CustomerService {
     customerSurvey: RegisterCustomerSurvey,
   ): Promise<void> => {
     const customer = await this.getCustomer(customerSurvey.phoneNumber);
+
+    if (!customer) {
+      const newCustomer = await this.createCustomer({
+        name: customerSurvey.name,
+        phoneNumber: customerSurvey.phoneNumber,
+        companyId: customerSurvey.companyId,
+      });
+
+      await this.customerSurveyRepository.createCustomerSurvey({
+        customerId: newCustomer.id,
+        surveyId: customerSurvey.surveyId,
+      });
+      return;
+    }
+
     await this.customerSurveyRepository.createCustomerSurvey({
       customerId: customer.id,
       surveyId: customerSurvey.surveyId,
