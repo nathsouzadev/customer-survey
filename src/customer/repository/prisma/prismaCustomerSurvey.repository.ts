@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../client/prisma/prisma.service';
 import { CustomerSurveyRepository } from '../customerSurvey.repository';
 import { CustomerSurveyModel } from '../../../customer/model/customerSurvey.model';
-import { CustomerRegisteredModel } from '../../../customer/model/customerRegistered.mode';
+import { CustomerRegisteredModel } from '../../model/customerRegistered.model';
+import { CustomerSurvey } from '@prisma/client';
+import { CreateCustomerSurvey } from '../../model/createCustomerSurvey.model';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class PrismaCustomerSurveyRepository
@@ -52,6 +55,17 @@ export class PrismaCustomerSurveyRepository
             answers: true,
           },
         },
+      },
+    });
+
+  createCustomerSurvey = async (
+    customerSurvey: CreateCustomerSurvey,
+  ): Promise<CustomerSurvey> =>
+    this.prisma.customerSurvey.create({
+      data: {
+        id: randomUUID(),
+        active: true,
+        ...customerSurvey,
       },
     });
 }

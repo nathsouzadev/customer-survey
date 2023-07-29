@@ -6,6 +6,7 @@ import { compare, hash } from 'bcryptjs';
 import { AppLogger } from '../../utils/appLogger';
 import { PhoneCompany } from '@prisma/client';
 import { PhoneCompanyRepository } from '../repository/phoneCompany.repository';
+import { PhoneCompanyWithSurvey } from '../model/phoneCompany.model';
 
 @Injectable()
 export class CompanyService {
@@ -55,4 +56,9 @@ export class CompanyService {
 
   getPhoneByCompanyId = async (companyId: string): Promise<PhoneCompany> =>
     this.phoneCompanyRepository.getPhoneByCompanyId(companyId);
+
+  getPhoneWithSurvey = async (
+    phoneNumber: string,
+  ): Promise<PhoneCompanyWithSurvey> =>
+    this.phoneCompanyRepository.getPhoneWithSurvey(phoneNumber);
 }

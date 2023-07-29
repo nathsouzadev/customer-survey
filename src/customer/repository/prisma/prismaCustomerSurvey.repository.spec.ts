@@ -18,6 +18,7 @@ describe('PrismaCustomerSurveyRepository', () => {
             customerSurvey: {
               findFirst: jest.fn(),
               findMany: jest.fn(),
+              create: jest.fn(),
             },
           },
         },
@@ -192,5 +193,37 @@ describe('PrismaCustomerSurveyRepository', () => {
         },
       },
     ]);
+  });
+
+  it('should be return customerSurvey created', async () => {
+    const mockCustomerId = randomUUID();
+    const mockSurveyId = randomUUID();
+    const mockCreate = jest
+      .spyOn<any, any>(mockPrismaService.customerSurvey, 'create')
+      .mockResolvedValue({
+        id: randomUUID(),
+        active: true,
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+      });
+
+    const customerSurvey = await repository.createCustomerSurvey({
+      customerId: mockCustomerId,
+      surveyId: mockSurveyId,
+    });
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: {
+        id: expect.any(String),
+        active: true,
+        customerId: mockCustomerId,
+        surveyId: mockSurveyId,
+      },
+    });
+    expect(customerSurvey).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      customerId: mockCustomerId,
+      surveyId: mockSurveyId,
+    });
   });
 });

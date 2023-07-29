@@ -42,6 +42,29 @@ export class HookService {
     return { messageId: messageSent.messages[0].id };
   };
 
+  registerCustomerToSurvey = async (
+    receivedMessage: MessageReceived,
+  ): Promise<{ messageId: string }> => {
+    const customer = receivedMessage.messages[0].from;
+    const survey = await this.companyService.getPhoneWithSurvey(
+      receivedMessage.metadata.display_phone_number,
+    );
+    await this.customerService.registerCustomerSurvey({
+      phoneNumber: customer,
+      surveyId: survey.company.surveys[0].id,
+    });
+    const message = await this.surveyService.getFirstQuestionBySurveyId(
+      survey.company.surveys[0].id,
+    );
+    const messageSent = await this.wbService.sendMessage({
+      sender: receivedMessage.metadata.display_phone_number,
+      receiver: customer,
+      message: message.question,
+      phoneNumberId: receivedMessage.metadata.phone_number_id,
+    });
+    return { messageId: messageSent.messages[0].id };
+  };
+
   sendMessage = async (
     receivedMessage: MessageReceived,
   ): Promise<{ messageId: string }> => {

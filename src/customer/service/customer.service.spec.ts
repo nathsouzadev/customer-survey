@@ -40,6 +40,7 @@ describe('CustomerService', () => {
           useValue: {
             getSurveyByCustomerId: jest.fn(),
             getCustomersBySurveyId: jest.fn(),
+            createCustomerSurvey: jest.fn(),
           },
         },
         AppLogger,
@@ -402,5 +403,41 @@ describe('CustomerService', () => {
         },
       },
     ]);
+  });
+
+  it('should be create customerSurvey with customerId and surveyId', async () => {
+    const mockCustomerId = randomUUID();
+    const mockPhoneNumber = '5511999991111';
+    const mockSurveyId = randomUUID();
+    const mockGetCustomer = jest
+      .spyOn(service, 'getCustomer')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: mockPhoneNumber,
+          companyId: randomUUID(),
+        }),
+      );
+    const mockCreate = jest
+      .spyOn(mockCustomerSurveyRepository, 'createCustomerSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          customerId: mockCustomerId,
+          surveyId: mockSurveyId,
+        }),
+      );
+
+    await service.registerCustomerSurvey({
+      phoneNumber: mockPhoneNumber,
+      surveyId: mockSurveyId,
+    });
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
+    expect(mockCreate).toHaveBeenCalledWith({
+      customerId: mockCustomerId,
+      surveyId: mockSurveyId,
+    });
   });
 });

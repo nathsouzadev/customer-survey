@@ -59,6 +59,21 @@ export class HookController {
           'text') ||
       messageRequest.entry[0].changes[0].value['messages'][0].type === 'button'
     ) {
+      if (
+        messageRequest.entry[0].changes[0].value['messages'][0].type ===
+          'text' &&
+        messageRequest.entry[0].changes[0].value['messages'][0].text.body ===
+          'Responder pesquisa'
+      ) {
+        const response = await this.hookService.registerCustomerToSurvey(
+          messageRequest.entry[0].changes[0].value as MessageReceived,
+        );
+        return {
+          status: 'ok',
+          response,
+        };
+      }
+
       const response = await this.hookService.sendMessage(
         messageRequest.entry[0].changes[0].value as MessageReceived,
       );
