@@ -50,8 +50,10 @@ export class HookService {
       receivedMessage.metadata.display_phone_number,
     );
     await this.customerService.registerCustomerSurvey({
+      name: receivedMessage.contacts[0].profile.name,
       phoneNumber: customer,
       surveyId: survey.company.surveys[0].id,
+      companyId: survey.companyId,
     });
     const message = await this.surveyService.getFirstQuestionBySurveyId(
       survey.company.surveys[0].id,

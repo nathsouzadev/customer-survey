@@ -5,6 +5,7 @@ interface MockReceivedMessageData {
   receiver: string;
   message: string;
   phoneNumberId: string;
+  name?: string;
 }
 
 export const mockReceivedMessage = (
@@ -18,7 +19,7 @@ export const mockReceivedMessage = (
   contacts: [
     {
       profile: {
-        name: 'NAME',
+        name: data.name ?? 'NAME',
       },
       wa_id: data.receiver,
     },

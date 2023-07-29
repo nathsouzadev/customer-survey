@@ -409,6 +409,7 @@ describe('CustomerService', () => {
     const mockCustomerId = randomUUID();
     const mockPhoneNumber = '5511999991111';
     const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
     const mockGetCustomer = jest
       .spyOn(service, 'getCustomer')
       .mockImplementation(() =>
@@ -416,7 +417,7 @@ describe('CustomerService', () => {
           id: mockCustomerId,
           name: 'Ada Lovelace',
           phoneNumber: mockPhoneNumber,
-          companyId: randomUUID(),
+          companyId: mockCompanyId,
         }),
       );
     const mockCreate = jest
@@ -431,10 +432,59 @@ describe('CustomerService', () => {
       );
 
     await service.registerCustomerSurvey({
+      name: 'Ada Lovelace',
       phoneNumber: mockPhoneNumber,
       surveyId: mockSurveyId,
+      companyId: mockCompanyId,
     });
     expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
+    expect(mockCreate).toHaveBeenCalledWith({
+      customerId: mockCustomerId,
+      surveyId: mockSurveyId,
+    });
+  });
+
+  it('should be create Customer, when customer dont exists', async () => {
+    const mockCustomerId = randomUUID();
+    const mockPhoneNumber = '5511999991111';
+    const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
+    const mockGetCustomer = jest
+      .spyOn(service, 'getCustomer')
+      .mockImplementation(() => Promise.resolve(null));
+    const mockCreateCustomer = jest
+      .spyOn(service, 'createCustomer')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockCustomerId,
+          name: 'Ada Lovelace',
+          phoneNumber: mockPhoneNumber,
+          companyId: mockCompanyId,
+        }),
+      );
+    const mockCreate = jest
+      .spyOn(mockCustomerSurveyRepository, 'createCustomerSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          customerId: mockCustomerId,
+          surveyId: mockSurveyId,
+        }),
+      );
+
+    await service.registerCustomerSurvey({
+      name: 'Ada Lovelace',
+      phoneNumber: mockPhoneNumber,
+      surveyId: mockSurveyId,
+      companyId: mockCompanyId,
+    });
+    expect(mockGetCustomer).toHaveBeenCalledWith(mockPhoneNumber);
+    expect(mockCreateCustomer).toHaveBeenCalledWith({
+      name: 'Ada Lovelace',
+      phoneNumber: mockPhoneNumber,
+      companyId: mockCompanyId,
+    });
     expect(mockCreate).toHaveBeenCalledWith({
       customerId: mockCustomerId,
       surveyId: mockSurveyId,
