@@ -96,6 +96,34 @@ describe('HookController', () => {
       });
     });
 
+    it('should return message after receive message "Responder pesquisa"', async () => {
+      jest
+        .spyOn(mockHookService, 'registerCustomerToSurvey')
+        .mockImplementation(() =>
+          Promise.resolve({
+            messageId:
+              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          }),
+        );
+
+      const response = await hookController.getMessage(
+        mockReceivedMessageFromMeta({
+          message: 'Responder pesquisa',
+          receiver: '12345678900',
+          sender: '5511988885555',
+          type: 'message',
+        }),
+      );
+
+      expect(response).toMatchObject({
+        status: 'ok',
+        response: {
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        },
+      });
+    });
+
     it('should return message after receive quickReply', async () => {
       const mockMessageReceived = mockReceivedMessageFromMeta({
         message: 'Participar da pesquisa',

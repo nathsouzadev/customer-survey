@@ -29,6 +29,7 @@ describe('CompanyService', () => {
           provide: PhoneCompanyRepository,
           useValue: {
             getPhoneByCompanyId: jest.fn(),
+            getPhoneWithSurvey: jest.fn(),
           },
         },
         AppLogger,
@@ -192,6 +193,64 @@ describe('CompanyService', () => {
       phoneNumber: '5511999995555',
       companyId: mockCompanyId,
       metaId: '1234567890',
+    });
+  });
+
+  it('should return phoneCompany with company and survey with companyId', async () => {
+    const mockCompanyId = randomUUID();
+    const mockPhoneNumber = '5511999995555';
+    const mockSurveyId = randomUUID();
+
+    const mockGetSurvey = jest
+      .spyOn(mockPhoneCompanyRepository, 'getPhoneWithSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          phoneNumber: '5511999995555',
+          companyId: mockCompanyId,
+          metaId: '1234567890',
+          company: {
+            id: mockCompanyId,
+            active: true,
+            name: 'Company',
+            email: 'company@email.com',
+            surveys: [
+              {
+                id: mockSurveyId,
+                companyId: mockCompanyId,
+                name: 'Survey',
+                title: 'Survey Title',
+                questions: [],
+              },
+            ],
+          },
+        }),
+      );
+
+    const company = await service.getPhoneWithSurvey(mockPhoneNumber);
+    expect(mockGetSurvey).toHaveBeenCalledWith(mockPhoneNumber);
+    expect(company).toMatchObject({
+      id: expect.any(String),
+      active: true,
+      phoneNumber: '5511999995555',
+      companyId: mockCompanyId,
+      metaId: '1234567890',
+      company: {
+        id: mockCompanyId,
+        active: true,
+        name: 'Company',
+        email: 'company@email.com',
+        surveys: [
+          {
+            id: mockSurveyId,
+            companyId: mockCompanyId,
+            name: 'Survey',
+            title: 'Survey Title',
+            questions: [],
+          },
+        ],
+      },
     });
   });
 });

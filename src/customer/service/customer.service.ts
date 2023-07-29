@@ -7,7 +7,8 @@ import { CustomerSurveyModel } from '../model/customerSurvey.model';
 import { CustomerAnswersRequestModel } from '../model/customerAnswerRequest.model';
 import { CreateCustomerRequestDTO } from '../dto/createCustomerRequest.dto';
 import { AppLogger } from '../../utils/appLogger';
-import { CustomerRegisteredModel } from '../model/customerRegistered.mode';
+import { CustomerRegisteredModel } from '../model/customerRegistered.model';
+import { RegisterCustomerSurvey } from '../model/registerCustomerSurvey.model ';
 
 @Injectable()
 export class CustomerService {
@@ -63,5 +64,15 @@ export class CustomerService {
     );
 
     return customers;
+  };
+
+  registerCustomerSurvey = async (
+    customerSurvey: RegisterCustomerSurvey,
+  ): Promise<void> => {
+    const customer = await this.getCustomer(customerSurvey.phoneNumber);
+    await this.customerSurveyRepository.createCustomerSurvey({
+      customerId: customer.id,
+      surveyId: customerSurvey.surveyId,
+    });
   };
 }
