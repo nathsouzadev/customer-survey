@@ -25,25 +25,25 @@ export class HookService {
     private readonly wbService: WBService,
   ) {}
 
-  receiveOptinFromCustomer = async (quickReply: QuickReplyReceived): Promise<{ messageId: string }> => {
+  receiveOptinFromCustomer = async (
+    quickReply: QuickReplyReceived,
+  ): Promise<{ messageId: string }> => {
     const customerPhoneNumber = quickReply.messages[0].from;
     const customer = await this.customerService.getSurvey(customerPhoneNumber);
     return this.sendFirstQuestionFromSurvey({
       sender: quickReply.metadata.display_phone_number,
       receiver: customerPhoneNumber,
       phoneNumberId: quickReply.metadata.phone_number_id,
-      surveyId: customer.surveyId
-    })
-  }
+      surveyId: customer.surveyId,
+    });
+  };
 
-  sendFirstQuestionFromSurvey = async (
-    sendFirstQuestionRequest: {
-      sender: string,
-      receiver: string
-      phoneNumberId: string,
-      surveyId: string
-    },
-  ): Promise<{ messageId: string }> => {
+  sendFirstQuestionFromSurvey = async (sendFirstQuestionRequest: {
+    sender: string;
+    receiver: string;
+    phoneNumberId: string;
+    surveyId: string;
+  }): Promise<{ messageId: string }> => {
     const message = await this.surveyService.getFirstQuestionBySurveyId(
       sendFirstQuestionRequest.surveyId,
     );
@@ -75,7 +75,7 @@ export class HookService {
       receiver: customer,
       phoneNumberId: receivedMessage.metadata.phone_number_id,
       surveyId: survey.company.surveys[0].id,
-    })
+    });
   };
 
   sendMessage = async (
