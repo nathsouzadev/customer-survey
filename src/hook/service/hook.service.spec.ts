@@ -72,7 +72,7 @@ describe('HookService', () => {
       phoneNumberId: mockPhoneNumberId,
     });
 
-    const mockGetCustomer = jest
+    const mockGetSurvey = jest
       .spyOn(mockCustomerService, 'getSurvey')
       .mockImplementation(() =>
         Promise.resolve({
@@ -111,10 +111,10 @@ describe('HookService', () => {
         }),
       );
 
-    const response = await service.sendFirstQuestionFromSurvey(
+    const response = await service.receiveOptinFromCustomer(
       mockMessageReceived,
     );
-    expect(mockGetCustomer).toHaveBeenCalledWith(mockCustomerPhoneNumber);
+    expect(mockGetSurvey).toHaveBeenCalledWith(mockCustomerPhoneNumber);
     expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
     expect(mockSendMessage).toHaveBeenCalledWith({
       sender: mockCompanyPhoneNumber,
@@ -443,7 +443,7 @@ describe('HookService', () => {
         Promise.resolve({
           id: randomUUID(),
           active: true,
-          phoneNumber: '5511999995555',
+          phoneNumber: mockReceiverPhone,
           companyId: mockCompanyId,
           metaId: '1234567890',
           company: {
@@ -466,25 +466,12 @@ describe('HookService', () => {
     const mockRegisterCustomer = jest
       .spyOn(mockCustomerService, 'registerCustomerSurvey')
       .mockImplementation(() => Promise.resolve());
-    const mockGetFirstQuestion = jest
-      .spyOn(mockSurveyService, 'getFirstQuestionBySurveyId')
-      .mockImplementation(() => Promise.resolve({ question: 'Question 1' }));
-    const mockSend = jest
-      .spyOn(mockWbService, 'sendMessage')
+    const mockSendFirstQuestion = jest
+      .spyOn(service, 'sendFirstQuestionFromSurvey')
       .mockImplementation(() =>
         Promise.resolve({
-          messaging_product: 'whatsapp',
-          contacts: [
-            {
-              input: mockReceiverPhone,
-              wa_id: mockReceiverPhone,
-            },
-          ],
-          messages: [
-            {
-              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-            },
-          ],
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
         }),
       );
 
@@ -496,12 +483,114 @@ describe('HookService', () => {
       surveyId: mockSurveyId,
       companyId: mockCompanyId,
     });
-    expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
-    expect(mockSend).toHaveBeenCalledWith({
+    expect(mockSendFirstQuestion).toHaveBeenCalledWith({
       sender: mockReceiverPhone,
       receiver: mockSenderPhone,
-      message: 'Question 1',
       phoneNumberId: mockPhoneNumberId,
+      surveyId: mockSurveyId,
+    });
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
+  });
+
+  it('should send first question from survey', async () => {
+    const mockCompanyPhoneNumber = '5511999998888';
+    const mockCustomerPhoneNumber = '5511999991234';
+    const mockQuestion = 'Question 1';
+    const mockPhoneNumberId = '1234567890';
+    const mockSurveyId = randomUUID();
+
+    const mockGetFirstQuestion = jest
+      .spyOn(mockSurveyService, 'getFirstQuestionBySurveyId')
+      .mockImplementation(() => Promise.resolve({ question: mockQuestion }));
+    const mockSend = jest
+      .spyOn(mockWbService, 'sendMessage')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCompanyPhoneNumber,
+              wa_id: mockCompanyPhoneNumber,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        }),
+      );
+    const response = await service.sendFirstQuestionFromSurvey({
+      sender: mockCompanyPhoneNumber,
+      receiver: mockCustomerPhoneNumber,
+      phoneNumberId: mockPhoneNumberId,
+      surveyId: mockSurveyId,
+    });
+    expect(mockGetFirstQuestion).toHaveBeenCalledWith(mockSurveyId);
+    expect(mockSend).toHaveBeenCalledWith({
+      sender: mockCompanyPhoneNumber,
+      receiver: mockCustomerPhoneNumber,
+      message: mockQuestion,
+      phoneNumberId: mockPhoneNumberId,
+    });
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
+  });
+
+  it('send first question after receive opt in from customer', async () => {
+    const mockCustomerPhoneNumber = '5511988885555';
+    const mockCompanyPhoneNumber = '12345678900';
+    const mockPhoneNumberId = `1234567890`;
+    const mockCustomerId = randomUUID();
+    const mockSurveyId = randomUUID();
+    const mockCompanyId = randomUUID();
+    const mockMessageReceived = mockQuickReplyReceived({
+      message: 'Participar da pesquisa',
+      receiver: mockCompanyPhoneNumber,
+      sender: mockCustomerPhoneNumber,
+      phoneNumberId: mockPhoneNumberId,
+    });
+
+    const mockGetSurvey = jest
+      .spyOn(mockCustomerService, 'getSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          active: true,
+          customerId: mockCustomerId,
+          surveyId: mockSurveyId,
+          survey: {
+            id: mockSurveyId,
+            name: 'Survey',
+            title: 'Survey title',
+            companyId: mockCompanyId,
+            questions: [],
+          },
+        }),
+      );
+    const mockSendFirstQuestion = jest
+      .spyOn(service, 'sendFirstQuestionFromSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        }),
+      );
+
+    const response = await service.receiveOptinFromCustomer(
+      mockMessageReceived,
+    );
+    expect(mockGetSurvey).toHaveBeenCalledWith(mockCustomerPhoneNumber);
+    expect(mockSendFirstQuestion).toHaveBeenCalledWith({
+      sender: mockCompanyPhoneNumber,
+      receiver: mockCustomerPhoneNumber,
+      phoneNumberId: mockPhoneNumberId,
+      surveyId: mockSurveyId,
     });
     expect(response).toMatchObject({
       messageId:

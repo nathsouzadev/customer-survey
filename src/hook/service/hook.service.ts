@@ -25,19 +25,33 @@ export class HookService {
     private readonly wbService: WBService,
   ) {}
 
-  sendFirstQuestionFromSurvey = async (
+  receiveOptinFromCustomer = async (
     quickReply: QuickReplyReceived,
   ): Promise<{ messageId: string }> => {
     const customerPhoneNumber = quickReply.messages[0].from;
     const customer = await this.customerService.getSurvey(customerPhoneNumber);
-    const message = await this.surveyService.getFirstQuestionBySurveyId(
-      customer.surveyId,
-    );
-    const messageSent = await this.wbService.sendMessage({
+    return this.sendFirstQuestionFromSurvey({
       sender: quickReply.metadata.display_phone_number,
       receiver: customerPhoneNumber,
-      message: message.question,
       phoneNumberId: quickReply.metadata.phone_number_id,
+      surveyId: customer.surveyId,
+    });
+  };
+
+  sendFirstQuestionFromSurvey = async (sendFirstQuestionRequest: {
+    sender: string;
+    receiver: string;
+    phoneNumberId: string;
+    surveyId: string;
+  }): Promise<{ messageId: string }> => {
+    const message = await this.surveyService.getFirstQuestionBySurveyId(
+      sendFirstQuestionRequest.surveyId,
+    );
+    const messageSent = await this.wbService.sendMessage({
+      sender: sendFirstQuestionRequest.sender,
+      receiver: sendFirstQuestionRequest.receiver,
+      message: message.question,
+      phoneNumberId: sendFirstQuestionRequest.phoneNumberId,
     });
     return { messageId: messageSent.messages[0].id };
   };
@@ -55,16 +69,13 @@ export class HookService {
       surveyId: survey.company.surveys[0].id,
       companyId: survey.companyId,
     });
-    const message = await this.surveyService.getFirstQuestionBySurveyId(
-      survey.company.surveys[0].id,
-    );
-    const messageSent = await this.wbService.sendMessage({
+
+    return this.sendFirstQuestionFromSurvey({
       sender: receivedMessage.metadata.display_phone_number,
       receiver: customer,
-      message: message.question,
       phoneNumberId: receivedMessage.metadata.phone_number_id,
+      surveyId: survey.company.surveys[0].id,
     });
-    return { messageId: messageSent.messages[0].id };
   };
 
   sendMessage = async (
