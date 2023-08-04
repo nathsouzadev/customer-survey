@@ -71,21 +71,23 @@ describe('HookController', () => {
 
   describe('hook', () => {
     it('should return message after sent', async () => {
-      const mockHandler = jest.spyOn(mockHookService, 'handlerMessage').mockImplementation(() =>
-        Promise.resolve({
-          messageId:
-            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-        }),
-      );
+      const mockHandler = jest
+        .spyOn(mockHookService, 'handlerMessage')
+        .mockImplementation(() =>
+          Promise.resolve({
+            messageId:
+              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          }),
+        );
       const mockMessage = mockReceivedMessageFromMeta({
         message: '1',
         receiver: '12345678900',
         sender: '5511988885555',
         type: 'message',
-      })
+      });
 
       const response = await hookController.getMessage(mockMessage);
-      expect(mockHandler).toHaveBeenCalledWith(mockMessage)
+      expect(mockHandler).toHaveBeenCalledWith(mockMessage);
       expect(response).toMatchObject({
         status: 'ok',
         response: {

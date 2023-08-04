@@ -17,10 +17,6 @@ import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
-import {
-  MessageReceived,
-  QuickReplyReceived,
-} from './models/messageData.model';
 
 @Controller()
 export class HookController {
@@ -55,14 +51,14 @@ export class HookController {
     );
 
     try {
-      const response = await this.hookService.handlerMessage(messageRequest)
+      const response = await this.hookService.handlerMessage(messageRequest);
       return {
         status: 'ok',
         response,
       };
     } catch (error) {
       return {
-        status: 'ok'
+        status: 'ok',
       };
     }
   }
