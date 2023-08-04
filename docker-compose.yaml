@@ -9,15 +9,30 @@ version: "3.6"
 services:
   postgres:
     image: postgres:11.7-alpine
+    container_name: 'postgres'
     ports:
       - 5010:5432
     environment:
       POSTGRES_PASSWORD: p4ssw0rd-t3st3-db
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+
 networks:
   default:
     external:
       name: microservice-network
-      # The network can be renamed to whatever you want
-      # If you change this here, it also needs to be changed in the package.json scripts
-      # in the "service" script and in the "dynamo:network" script.
+
+  rabbitmq_go_net:
+    driver: bridge
+    
       
