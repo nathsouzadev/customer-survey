@@ -54,56 +54,17 @@ export class HookController {
       HookController.name,
     );
 
-    if (
-      (Object.keys(messageRequest.entry[0].changes[0].value).includes(
-        'messages',
-      ) &&
-        messageRequest.entry[0].changes[0].value['messages'][0].type ===
-          'text') ||
-      messageRequest.entry[0].changes[0].value['messages'][0].type === 'button'
-    ) {
-      if (
-        messageRequest.entry[0].changes[0].value['messages'][0].type ===
-          'text' &&
-        messageRequest.entry[0].changes[0].value['messages'][0].text.body ===
-          'Responder pesquisa'
-      ) {
-        const response = await this.hookService.registerCustomerToSurvey(
-          messageRequest.entry[0].changes[0].value as MessageReceived,
-        );
-        return {
-          status: 'ok',
-          response,
-        };
-      }
-
-      if (
-        messageRequest.entry[0].changes[0].value['messages'][0].type ===
-          'button' &&
-        messageRequest.entry[0].changes[0].value['messages'][0].button
-          .payload === 'Quero participar'
-      ) {
-        const response = await this.hookService.receiveOptinFromCustomer(
-          messageRequest.entry[0].changes[0].value as QuickReplyReceived,
-        );
-        return {
-          status: 'ok',
-          response,
-        };
-      }
-
-      const response = await this.hookService.sendMessage(
-        messageRequest.entry[0].changes[0].value as MessageReceived,
-      );
+    try {
+      const response = await this.hookService.handlerMessage(messageRequest)
       return {
         status: 'ok',
         response,
       };
+    } catch (error) {
+      return {
+        status: 'ok'
+      };
     }
-
-    return {
-      status: 'ok',
-    };
   }
 
   @ApiOkResponse({

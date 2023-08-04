@@ -10,6 +10,7 @@ import {
 } from '../models/messageData.model';
 import { SendSurveyRequest } from '../models/sendSurveyRequest.model';
 import { getSurveyTemplate } from '../templates/survey.template';
+import { ReceivedMessageRequestDTO } from '../dto/receivedMessageRequest.dto';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
@@ -24,6 +25,30 @@ export class HookService {
     private readonly companyService: CompanyService,
     private readonly wbService: WBService,
   ) {}
+
+  handlerMessage = async (messageRequest: ReceivedMessageRequestDTO) => {
+    const messageData = messageRequest.entry[0].changes[0].value;
+    if (
+      (Object.keys(messageData).includes('messages') &&
+        messageData['messages'][0].type === 'text') ||
+      messageData['messages'][0].type === 'button'
+    ) {
+      if (
+        messageData['messages'][0].type === 'text' &&
+        messageData['messages'][0].text.body === 'Responder pesquisa'
+      ) {
+        return this.registerCustomerToSurvey(messageData as MessageReceived);
+      }
+
+      if (
+        messageData['messages'][0].type === 'button' &&
+        messageData['messages'][0].button.payload === 'Quero participar'
+      ) {
+        return this.receiveOptinFromCustomer(messageData as QuickReplyReceived);
+      }
+      return this.sendMessage(messageData as MessageReceived);
+    }
+  };
 
   receiveOptinFromCustomer = async (
     quickReply: QuickReplyReceived,
