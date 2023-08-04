@@ -17,7 +17,10 @@ import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
-import { MessageReceived } from './models/messageData.model';
+import {
+  MessageReceived,
+  QuickReplyReceived,
+} from './models/messageData.model';
 
 @Controller()
 export class HookController {
@@ -67,6 +70,21 @@ export class HookController {
       ) {
         const response = await this.hookService.registerCustomerToSurvey(
           messageRequest.entry[0].changes[0].value as MessageReceived,
+        );
+        return {
+          status: 'ok',
+          response,
+        };
+      }
+
+      if (
+        messageRequest.entry[0].changes[0].value['messages'][0].type ===
+          'button' &&
+        messageRequest.entry[0].changes[0].value['messages'][0].button
+          .payload === 'Quero participar'
+      ) {
+        const response = await this.hookService.receiveOptinFromCustomer(
+          messageRequest.entry[0].changes[0].value as QuickReplyReceived,
         );
         return {
           status: 'ok',

@@ -126,13 +126,13 @@ describe('HookController', () => {
 
     it('should return message after receive quickReply', async () => {
       const mockMessageReceived = mockReceivedMessageFromMeta({
-        message: 'Participar da pesquisa',
+        message: 'Quero participar',
         receiver: '12345678900',
         sender: '5511988885555',
         type: 'quickReply',
       });
-      const mockSend = jest
-        .spyOn(mockHookService, 'sendMessage')
+      const mockReceivedOptin = jest
+        .spyOn(mockHookService, 'receiveOptinFromCustomer')
         .mockImplementation(() =>
           Promise.resolve({
             messageId:
@@ -142,7 +142,7 @@ describe('HookController', () => {
 
       const response = await hookController.getMessage(mockMessageReceived);
 
-      expect(mockSend).toHaveBeenCalledWith(
+      expect(mockReceivedOptin).toHaveBeenCalledWith(
         mockMessageReceived.entry[0].changes[0].value,
       );
       expect(response).toMatchObject({
