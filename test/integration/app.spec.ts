@@ -89,7 +89,7 @@ describe('AppController', () => {
         });
     });
 
-    it('send thank message when user do not finish survey', async () => {
+    it('send thank message when user finish survey', async () => {
       const mockCompanyPhone = '12345678900';
       const mockCustomerPhone = '5511999992222';
       nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
@@ -186,6 +186,231 @@ describe('AppController', () => {
             response: {
               messageId:
                 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          });
+        });
+    });
+
+    it('receive message with optin from customer to survey', () => {
+      const mockCompanyPhone = '551199991234';
+      const mockCustomerPhone = '5511999991111';
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta')
+        .send(
+          mockReceivedMessageFromMeta({
+            message: 'Quero participar',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
+            phoneNumberId: mockPhoneNumberId,
+            type: 'quickReply',
+          }),
+        )
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            status: 'ok',
+            response: {
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          });
+        });
+    });
+
+    it('receive message without optin from customer to survey', () => {
+      const mockCompanyPhone = '551199991234';
+      const mockCustomerPhone = '5511999991111';
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta')
+        .send(
+          mockReceivedMessageFromMeta({
+            message: 'Não quero participar',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
+            phoneNumberId: mockPhoneNumberId,
+            type: 'quickReply',
+          }),
+        )
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            status: 'ok',
+          });
+        });
+    });
+
+    it('receive message with "Responder pesquisa" from customer', () => {
+      const mockCompanyPhone = '551199991234';
+      const mockCustomerPhone = '5511999992225';
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta')
+        .send(
+          mockReceivedMessageFromMeta({
+            message: 'Responder pesquisa',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
+            phoneNumberId: mockPhoneNumberId,
+            type: 'message',
+          }),
+        )
+        .expect(200)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            status: 'ok',
+            response: {
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          });
+
+          const customerSurvey = await prismaClient.customerSurvey.findFirst({
+            where: {
+              customerId: '29c7cdb6-3672-4f65-9caa-d026d982f479',
+            },
+          });
+
+          expect(customerSurvey).toMatchObject({
+            id: expect.any(String),
+            active: true,
+            customerId: '29c7cdb6-3672-4f65-9caa-d026d982f479',
+            surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
+          });
+
+          await prismaClient.customerSurvey.delete({
+            where: {
+              id: customerSurvey.id,
+            },
+          });
+        });
+    });
+
+    it('receive message with "Responder pesquisa" from customer not exists', () => {
+      const mockCompanyPhone = '551199991234';
+      const mockCustomerPhone = '5511999999999';
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCustomerPhone,
+              wa_id: mockCustomerPhone,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta')
+        .send(
+          mockReceivedMessageFromMeta({
+            message: 'Responder pesquisa',
+            receiver: mockCompanyPhone,
+            sender: mockCustomerPhone,
+            phoneNumberId: mockPhoneNumberId,
+            type: 'message',
+          }),
+        )
+        .expect(200)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            status: 'ok',
+            response: {
+              messageId:
+                'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          });
+
+          const customer = await prismaClient.customer.findFirst({
+            where: {
+              phoneNumber: mockCustomerPhone,
+            },
+          });
+
+          expect(customer).toMatchObject({
+            id: expect.any(String),
+            name: 'NAME',
+            phoneNumber: mockCustomerPhone,
+            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          });
+
+          const customerSurvey = await prismaClient.customerSurvey.findFirst({
+            where: {
+              customerId: customer.id,
+            },
+          });
+
+          expect(customerSurvey).toMatchObject({
+            id: expect.any(String),
+            active: true,
+            customerId: customer.id,
+            surveyId: '29551fe2-3059-44d9-ab1a-f5318368b88f',
+          });
+
+          await prismaClient.customerSurvey.delete({
+            where: {
+              id: customerSurvey.id,
+            },
+          });
+
+          await prismaClient.customer.delete({
+            where: {
+              id: customer.id,
             },
           });
         });
