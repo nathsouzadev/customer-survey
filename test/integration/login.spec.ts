@@ -2,27 +2,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { PrismaService } from '../../src/client/prisma/prisma.service';
 
 describe('CompanyController', () => {
   let app: INestApplication;
-  let prismaService: PrismaService;
   process.env.TOKEN = 'dev-secret';
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-      providers: [PrismaService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    prismaService = moduleFixture.get(PrismaService);
 
     await app.init();
   });
 
   afterAll(async () => {
-    await prismaService.$disconnect();
     await app.close();
   });
 

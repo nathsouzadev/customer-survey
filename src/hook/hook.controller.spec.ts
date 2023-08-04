@@ -71,150 +71,101 @@ describe('HookController', () => {
 
   describe('hook', () => {
     it('should return message after sent', async () => {
-      jest.spyOn(mockHookService, 'sendMessage').mockImplementation(() =>
-        Promise.resolve({
-          messageId:
-            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-        }),
-      );
-
-      const response = await hookController.getMessage(
-        mockReceivedMessageFromMeta({
-          message: '1',
-          receiver: '12345678900',
-          sender: '5511988885555',
-          type: 'message',
-        }),
-      );
-
-      expect(response).toMatchObject({
-        status: 'ok',
-        response: {
-          messageId:
-            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-        },
-      });
-    });
-
-    it('should return message after receive message "Responder pesquisa"', async () => {
-      jest
-        .spyOn(mockHookService, 'registerCustomerToSurvey')
+      const mockHandler = jest
+        .spyOn(mockHookService, 'handlerMessage')
         .mockImplementation(() =>
           Promise.resolve({
             messageId:
               'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
           }),
         );
-
-      const response = await hookController.getMessage(
-        mockReceivedMessageFromMeta({
-          message: 'Responder pesquisa',
-          receiver: '12345678900',
-          sender: '5511988885555',
-          type: 'message',
-        }),
-      );
-
-      expect(response).toMatchObject({
-        status: 'ok',
-        response: {
-          messageId:
-            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-        },
-      });
-    });
-
-    it('should return message after receive quickReply', async () => {
-      const mockMessageReceived = mockReceivedMessageFromMeta({
-        message: 'Participar da pesquisa',
+      const mockMessage = mockReceivedMessageFromMeta({
+        message: '1',
         receiver: '12345678900',
         sender: '5511988885555',
-        type: 'quickReply',
+        type: 'message',
       });
-      const mockSend = jest
-        .spyOn(mockHookService, 'sendMessage')
+
+      const response = await hookController.getMessage(mockMessage);
+      expect(mockHandler).toHaveBeenCalledWith(mockMessage);
+      expect(response).toMatchObject({
+        status: 'ok',
+        response: {
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        },
+      });
+    });
+  });
+
+  describe('send survey', () => {
+    it('should send survey to customers', async () => {
+      const mockSurveyId = randomUUID();
+      const mockCompanyId = randomUUID();
+      const mockCompanyName = 'Company';
+      const mockSendSurvey = jest
+        .spyOn(mockHookService, 'sendSurvey')
         .mockImplementation(() =>
           Promise.resolve({
-            messageId:
-              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            surveySent: {
+              surveyId: mockSurveyId,
+              status: 'sent',
+              totalCustomers: 2,
+            },
           }),
         );
 
-      const response = await hookController.getMessage(mockMessageReceived);
-
-      expect(mockSend).toHaveBeenCalledWith(
-        mockMessageReceived.entry[0].changes[0].value,
+      const response = await hookController.sendSurvey(
+        {
+          headers: {},
+        },
+        mockSurveyId,
+        {
+          companyId: mockCompanyId,
+          name: mockCompanyName,
+        },
       );
+      expect(mockSendSurvey).toHaveBeenCalledWith({
+        surveyId: mockSurveyId,
+        companyId: mockCompanyId,
+        name: mockCompanyName,
+      });
       expect(response).toMatchObject({
-        status: 'ok',
+        surveySent: {
+          surveyId: mockSurveyId,
+          status: 'sent',
+          totalCustomers: 2,
+        },
       });
     });
   });
 
-  it('should send survey to customers', async () => {
-    const mockSurveyId = randomUUID();
-    const mockCompanyId = randomUUID();
-    const mockCompanyName = 'Company';
-    const mockSendSurvey = jest
-      .spyOn(mockHookService, 'sendSurvey')
-      .mockImplementation(() =>
-        Promise.resolve({
-          surveySent: {
-            surveyId: mockSurveyId,
-            status: 'sent',
-            totalCustomers: 2,
-          },
-        }),
-      );
-
-    const response = await hookController.sendSurvey(
-      {
-        headers: {},
-      },
-      mockSurveyId,
-      {
-        companyId: mockCompanyId,
-        name: mockCompanyName,
-      },
-    );
-    expect(mockSendSurvey).toHaveBeenCalledWith({
-      surveyId: mockSurveyId,
-      companyId: mockCompanyId,
-      name: mockCompanyName,
-    });
-    expect(response).toMatchObject({
-      surveySent: {
-        surveyId: mockSurveyId,
-        status: 'sent',
-        totalCustomers: 2,
-      },
-    });
-  });
-
-  it('should activate webhook', async () => {
-    const mockToken = randomUUID();
-    const mockChallenge = randomUUID();
-    process.env.WEBHOOK_TOKEN = mockToken;
-    const response = await hookController.activate({
-      query: {
-        'hub.verify_token': mockToken,
-        'hub.challenge': mockChallenge,
-      },
-    });
-    expect(response).toBe(mockChallenge);
-  });
-
-  it('should throw a erro if has invalid token', async () => {
-    const mockToken = randomUUID();
-    const mockChallenge = randomUUID();
-    process.env.WEBHOOK_TOKEN = mockToken;
-    expect(
-      hookController.activate({
+  describe('validate webhook', () => {
+    it('should activate webhook', async () => {
+      const mockToken = randomUUID();
+      const mockChallenge = randomUUID();
+      process.env.WEBHOOK_TOKEN = mockToken;
+      const response = await hookController.activate({
         query: {
-          'hub.verify_token': randomUUID(),
+          'hub.verify_token': mockToken,
           'hub.challenge': mockChallenge,
         },
-      }),
-    ).rejects.toThrow(new UnauthorizedException());
+      });
+      expect(response).toBe(mockChallenge);
+    });
+
+    it('should throw a erro if has invalid token', async () => {
+      const mockToken = randomUUID();
+      const mockChallenge = randomUUID();
+      process.env.WEBHOOK_TOKEN = mockToken;
+      expect(
+        hookController.activate({
+          query: {
+            'hub.verify_token': randomUUID(),
+            'hub.challenge': mockChallenge,
+          },
+        }),
+      ).rejects.toThrow(new UnauthorizedException());
+    });
   });
 });
