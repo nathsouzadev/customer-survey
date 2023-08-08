@@ -178,6 +178,10 @@ export class HookService {
       email: senderSurveyRequest.email,
     });
 
+    if (!sender) {
+      throw new Error('Sender invalid!');
+    }
+
     const company = await this.companyService.getCompanyByEmailOrId(
       senderSurveyRequest.companyId,
     );

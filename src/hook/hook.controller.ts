@@ -108,6 +108,18 @@ export class HookController {
     throw new UnauthorizedException();
   }
 
+  @ApiOkResponse({
+    description: 'Return surveySent with details',
+    schema: {
+      example: {
+        messageId:
+          'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Return error when does not have token',
+  })
   @Post('/company/sender/survey')
   async sendSurveyFromSender(
     @Request() request: any,
@@ -122,6 +134,15 @@ export class HookController {
       HookController.name,
     );
 
-    return this.hookService.sendSurveyFromSender(sendSurveyFromSender);
+    try {
+      const response = await this.hookService.sendSurveyFromSender(
+        sendSurveyFromSender,
+      );
+      return response;
+    } catch (error) {
+      if (error.message === 'Sender invalid!') {
+        throw new UnauthorizedException();
+      }
+    }
   }
 }

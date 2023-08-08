@@ -682,4 +682,25 @@ describe('HookService', () => {
         'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
+
+  it('should throw error if sender is invalid', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderEmail = 'sender@email.com';
+    const mockPhoneNumber = '11999991111';
+    const mockValidate = jest
+      .spyOn(mockSenderService, 'validateSender')
+      .mockImplementation(() => null);
+
+    await expect(
+      service.sendSurveyFromSender({
+        companyId: mockCompanyId,
+        email: mockSenderEmail,
+        phoneNumber: mockPhoneNumber,
+      }),
+    ).rejects.toThrow();
+    expect(mockValidate).toHaveBeenCalledWith({
+      companyId: mockCompanyId,
+      email: mockSenderEmail,
+    });
+  });
 });
