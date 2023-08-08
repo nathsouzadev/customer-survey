@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { SurveyService } from './service/survey.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AppLogger } from '../utils/appLogger';
 import { CreateSurveyRequestDTO } from './dto/createSurveyRequest.dto';
 
@@ -60,6 +64,17 @@ export class SurveyController {
     return this.surveyService.getSurveyResults(surveyId);
   }
 
+  @ApiCreatedResponse({
+    description: 'Return surveyId created',
+    schema: {
+      example: {
+        surveyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Return error when does not have token',
+  })
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async createSurvey(
