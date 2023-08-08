@@ -21,7 +21,7 @@ describe('CompanyService', () => {
           provide: CompanyRepository,
           useValue: {
             saveCompany: jest.fn(),
-            getCompanyByEmail: jest.fn(),
+            getCompanyByEmailOrId: jest.fn(),
             getCompany: jest.fn(),
           },
         },
@@ -80,7 +80,7 @@ describe('CompanyService', () => {
   it('should be return company with email', async () => {
     const mockCompanyId = randomUUID();
     const mockGetCompany = jest
-      .spyOn(mockCompanyRepository, 'getCompanyByEmail')
+      .spyOn(mockCompanyRepository, 'getCompanyByEmailOrId')
       .mockImplementation(() =>
         Promise.resolve({
           id: mockCompanyId,
@@ -98,7 +98,7 @@ describe('CompanyService', () => {
         }),
       );
 
-    const company = await service.getCompanyByEmail('company@email.com');
+    const company = await service.getCompanyByEmailOrId('company@email.com');
     expect(mockGetCompany).toHaveBeenCalledWith('company@email.com');
     expect(company).toMatchObject({
       id: mockCompanyId,

@@ -16,6 +16,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CompanyRepository } from '../company/repository/company.repository';
 import { CompanyService } from '../company/service/company.service';
 import { PhoneCompanyRepository } from '../company/repository/phoneCompany.repository';
+import { SenderRepository } from '../sender/repository/sender.repository';
+import { SenderService } from '../sender/service/sender.service';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -28,6 +30,7 @@ describe('HookController', () => {
         HookService,
         SurveyService,
         CompanyService,
+        SenderService,
         {
           provide: WBService,
           useValue: {},
@@ -59,6 +62,10 @@ describe('HookController', () => {
         },
         {
           provide: PhoneCompanyRepository,
+          useValue: {},
+        },
+        {
+          provide: SenderRepository,
           useValue: {},
         },
         AppLogger,

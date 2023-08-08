@@ -61,7 +61,7 @@ describe('PrismaCompanyRepository', () => {
     });
   });
 
-  it('should return company with survey', async () => {
+  it('should return company with email', async () => {
     const mockCompanyId = randomUUID();
     const mockFindFirst = jest
       .spyOn<any, any>(mockPrismaService.company, 'findFirst')
@@ -79,15 +79,30 @@ describe('PrismaCompanyRepository', () => {
             title: 'Main survey',
           },
         ],
+        phoneNumbers: [
+          {
+            id: randomUUID(),
+            companyId: mockCompanyId,
+            active: true,
+            phoneNumber: '5511999991234',
+            metaId: '1234567890',
+          },
+        ],
       });
 
-    const company = await repository.getCompanyByEmail('company@email.com');
+    const company = await repository.getCompanyByEmailOrId('company@email.com');
     expect(mockFindFirst).toHaveBeenCalledWith({
       where: {
-        email: 'company@email.com',
+        OR: [{ id: 'company@email.com' }, { email: 'company@email.com' }],
       },
-      include: {
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        email: true,
+        password: false,
         surveys: true,
+        phoneNumbers: true,
       },
     });
     expect(company).toMatchObject({
@@ -101,6 +116,15 @@ describe('PrismaCompanyRepository', () => {
           companyId: mockCompanyId,
           name: 'Survey',
           title: 'Main survey',
+        },
+      ],
+      phoneNumbers: [
+        {
+          id: expect.any(String),
+          companyId: mockCompanyId,
+          active: true,
+          phoneNumber: '5511999991234',
+          metaId: '1234567890',
         },
       ],
     });

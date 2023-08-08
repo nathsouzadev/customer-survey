@@ -7,7 +7,7 @@ export abstract class CompanyRepository {
     createCompanyRequest: CreateCompanyRequestDTO,
   ): Promise<CompanyModel>;
 
-  abstract getCompanyByEmail(email: string): Promise<CompanyModel>;
+  abstract getCompanyByEmailOrId(emailOrId: string): Promise<CompanyModel>;
 
   abstract getCompany(email: string): Promise<Company>;
 }

@@ -370,7 +370,7 @@ describe('SurveyController', () => {
   });
 
   describe('sender send survey', () => {
-    it.only('should sender can ser survey to customer', async () => {
+    it('should sender can ser survey to customer', async () => {
       nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
         .post('')
         .reply(200, {

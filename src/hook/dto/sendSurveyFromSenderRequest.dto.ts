@@ -12,7 +12,7 @@ export class SendSurveyFromSenderRequestDTO {
     example: 'sender@company.com',
   })
   @IsNotEmpty({ message: 'Required field' })
-  senderEmail: string;
+  email: string;
 
   @ApiProperty({
     example: '11999991111',

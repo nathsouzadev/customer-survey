@@ -9,6 +9,7 @@ import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { getSurveyTemplate } from '../templates/survey.template';
 import { mockQuickReplyReceived } from '../../__mocks__/quickReplyReceived.mock';
 import { mockReceivedMessageFromMeta } from '../../__mocks__/metaReceivedMessage.mock';
+import { SenderService } from '../../sender/service/sender.service';
 
 describe('HookService', () => {
   let service: HookService;
@@ -16,6 +17,7 @@ describe('HookService', () => {
   let mockCustomerService: CustomerService;
   let mockWbService: WBService;
   let mockCompanyService: CompanyService;
+  let mockSenderService: SenderService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +51,12 @@ describe('HookService', () => {
             getPhoneWithSurvey: jest.fn(),
           },
         },
+        {
+          provide: SenderService,
+          useValue: {
+            validateSender: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -57,6 +65,7 @@ describe('HookService', () => {
     mockCustomerService = module.get<CustomerService>(CustomerService);
     mockWbService = module.get<WBService>(WBService);
     mockCompanyService = module.get<CompanyService>(CompanyService);
+    mockSenderService = module.get<SenderService>(SenderService);
   });
 
   describe('handler message', () => {
@@ -615,11 +624,28 @@ describe('HookService', () => {
     const mockCompanyId = randomUUID();
     const mockSenderEmail = 'sender@email.com';
     const mockPhoneNumber = '11999991111';
+    const mockValidate = jest
+      .spyOn(mockSenderService, 'validateSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          email: mockSenderEmail,
+          companyId: mockCompanyId,
+          name: 'Sender',
+        }),
+      );
 
     const response = await service.sendSurveyFromSender({
       companyId: mockCompanyId,
-      senderEmail: mockSenderEmail,
+      email: mockSenderEmail,
       phoneNumber: mockPhoneNumber,
+    });
+    expect(mockValidate).toHaveBeenCalledWith({
+      companyId: mockCompanyId,
+      email: mockSenderEmail,
+    });
+    expect(response).toMatchObject({
+      id: expect.any(String),
     });
   });
 });

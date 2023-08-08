@@ -25,17 +25,21 @@ export class PrismaCompanyRepository implements CompanyRepository {
     return company;
   };
 
-  getCompanyByEmail = async (email: string): Promise<CompanyModel> => {
+  getCompanyByEmailOrId = async (emailOrId: string): Promise<CompanyModel> => {
     const company = await this.prisma.company.findFirst({
       where: {
-        email,
+        OR: [{ id: emailOrId }, { email: emailOrId }],
       },
-      include: {
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        email: true,
+        password: false,
         surveys: true,
+        phoneNumbers: true,
       },
     });
-
-    company && delete company.password;
 
     return company;
   };

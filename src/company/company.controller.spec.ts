@@ -61,7 +61,7 @@ describe('CompanyController', () => {
   it('should be return company with email', async () => {
     const mockCompanyId = randomUUID();
     const mockGetCompany = jest
-      .spyOn(mockCompanyService, 'getCompanyByEmail')
+      .spyOn(mockCompanyService, 'getCompanyByEmailOrId')
       .mockImplementation(() =>
         Promise.resolve({
           id: mockCompanyId,

@@ -12,6 +12,7 @@ import { SendSurveyRequest } from '../models/sendSurveyRequest.model';
 import { getSurveyTemplate } from '../templates/survey.template';
 import { ReceivedMessageRequestDTO } from '../dto/receivedMessageRequest.dto';
 import { SendSurveyFromSenderRequestDTO } from '../dto/sendSurveyFromSenderRequest.dto';
+import { SenderService } from '../../sender/service/sender.service';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
@@ -25,6 +26,7 @@ export class HookService {
     private readonly customerService: CustomerService,
     private readonly companyService: CompanyService,
     private readonly wbService: WBService,
+    private readonly senderService: SenderService,
   ) {}
 
   handlerMessage = async (messageRequest: ReceivedMessageRequestDTO) => {
@@ -170,5 +172,9 @@ export class HookService {
 
   sendSurveyFromSender = (
     senderSurveyRequest: SendSurveyFromSenderRequestDTO,
-  ) => 0;
+  ) =>
+    this.senderService.validateSender({
+      companyId: senderSurveyRequest.companyId,
+      email: senderSurveyRequest.email,
+    });
 }
