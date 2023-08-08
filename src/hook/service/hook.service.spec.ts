@@ -610,4 +610,16 @@ describe('HookService', () => {
         'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
+
+  it('should send survey from sender', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderEmail = 'sender@email.com';
+    const mockPhoneNumber = '11999991111';
+
+    const response = await service.sendSurveyFromSender({
+      companyId: mockCompanyId,
+      senderEmail: mockSenderEmail,
+      phoneNumber: mockPhoneNumber,
+    });
+  });
 });

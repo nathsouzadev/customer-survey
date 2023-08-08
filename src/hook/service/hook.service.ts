@@ -11,6 +11,7 @@ import {
 import { SendSurveyRequest } from '../models/sendSurveyRequest.model';
 import { getSurveyTemplate } from '../templates/survey.template';
 import { ReceivedMessageRequestDTO } from '../dto/receivedMessageRequest.dto';
+import { SendSurveyFromSenderRequestDTO } from '../dto/sendSurveyFromSenderRequest.dto';
 
 enum ReplyMessage {
   finish = 'Obrigada pela sua resposta!',
@@ -166,4 +167,8 @@ export class HookService {
       },
     };
   };
+
+  sendSurveyFromSender = (
+    senderSurveyRequest: SendSurveyFromSenderRequestDTO,
+  ) => 0;
 }
