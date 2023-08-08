@@ -9,6 +9,7 @@ import { SurveyRepository } from './repository/survey.repository';
 import { randomUUID } from 'crypto';
 import { AppLogger } from '../utils/appLogger';
 import { QuestionRepository } from './repository/question.repository';
+import { mockCreateSurveyRequest } from '../__mocks__/createSurveyRequesst.mock';
 
 describe('SurveyController', () => {
   let controller: SurveyController;
@@ -95,5 +96,28 @@ describe('SurveyController', () => {
         },
       ],
     });
+  });
+
+  it('should be return id when survey created', async () => {
+    const mockCreate = jest
+      .spyOn(mockSurveyService, 'createSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          surveyId: randomUUID(),
+        }),
+      );
+    const mockCompanyId = randomUUID();
+    const mockRequest = {
+      headers: {},
+    };
+    const mockCreateRequest = mockCreateSurveyRequest({
+      companyId: mockCompanyId,
+    });
+    const survey = await controller.createSurvey(
+      mockRequest,
+      mockCreateRequest,
+    );
+    expect(mockCreate).toHaveBeenCalledWith(mockCreateRequest);
+    expect(survey).toMatchObject({ surveyId: expect.any(String) });
   });
 });

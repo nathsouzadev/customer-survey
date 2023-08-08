@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { SurveyResultModel } from '../model/survey.model';
+import { SurveyResultModel } from '../model/surveyResult.model';
 import { CustomerService } from '../../customer/service/customer.service';
 import { randomUUID } from 'crypto';
 import { CustomerAnswer } from '@prisma/client';
 import { CustomerSurveyModel } from '../../customer/model/customerSurvey.model';
 import { SurveyRepository } from '../repository/survey.repository';
 import { QuestionRepository } from '../repository/question.repository';
+import { CreateSurveyRequestDTO } from '../dto/createSurveyRequest.dto';
 
 @Injectable()
 export class SurveyService {
   constructor(
     private readonly surveyRepository: SurveyRepository,
     private readonly customerService: CustomerService,
-    private readonly questionService: QuestionRepository,
+    private readonly questionRepository: QuestionRepository,
   ) {}
 
   getSurveyResults = async (surveyId: string): Promise<SurveyResultModel> => {
@@ -114,11 +115,27 @@ export class SurveyService {
   getFirstQuestionBySurveyId = async (
     surveyId: string,
   ): Promise<{ question: string }> => {
-    const first = await this.questionService.getFirstQuestionBySurveyId(
+    const first = await this.questionRepository.getFirstQuestionBySurveyId(
       surveyId,
     );
     return {
       question: `${first.question} \n${this.getOptions(first.answers)}`,
     };
+  };
+
+  createSurvey = async (
+    createSurveyRequest: CreateSurveyRequestDTO,
+  ): Promise<{ surveyId: string }> => {
+    const { id: surveyId } = await this.surveyRepository.createSurvey(
+      createSurveyRequest,
+    );
+    const questions = createSurveyRequest.questions.map((question) => ({
+      surveyId,
+      ...question,
+    }));
+    for (const question of questions) {
+      await this.questionRepository.creatQuestions(question);
+    }
+    return { surveyId };
   };
 }

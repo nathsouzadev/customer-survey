@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../client/prisma/prisma.service';
 import { QuestionRepository } from '../question.repository';
-import { QuestionDetailModel } from 'src/survey/model/questionDetail.model';
+import { QuestionDetailModel } from '../../../survey/model/questionDetail.model';
+import { Question } from '@prisma/client';
+import { CreateQuestionModel } from '../../../survey/model/createQuestion.model';
 
 @Injectable()
 export class PrismaQuestionRepository implements QuestionRepository {
@@ -17,6 +19,18 @@ export class PrismaQuestionRepository implements QuestionRepository {
       },
       include: {
         answers: true,
+      },
+    });
+
+  creatQuestions = (createQuestion: CreateQuestionModel): Promise<Question> =>
+    this.prisma.question.create({
+      data: {
+        ...createQuestion,
+        answers: {
+          createMany: {
+            data: createQuestion.answers,
+          },
+        },
       },
     });
 }
