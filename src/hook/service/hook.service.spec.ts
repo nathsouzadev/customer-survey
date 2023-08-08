@@ -9,6 +9,8 @@ import { mockReceivedMessage } from '../../__mocks__/receivedMessage.mock';
 import { getSurveyTemplate } from '../templates/survey.template';
 import { mockQuickReplyReceived } from '../../__mocks__/quickReplyReceived.mock';
 import { mockReceivedMessageFromMeta } from '../../__mocks__/metaReceivedMessage.mock';
+import { SenderService } from '../../sender/service/sender.service';
+import { getMockCompanyModel } from '../../__mocks__/companyModel.mock';
 
 describe('HookService', () => {
   let service: HookService;
@@ -16,6 +18,7 @@ describe('HookService', () => {
   let mockCustomerService: CustomerService;
   let mockWbService: WBService;
   let mockCompanyService: CompanyService;
+  let mockSenderService: SenderService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,6 +50,13 @@ describe('HookService', () => {
           useValue: {
             getPhoneByCompanyId: jest.fn(),
             getPhoneWithSurvey: jest.fn(),
+            getCompanyByEmailOrId: jest.fn(),
+          },
+        },
+        {
+          provide: SenderService,
+          useValue: {
+            validateSender: jest.fn(),
           },
         },
       ],
@@ -57,6 +67,7 @@ describe('HookService', () => {
     mockCustomerService = module.get<CustomerService>(CustomerService);
     mockWbService = module.get<WBService>(WBService);
     mockCompanyService = module.get<CompanyService>(CompanyService);
+    mockSenderService = module.get<SenderService>(SenderService);
   });
 
   describe('handler message', () => {
@@ -608,6 +619,88 @@ describe('HookService', () => {
     expect(response).toMatchObject({
       messageId:
         'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
+  });
+
+  it('should send template message from sender', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderEmail = 'sender@email.com';
+    const mockPhoneNumber = '11999991111';
+    const mockValidate = jest
+      .spyOn(mockSenderService, 'validateSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          email: mockSenderEmail,
+          companyId: mockCompanyId,
+          name: 'Sender',
+        }),
+      );
+    const mockCompany = getMockCompanyModel(mockCompanyId);
+    const mockGetCompany = jest
+      .spyOn(mockCompanyService, 'getCompanyByEmailOrId')
+      .mockImplementation(() => Promise.resolve(mockCompany));
+    const mockSendTemplate = jest
+      .spyOn(mockWbService, 'sendMessage')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCompany.phoneNumbers[0].phoneNumber,
+              wa_id: mockCompany.phoneNumbers[0].phoneNumber,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        }),
+      );
+
+    const response = await service.sendSurveyFromSender({
+      companyId: mockCompanyId,
+      email: mockSenderEmail,
+      phoneNumber: mockPhoneNumber,
+    });
+    expect(mockValidate).toHaveBeenCalledWith({
+      companyId: mockCompanyId,
+      email: mockSenderEmail,
+    });
+    expect(mockGetCompany).toHaveBeenCalledWith(mockCompanyId);
+    expect(mockSendTemplate).toHaveBeenCalledWith(
+      getSurveyTemplate({
+        receiver: '5511999991111',
+        sender: mockCompany.phoneNumbers[0].phoneNumber,
+        company: mockCompany.name,
+        phoneNumberId: mockCompany.phoneNumbers[0].metaId,
+      }),
+    );
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
+  });
+
+  it('should throw error if sender is invalid', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderEmail = 'sender@email.com';
+    const mockPhoneNumber = '11999991111';
+    const mockValidate = jest
+      .spyOn(mockSenderService, 'validateSender')
+      .mockImplementation(() => null);
+
+    await expect(
+      service.sendSurveyFromSender({
+        companyId: mockCompanyId,
+        email: mockSenderEmail,
+        phoneNumber: mockPhoneNumber,
+      }),
+    ).rejects.toThrow();
+    expect(mockValidate).toHaveBeenCalledWith({
+      companyId: mockCompanyId,
+      email: mockSenderEmail,
     });
   });
 });

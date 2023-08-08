@@ -16,6 +16,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CompanyRepository } from '../company/repository/company.repository';
 import { CompanyService } from '../company/service/company.service';
 import { PhoneCompanyRepository } from '../company/repository/phoneCompany.repository';
+import { SenderRepository } from '../sender/repository/sender.repository';
+import { SenderService } from '../sender/service/sender.service';
 
 describe('HookController', () => {
   let hookController: HookController;
@@ -28,6 +30,7 @@ describe('HookController', () => {
         HookService,
         SurveyService,
         CompanyService,
+        SenderService,
         {
           provide: WBService,
           useValue: {},
@@ -59,6 +62,10 @@ describe('HookController', () => {
         },
         {
           provide: PhoneCompanyRepository,
+          useValue: {},
+        },
+        {
+          provide: SenderRepository,
           useValue: {},
         },
         AppLogger,
@@ -166,6 +173,34 @@ describe('HookController', () => {
           },
         }),
       ).rejects.toThrow(new UnauthorizedException());
+    });
+  });
+
+  it('should return messageId when sender sent survey', async () => {
+    const mockSend = jest
+      .spyOn(mockHookService, 'sendSurveyFromSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        }),
+      );
+    const mockSenderRequest = {
+      companyId: randomUUID(),
+      email: 'sender@email.com',
+      phoneNumber: '11999998888',
+    };
+
+    const response = await hookController.sendSurveyFromSender(
+      {
+        headers: {},
+      },
+      mockSenderRequest,
+    );
+    expect(mockSend).toHaveBeenCalledWith(mockSenderRequest);
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
 });

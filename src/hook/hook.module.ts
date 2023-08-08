@@ -9,6 +9,7 @@ import { hookProviders } from '../config/providers/hookProviders';
 import { AppLogger } from '../utils/appLogger';
 import { WBService } from '../client/wb/wb.service';
 import { CompanyService } from '../company/service/company.service';
+import { SenderService } from '../sender/service/sender.service';
 
 @Module({
   imports: [CustomerModule],
@@ -20,6 +21,7 @@ import { CompanyService } from '../company/service/company.service';
     CustomerService,
     CompanyService,
     PrismaService,
+    SenderService,
     AppLogger,
     ...hookProviders,
   ],

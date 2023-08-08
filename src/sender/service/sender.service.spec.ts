@@ -37,8 +37,8 @@ describe('SenderService', () => {
           companyId: mockCompanyId,
         }),
       );
-    const mockGet = jest
-      .spyOn(mockSenderRepository, 'getSender')
+    const mockValidate = jest
+      .spyOn(service, 'validateSender')
       .mockImplementation(() => Promise.resolve(null));
 
     const sender = await service.createSender({
@@ -46,7 +46,7 @@ describe('SenderService', () => {
       email: 'sender@company.com',
       companyId: mockCompanyId,
     });
-    expect(mockGet).toHaveBeenCalledWith({
+    expect(mockValidate).toHaveBeenCalledWith({
       email: 'sender@company.com',
       companyId: mockCompanyId,
     });
@@ -63,8 +63,8 @@ describe('SenderService', () => {
   it('should return sender already exists', async () => {
     const mockCompanyId = randomUUID();
     const mockSenderId = randomUUID();
-    const mockGet = jest
-      .spyOn(mockSenderRepository, 'getSender')
+    const mockValidate = jest
+      .spyOn(service, 'validateSender')
       .mockImplementation(() =>
         Promise.resolve({
           id: mockSenderId,
@@ -81,9 +81,56 @@ describe('SenderService', () => {
         companyId: mockCompanyId,
       }),
     ).rejects.toThrowError(new Error(`Sender already exists`));
+    expect(mockValidate).toHaveBeenCalledWith({
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
+    });
+  });
+
+  it('should return sender if is valid', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSenderId = randomUUID();
+    const mockGet = jest
+      .spyOn(mockSenderRepository, 'getSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockSenderId,
+          name: 'Sender',
+          email: 'sender@company.com',
+          companyId: mockCompanyId,
+        }),
+      );
+
+    const response = await service.validateSender({
+      companyId: mockCompanyId,
+      email: 'sender@company.com',
+    });
     expect(mockGet).toHaveBeenCalledWith({
       email: 'sender@company.com',
       companyId: mockCompanyId,
     });
+    expect(response).toMatchObject({
+      id: expect.any(String),
+      name: 'Sender',
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
+    });
+  });
+
+  it('should return null if is invalid', async () => {
+    const mockCompanyId = randomUUID();
+    const mockGet = jest
+      .spyOn(mockSenderRepository, 'getSender')
+      .mockImplementation(() => Promise.resolve(null));
+
+    const response = await service.validateSender({
+      companyId: mockCompanyId,
+      email: 'sender@company.com',
+    });
+    expect(mockGet).toHaveBeenCalledWith({
+      email: 'sender@company.com',
+      companyId: mockCompanyId,
+    });
+    expect(response).toBeNull();
   });
 });

@@ -69,6 +69,6 @@ export class CompanyController {
   async getCompanyByEmail(
     @Param('email') email: string,
   ): Promise<CompanyModel> {
-    return this.companyService.getCompanyByEmail(email);
+    return this.companyService.getCompanyByEmailOrId(email);
   }
 }

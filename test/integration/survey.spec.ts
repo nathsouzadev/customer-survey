@@ -368,4 +368,121 @@ describe('SurveyController', () => {
         });
     });
   });
+
+  describe('sender send survey', () => {
+    it('should sender can send survey to customer', async () => {
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: '5511999991111',
+              wa_id: '5511999991111',
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          email: 'sender@company.com',
+          phoneNumber: '11999991111',
+        })
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            messageId:
+              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          });
+        });
+    });
+
+    it('should return 401 if sender is invalid', async () => {
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: '5511999991111',
+              wa_id: '5511999991111',
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          email: 'invalid-sender@company.com',
+          phoneNumber: '11999991111',
+        })
+        .expect(401)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            message: 'Unauthorized',
+          });
+        });
+    });
+
+    it('should return 400 if companyId is empty', async () => {
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '',
+          email: 'invalid-sender@company.com',
+          phoneNumber: '11999991111',
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should return 400 if email is empty', async () => {
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          email: '',
+          phoneNumber: '11999991111',
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should return 400 if phoneNumber is empty', async () => {
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          email: 'sender@email.com',
+          phoneNumber: '',
+        })
+        .expect(400)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            message: ['Required field'],
+          });
+        });
+    });
+  });
 });

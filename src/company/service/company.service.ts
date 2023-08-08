@@ -27,8 +27,8 @@ export class CompanyService {
     });
   };
 
-  getCompanyByEmail = async (email: string): Promise<CompanyModel> =>
-    this.companyRepository.getCompanyByEmail(email);
+  getCompanyByEmailOrId = async (email: string): Promise<CompanyModel> =>
+    this.companyRepository.getCompanyByEmailOrId(email);
 
   getAuthCompany = async (authRequest: {
     email: string;

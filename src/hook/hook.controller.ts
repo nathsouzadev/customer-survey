@@ -17,6 +17,7 @@ import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
+import { SendSurveyFromSenderRequestDTO } from './dto/sendSurveyFromSenderRequest.dto';
 
 @Controller()
 export class HookController {
@@ -105,5 +106,43 @@ export class HookController {
       return req.query['hub.challenge'];
     }
     throw new UnauthorizedException();
+  }
+
+  @ApiOkResponse({
+    description: 'Return surveySent with details',
+    schema: {
+      example: {
+        messageId:
+          'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Return error when does not have token',
+  })
+  @Post('/company/sender/survey')
+  async sendSurveyFromSender(
+    @Request() request: any,
+    @Body(new ValidationPipe())
+    sendSurveyFromSender: SendSurveyFromSenderRequestDTO,
+  ) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
+      },
+      HookController.name,
+    );
+
+    try {
+      const response = await this.hookService.sendSurveyFromSender(
+        sendSurveyFromSender,
+      );
+      return response;
+    } catch (error) {
+      if (error.message === 'Sender invalid!') {
+        throw new UnauthorizedException();
+      }
+    }
   }
 }
