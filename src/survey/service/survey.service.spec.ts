@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import { mockCustomerSurvey } from '../../__mocks__/customerSurvey.mock';
 import { SurveyRepository } from '../repository/survey.repository';
 import { QuestionRepository } from '../repository/question.repository';
+import { mockCreateSurveyRequest } from '../../__mocks__/createSurveyRequesst.mock';
 
 describe('SurveyService', () => {
   let service: SurveyService;
@@ -29,12 +30,14 @@ describe('SurveyService', () => {
           provide: SurveyRepository,
           useValue: {
             getSurveyResultById: jest.fn(),
+            createSurvey: jest.fn(),
           },
         },
         {
           provide: QuestionRepository,
           useValue: {
             getFirstQuestionBySurveyId: jest.fn(),
+            creatQuestions: jest.fn(),
           },
         },
       ],
@@ -282,6 +285,61 @@ describe('SurveyService', () => {
     expect(mockGetQuestion).toHaveBeenCalledWith(mockSurveyId);
     expect(response).toMatchObject({
       question: 'Question \n1 - Bom\n2 - Regular\n3 - Ruim',
+    });
+  });
+
+  it('should return surey was created', async () => {
+    const mockCompanyId = randomUUID();
+    const mockSurveyId = randomUUID();
+    const mockQuestionId = randomUUID();
+    const mockRequest = mockCreateSurveyRequest({
+      companyId: mockCompanyId,
+    });
+    const mockCreateSurvey = jest
+      .spyOn(mockSurveyRepository, 'createSurvey')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: randomUUID(),
+          companyId: mockCompanyId,
+          name: 'Survey',
+          title: 'Survey title',
+        }),
+      );
+    const mockCreateQuestion = jest
+      .spyOn(mockQuestionRepository, 'creatQuestions')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockQuestionId,
+          surveyId: mockSurveyId,
+          question: 'Question 1',
+          order: 1,
+          answers: [
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: 'Bom',
+              label: '1',
+            },
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: 'Ruim',
+              label: '2',
+            },
+          ],
+        }),
+      );
+
+    const response = await service.createSurvey(mockRequest);
+    expect(mockCreateSurvey).toHaveBeenCalledWith(mockRequest);
+    mockRequest.questions.forEach((question) => {
+      expect(mockCreateQuestion).toHaveBeenCalledWith({
+        surveyId: expect.any(String),
+        ...question,
+      });
+    });
+    expect(response).toMatchObject({
+      surveyId: expect.any(String),
     });
   });
 });

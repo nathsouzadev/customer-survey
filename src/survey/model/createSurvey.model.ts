@@ -1,4 +1,4 @@
-export class SurveyResults {
+export class CreateSurveyModel {
   id: string;
   companyId: string;
   name: string;
@@ -10,13 +10,12 @@ class Question {
   id: string;
   surveyId: string;
   question: string;
-  order: number;
-  customerAnswers: CustomerAnswer[];
+  answers: Answer[];
 }
 
-class CustomerAnswer {
+class Answer {
   id: string;
-  customerId: string;
-  answer: string;
   questionId: string;
+  answer: string;
+  label: string;
 }

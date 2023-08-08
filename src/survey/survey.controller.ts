@@ -1,8 +1,18 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  Request,
+  Post,
+  Body,
+  ValidationPipe,
+} from '@nestjs/common';
 import { SurveyService } from './service/survey.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOkResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AppLogger } from '../utils/appLogger';
+import { CreateSurveyRequestDTO } from './dto/createSurveyRequest.dto';
 
 @Controller()
 export class SurveyController {
@@ -48,5 +58,22 @@ export class SurveyController {
       SurveyController.name,
     );
     return this.surveyService.getSurveyResults(surveyId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  async createSurvey(
+    @Request() request: any,
+    @Body(new ValidationPipe()) createSurveyRequest: CreateSurveyRequestDTO,
+  ) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
+      },
+      SurveyController.name,
+    );
+
+    return this.surveyService.createSurvey(createSurveyRequest);
   }
 }

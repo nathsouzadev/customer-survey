@@ -16,6 +16,7 @@ describe('PrismaQuestionRepository', () => {
           useValue: {
             question: {
               findFirst: jest.fn(),
+              create: jest.fn(),
             },
           },
         },
@@ -92,6 +93,73 @@ describe('PrismaQuestionRepository', () => {
           questionId: mockQuestionId,
           answer: '3',
           label: 'Ruim',
+        },
+      ],
+    });
+  });
+
+  it('should create question from requeust', async () => {
+    const mockQuestionId = randomUUID();
+    const mockCreate = jest
+      .spyOn<any, any>(mockPrismaService.question, 'create')
+      .mockImplementation(() =>
+        Promise.resolve({
+          id: mockQuestionId,
+          surveyId: mockSurveyId,
+          question: 'Question 1',
+          order: 1,
+          answers: [
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: 'Bom',
+              label: '1',
+            },
+            {
+              id: randomUUID(),
+              questionId: mockQuestionId,
+              answer: 'Ruim',
+              label: '2',
+            },
+          ],
+        }),
+      );
+    const mockSurveyId = randomUUID();
+    const mockRequest = {
+      surveyId: mockSurveyId,
+      question: 'Question 1',
+      order: 1,
+      answers: [
+        {
+          answer: 'Bom',
+          label: '1',
+        },
+        {
+          answer: 'Ruim',
+          label: '2',
+        },
+      ],
+    };
+
+    const response = await repository.creatQuestions(mockRequest);
+    expect(mockCreate).toHaveBeenCalled();
+    expect(response).toMatchObject({
+      id: expect.any(String),
+      surveyId: mockSurveyId,
+      question: 'Question 1',
+      order: 1,
+      answers: [
+        {
+          id: expect.any(String),
+          questionId: expect.any(String),
+          answer: 'Bom',
+          label: '1',
+        },
+        {
+          id: expect.any(String),
+          questionId: expect.any(String),
+          answer: 'Ruim',
+          label: '2',
         },
       ],
     });

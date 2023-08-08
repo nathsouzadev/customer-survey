@@ -17,6 +17,7 @@ describe('PrismaQuestionAnswerRepository', () => {
             questionAnswer: {
               create: jest.fn(),
               findMany: jest.fn(),
+              createMany: jest.fn(),
             },
           },
         },

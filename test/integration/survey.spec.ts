@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { getToken } from './aux/token';
 import nock from 'nock';
+import { prismaClient } from './aux/prisma';
 
 describe('SurveyController', () => {
   let app: INestApplication;
@@ -107,34 +108,264 @@ describe('SurveyController', () => {
           });
         });
     });
-  });
 
-  it('should not send survey twhe not have customers registered', async () => {
-    const token = await getToken(app, request);
+    it('should not send survey when not have customers registered', async () => {
+      const token = await getToken(app, request);
 
-    return request(app.getHttpServer())
-      .post('/meta/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
-      .auth(token, { type: 'bearer' })
-      .send({
-        companyId: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7',
-        name: 'Company',
-      })
-      .expect(200)
-      .then((response) => {
-        expect(response.body).toMatchObject({
-          surveySent: {
-            surveyId: 'e5c02305-defc-444e-9ca9-7bbcb714063b',
-            status: 'no-customers',
-            totalCustomers: 0,
-          },
+      return request(app.getHttpServer())
+        .post('/meta/company/survey/e5c02305-defc-444e-9ca9-7bbcb714063b')
+        .auth(token, { type: 'bearer' })
+        .send({
+          companyId: '2b6cdc39-0dcf-4a27-b508-13dc97453aa7',
+          name: 'Company',
+        })
+        .expect(200)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            surveySent: {
+              surveyId: 'e5c02305-defc-444e-9ca9-7bbcb714063b',
+              status: 'no-customers',
+              totalCustomers: 0,
+            },
+          });
         });
-      });
+    });
+
+    it('should return 401 when does not have token', async () => {
+      jest.clearAllMocks();
+      return request(app.getHttpServer())
+        .post('/meta/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
+        .expect(401);
+    });
   });
 
-  it('should return 401 when does not have token', async () => {
-    jest.clearAllMocks();
-    return request(app.getHttpServer())
-      .post('/meta/company/survey/29551fe2-3059-44d9-ab1a-f5318368b88f')
-      .expect(401);
+  describe('create survey', () => {
+    it('should create survey and return surveyId', async () => {
+      const token = await getToken(app, request);
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: 'Survey',
+          title: 'Title',
+          questions: [
+            {
+              question: 'Question',
+              order: 1,
+              answers: [
+                {
+                  label: '1',
+                  answer: 'Answer',
+                },
+              ],
+            },
+          ],
+        })
+        .auth(token, { type: 'bearer' })
+        .expect(201)
+        .then(async (response) => {
+          const surveyId = response.body.surveyId;
+          expect(response.body).toMatchObject({
+            surveyId: expect.any(String),
+          });
+
+          const survey = await prismaClient.survey.findFirst({
+            where: {
+              id: surveyId,
+            },
+            include: {
+              questions: {
+                include: {
+                  answers: true,
+                },
+              },
+            },
+          });
+
+          expect(survey).toMatchObject({
+            id: expect.any(String),
+            companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+            name: 'Survey',
+            title: 'Title',
+            questions: [
+              {
+                id: expect.any(String),
+                surveyId: expect.any(String),
+                question: 'Question',
+                order: 1,
+                answers: [
+                  {
+                    id: expect.any(String),
+                    questionId: expect.any(String),
+                    label: '1',
+                    answer: 'Answer',
+                  },
+                ],
+              },
+            ],
+          });
+
+          await prismaClient.questionAnswer.delete({
+            where: {
+              id: survey.questions[0].answers[0].id,
+            },
+          });
+          await prismaClient.question.delete({
+            where: {
+              id: survey.questions[0].id,
+            },
+          });
+          await prismaClient.survey.delete({
+            where: {
+              id: survey.id,
+            },
+          });
+        });
+    });
+
+    it('should return 401 when does not have token', async () => {
+      jest.clearAllMocks();
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: 'Survey',
+          title: 'Title',
+          questions: [
+            {
+              question: 'Question',
+              order: 1,
+              answers: [
+                {
+                  label: '1',
+                  answer: 'Answer',
+                },
+              ],
+            },
+          ],
+        })
+        .expect(401);
+    });
+
+    it('should return 400 when does not have companyId', async () => {
+      jest.clearAllMocks();
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '',
+          name: 'Survey',
+          title: 'Title',
+          questions: [
+            {
+              question: 'Question',
+              order: 1,
+              answers: [
+                {
+                  label: '1',
+                  answer: 'Answer',
+                },
+              ],
+            },
+          ],
+        })
+        .auth(token, { type: 'bearer' })
+        .expect(400)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            error: 'Bad Request',
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should return 400 when does not have name', async () => {
+      jest.clearAllMocks();
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: '',
+          title: 'Title',
+          questions: [
+            {
+              question: 'Question',
+              order: 1,
+              answers: [
+                {
+                  label: '1',
+                  answer: 'Answer',
+                },
+              ],
+            },
+          ],
+        })
+        .auth(token, { type: 'bearer' })
+        .expect(400)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            error: 'Bad Request',
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should return 400 when does not have title', async () => {
+      jest.clearAllMocks();
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: 'Survey',
+          title: '',
+          questions: [
+            {
+              question: 'Question',
+              order: 1,
+              answers: [
+                {
+                  label: '1',
+                  answer: 'Answer',
+                },
+              ],
+            },
+          ],
+        })
+        .auth(token, { type: 'bearer' })
+        .expect(400)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            error: 'Bad Request',
+            message: ['Required field'],
+          });
+        });
+    });
+
+    it('should return 400 when does not have questions', async () => {
+      jest.clearAllMocks();
+      const token = await getToken(app, request);
+
+      return request(app.getHttpServer())
+        .post('/company/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          name: 'Survey',
+          title: 'Title',
+          questions: '',
+        })
+        .auth(token, { type: 'bearer' })
+        .expect(400)
+        .then(async (response) => {
+          expect(response.body).toMatchObject({
+            error: 'Bad Request',
+            message: ['Required field'],
+          });
+        });
+    });
   });
 });
