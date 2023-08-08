@@ -53,6 +53,13 @@ describe('PrismaCompanyRepository', () => {
         id: expect.any(String),
         active: true,
       },
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        email: true,
+        password: false,
+      },
     });
     expect(company).toMatchObject({
       id: expect.any(String),
