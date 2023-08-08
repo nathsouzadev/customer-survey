@@ -12,18 +12,21 @@ export class PrismaCompanyRepository implements CompanyRepository {
 
   saveCompany = async (
     createCompanyRequest: CreateCompanyRequestDTO,
-  ): Promise<CompanyModel> => {
-    const company = await this.prisma.company.create({
+  ): Promise<CompanyModel> =>
+    this.prisma.company.create({
       data: {
         id: randomUUID(),
         active: true,
         ...createCompanyRequest,
       },
+      select: {
+        id: true,
+        active: true,
+        name: true,
+        email: true,
+        password: false,
+      },
     });
-    delete company.password;
-
-    return company;
-  };
 
   getCompanyByEmailOrId = async (emailOrId: string): Promise<CompanyModel> => {
     const company = await this.prisma.company.findFirst({
