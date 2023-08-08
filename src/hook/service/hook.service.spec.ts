@@ -10,6 +10,7 @@ import { getSurveyTemplate } from '../templates/survey.template';
 import { mockQuickReplyReceived } from '../../__mocks__/quickReplyReceived.mock';
 import { mockReceivedMessageFromMeta } from '../../__mocks__/metaReceivedMessage.mock';
 import { SenderService } from '../../sender/service/sender.service';
+import { getMockCompanyModel } from '../../__mocks__/companyModel.mock';
 
 describe('HookService', () => {
   let service: HookService;
@@ -49,6 +50,7 @@ describe('HookService', () => {
           useValue: {
             getPhoneByCompanyId: jest.fn(),
             getPhoneWithSurvey: jest.fn(),
+            getCompanyByEmailOrId: jest.fn(),
           },
         },
         {
@@ -620,7 +622,7 @@ describe('HookService', () => {
     });
   });
 
-  it('should send survey from sender', async () => {
+  it('should send template message from sender', async () => {
     const mockCompanyId = randomUUID();
     const mockSenderEmail = 'sender@email.com';
     const mockPhoneNumber = '11999991111';
@@ -634,6 +636,28 @@ describe('HookService', () => {
           name: 'Sender',
         }),
       );
+    const mockCompany = getMockCompanyModel(mockCompanyId);
+    const mockGetCompany = jest
+      .spyOn(mockCompanyService, 'getCompanyByEmailOrId')
+      .mockImplementation(() => Promise.resolve(mockCompany));
+    const mockSendTemplate = jest
+      .spyOn(mockWbService, 'sendMessage')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: mockCompany.phoneNumbers[0].phoneNumber,
+              wa_id: mockCompany.phoneNumbers[0].phoneNumber,
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        }),
+      );
 
     const response = await service.sendSurveyFromSender({
       companyId: mockCompanyId,
@@ -644,8 +668,18 @@ describe('HookService', () => {
       companyId: mockCompanyId,
       email: mockSenderEmail,
     });
+    expect(mockGetCompany).toHaveBeenCalledWith(mockCompanyId);
+    expect(mockSendTemplate).toHaveBeenCalledWith(
+      getSurveyTemplate({
+        receiver: '5511999991111',
+        sender: mockCompany.phoneNumbers[0].phoneNumber,
+        company: mockCompany.name,
+        phoneNumberId: mockCompany.phoneNumbers[0].metaId,
+      }),
+    );
     expect(response).toMatchObject({
-      id: expect.any(String),
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
     });
   });
 });

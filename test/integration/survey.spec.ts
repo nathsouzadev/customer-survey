@@ -392,7 +392,7 @@ describe('SurveyController', () => {
         .post('/meta/company/sender/survey')
         .send({
           companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
-          senderEmail: 'sender@company.com',
+          email: 'sender@company.com',
           phoneNumber: '11999991111',
         })
         .expect(201)

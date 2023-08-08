@@ -175,4 +175,32 @@ describe('HookController', () => {
       ).rejects.toThrow(new UnauthorizedException());
     });
   });
+
+  it('should return messageId when sender sent survey', async () => {
+    const mockSend = jest
+      .spyOn(mockHookService, 'sendSurveyFromSender')
+      .mockImplementation(() =>
+        Promise.resolve({
+          messageId:
+            'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+        }),
+      );
+    const mockSenderRequest = {
+      companyId: randomUUID(),
+      email: 'sender@email.com',
+      phoneNumber: '11999998888',
+    };
+
+    const response = await hookController.sendSurveyFromSender(
+      {
+        headers: {},
+      },
+      mockSenderRequest,
+    );
+    expect(mockSend).toHaveBeenCalledWith(mockSenderRequest);
+    expect(response).toMatchObject({
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    });
+  });
 });

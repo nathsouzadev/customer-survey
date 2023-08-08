@@ -170,11 +170,27 @@ export class HookService {
     };
   };
 
-  sendSurveyFromSender = (
+  sendSurveyFromSender = async (
     senderSurveyRequest: SendSurveyFromSenderRequestDTO,
-  ) =>
-    this.senderService.validateSender({
+  ): Promise<{ messageId: string }> => {
+    const sender = await this.senderService.validateSender({
       companyId: senderSurveyRequest.companyId,
       email: senderSurveyRequest.email,
     });
+
+    const company = await this.companyService.getCompanyByEmailOrId(
+      senderSurveyRequest.companyId,
+    );
+
+    const message = await this.wbService.sendMessage(
+      getSurveyTemplate({
+        receiver: `55${senderSurveyRequest.phoneNumber}`,
+        sender: company.phoneNumbers[0].phoneNumber,
+        company: company.name,
+        phoneNumberId: company.phoneNumbers[0].metaId,
+      }),
+    );
+
+    return { messageId: message.messages[0].id };
+  };
 }

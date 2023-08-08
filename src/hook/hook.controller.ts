@@ -17,6 +17,7 @@ import { AppLogger } from '../utils/appLogger';
 import { SendSurveyModel } from './models/sendSurvey.model';
 import { ReceivedMessageRequestDTO } from './dto/receivedMessageRequest.dto';
 import { SendSurveyRequestDTO } from './dto/sendSurveyRequest.dto';
+import { SendSurveyFromSenderRequestDTO } from './dto/sendSurveyFromSenderRequest.dto';
 
 @Controller()
 export class HookController {
@@ -108,10 +109,19 @@ export class HookController {
   }
 
   @Post('/company/sender/survey')
-  sendSurveyFromSender() {
-    return {
-      messageId:
-        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
-    };
+  async sendSurveyFromSender(
+    @Request() request: any,
+    @Body(new ValidationPipe())
+    sendSurveyFromSender: SendSurveyFromSenderRequestDTO,
+  ) {
+    this.logger.logger(
+      {
+        headers: request.headers,
+        message: 'Request received',
+      },
+      HookController.name,
+    );
+
+    return this.hookService.sendSurveyFromSender(sendSurveyFromSender);
   }
 }
