@@ -106,4 +106,12 @@ export class HookController {
     }
     throw new UnauthorizedException();
   }
+
+  @Post('/company/sender/survey')
+  sendSurveyFromSender() {
+    return {
+      messageId:
+        'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+    };
+  }
 }

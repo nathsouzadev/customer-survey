@@ -368,4 +368,40 @@ describe('SurveyController', () => {
         });
     });
   });
+
+  describe('sender send survey', () => {
+    it('should sender can ser survey to customer', async () => {
+      nock(`${mockUrl}/${mockPhoneNumberId}/messages`)
+        .post('')
+        .reply(200, {
+          messaging_product: 'whatsapp',
+          contacts: [
+            {
+              input: '5511999991111',
+              wa_id: '5511999991111',
+            },
+          ],
+          messages: [
+            {
+              id: 'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+            },
+          ],
+        });
+
+      return request(app.getHttpServer())
+        .post('/meta/company/sender/survey')
+        .send({
+          companyId: '8defa50c-1187-49f9-95af-9f1c22ec94af',
+          senderEmail: 'sender@company.com',
+          phoneNumber: '11999991111',
+        })
+        .expect(201)
+        .then((response) => {
+          expect(response.body).toMatchObject({
+            messageId:
+              'amid.HBgNNTUxMTk5MDExNjU1NRUCABEYEjdFRkNERTk5NjQ5OUJCMDk0MAA=',
+          });
+        });
+    });
+  });
 });
